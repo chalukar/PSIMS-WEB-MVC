@@ -1,0 +1,43 @@
+﻿@model PSIMS.Models.Finance.Bank
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-body box-primary">
+
+    <div>
+        <h4>Bank Details</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                ID
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ID)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.BankCode)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BankCode)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.BankName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BankName)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-flat" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>

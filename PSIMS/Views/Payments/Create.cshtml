@@ -1,0 +1,368 @@
+﻿@model PSIMS.Models.Finance.Payment
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Receipt Payments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="~/Scripts/jquery.numberformatter.js"></script>
+@****  loading Spinner ******@
+<div id="fade"></div>
+<div id="modalSpinner">
+    <img id="loader" src="~/Content/images/477.GIF" />
+</div>
+@**************************@
+<style>
+    .grandTotal {
+        font-size: 18px;
+        font-weight: 400;
+        color: red;
+    }
+</style>
+<div class="row">
+    <div class="box box-primary box-body">
+        <div class="row">
+            <div class="col-xs-8 col-xs-offset-2">
+                <div class="input-group">
+                    <div class="input-group-btn search-panel">
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span id="search_concept">Filter by</span> <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="#InvoiceNo">Invoice Order</a></li>
+                            <li><a href="#custName">Customer Name</a></li>
+                        </ul>
+                    </div>
+                    <input type="hidden" name="search_param" value="all" id="search_param">
+                    <input type="text" id="searchVal" class="form-control" name="searchVal" placeholder="Search ...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" id="GeSalestSearch" name="searchbtn"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+
+        @*<div class="row col-lg-offset-2">
+            <form id="getPaymentfromDB">
+                <div class="col-md-2">
+                    <strong>Invoice No</strong><br />
+                    <input type="text" name="InvoicetNo" id="getInvoiceNo" readonly class="form-control " />
+                </div>
+                <div class="col-md-2">
+                    <strong>Grand Total</strong><br />
+                    <input type="text" name="grandtotal" id="getBalanceBF" readonly class="form-control " />
+                </div>
+                <div class="col-md-2">
+                    <strong>Payment Received</strong><br />
+                    <input type="text" name="paymentreceived" id="getpaymentreceived" readonly class="form-control " />
+                </div>
+                <div class="col-md-2">
+                    <strong>Balance B/F</strong><br />
+                    <input type="text" name="balanceBF" id="getArrears" readonly class="form-control " />
+                </div>
+                <div class="col-md-2">
+                    <strong>Add Payment</strong><br />
+                    <button class="btn btn-primary" type="button" id="getpayments" name="getpayments"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </form>
+        </div>*@
+    </div>
+
+    <div class="row">
+        <div id="Mainreceipt" class="col-xs-12">
+            <div class="box box-primary box-body">
+                <div class="row">
+                    <form id="formPayment">
+                        <div class="col-xs-12">
+                            <div class="col-md-2">
+                               
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Invoice No</strong><br />
+                                <input type="text" name="InvoicetNo" id="getInvoiceNo" readonly class="form-control " />
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Balance B/F</strong><br />
+                                <input type="text" name="grandtotal" id="getBalanceBF" readonly class="form-control " />
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Last Payments Received</strong><br />
+                                <input type="text" name="paymentreceived" id="getpaymentreceived" readonly class="form-control " />
+                            </div>
+                            <div class="col-md-2">
+                                <strong>Arrears</strong><br />
+                                <input type="text" name="arrears" id="getArrears" readonly class="form-control " />
+                            </div>
+
+                        </div>
+                        <br />
+                        <hr />
+                        <div class="col-xs-12">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <label>Company Name</label>
+                                    <input type="text" id="ComName" name="ComName" class="form-control CustName" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Invoice Order #</label>
+                                    <input type="text" id="invoiceNo" name="invoiceNo" class="form-control invoiceNo" readonly />
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Invoice Amount</label>
+                                    <input type="text" id="inamount" name="inamount" class="form-control grandTotal" readonly />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Receipt Amount</label>
+                                    <input type="text" id="receiptamount" name="receiptamount" class="form-control NumbersAndDecimal" />
+                                </div>
+                                <div class="col-sm-6">
+                                    <label>Bank</label>
+                                    <select id="selectBank" name="selectBank" class="form-control text-uppercase"></select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <label>Payment Mode</label>
+                                    <select id="PaymentMode" name="PaymentMode" class="form-control">
+                                        <option value="0">-- Select Pay Mode --</option>
+                                        <option value="CA">Cash</option>
+                                        <option value="CH">Cheque</option>
+                                    </select>
+                                </div>
+                                <div id="chqNodiv" class="col-sm-3" hidden="hidden">
+                                    <label>Cheque No</label>
+                                    <input type="text" name="ChqNo" id="chqNo" class="form-control " />
+                                </div>
+                                <div id="chqDatediv" class="col-sm-3" hidden="hidden">
+                                    <label>Cheque Date</label>
+                                    <input type="date" name="ChqDate" id="chqDate" class="form-control" />
+                                </div>
+                            </div>
+                            <br />
+                            <div class="row">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="button" id="Savebtn" name="Savebtn" value="Save" class="btn btn-primary btn-flat" />
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    $(document).ready(function () {
+        $('#GeSalestSearch').click(function () {
+            GetSalesUsingAjax(); // call sales Items
+            GetPayUsingAjax(); // call Payment Value
+
+
+        });
+
+
+    });
+
+
+    //Get Data from Sales Table
+    function GetSalesUsingAjax() {
+        var SearchVal = $("#searchVal").val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetformPayment")',
+            //url: "/Payments/GetformPayment?SerachBy="+ SerachBy + "&SerachValue=" + SerachValue,
+            data: { "SearchVal": SearchVal },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+                if (response != null) {
+
+                    $('#invoiceNo').val(response.ID);
+                    $('#inamount').val(response.GrandTotal.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+                    $('#ComName').val(response.ComName);
+
+
+                }
+
+            },
+            error: function (response) {
+                alert('error');
+            }
+        });
+    }
+
+    //Get Data from Payment Table
+    function GetPayUsingAjax() {
+        var SearchVal = $("#searchVal").val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetPassdata")',
+            //url: "/Payments/GetformPayment?SerachBy="+ SerachBy + "&SerachValue=" + SerachValue,
+            data: { "SearchVal": SearchVal },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+                if (response != null) {
+
+                    $('#getInvoiceNo').val(response.ID);
+                    if (response.balance == null) {
+                        $('#getBalanceBF').val('0.00');
+                    }
+                    else {
+                        $('#getBalanceBF').val(response.balance.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+                    }
+
+                    if (response.LastPayment == null)
+                    {
+                        $('#getpaymentreceived').val('0.00');
+                    }
+                    else
+                    {
+                        $('#getpaymentreceived').val(response.LastPayment.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+                    }
+                    if (response.Arrears == null) {
+                        $('#getArrears').val('0.00');
+                    }
+                    else {
+                        $('#getArrears').val(response.Arrears.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"));
+                    }
+                    
+
+                }
+            },
+            error: function (response) {
+                alert('error');
+            }
+        });
+    }
+
+
+    $('#Savebtn').on('click', function () {
+        var ReceiptAmt = Number($('#receiptamount').val());
+        var PayMode = Number($('#PaymentMode').val());
+        var InvoiceAmt = Number($('#inamount').val());
+
+
+        if ($('#invoiceNo').val() == "" ||
+            $('#invoiceNo').val() == NaN ||
+            $('#invoiceNo').val() == null ||
+            $('#receiptamount').val() == "" ||
+            $('#receiptamount').val() == 0 ||
+
+            $('#CustName').val() == "") {
+            sweetAlert("Oops...", 'Looks like you forgot to enter correct values.', "error");
+        }
+        else if (ReceiptAmt == 0) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter Receipt Amount is Zero.', "error");
+        }
+        else if ($('#PaymentMode').val() == 0) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter Payment Mode.', "error");
+        }
+        else {
+            //post form
+            $.post('../../../Payments/SerializePaymentFormData', $('#formPayment').serialize(), function (data) {
+                if (data == null) {
+                    sweetAlert("Oops...", "Some inputs may be missing!", "error");
+                }
+                else {
+                    window.location.href = "../../../Payments/SalesReceipt/" + data;
+                }
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    $.get('/Payments/PopulateBank', {}, function (data) {
+        $('#selectBank').empty();
+        $('#selectBank').append($("<option value='0'>--Select Bank-</option>"))
+        $.each(data, function (key, value, sort) {
+            $('#selectBank').append($('<option></option>').val(value.ID).html(value.BankName));
+        });
+    }, 'json');
+
+
+    $("#PaymentMode").change(function () {
+        if ($(this).val() == "CH") {
+            $("#chqDepDatediv").show();
+            $("#chqNodiv").show();
+            $("#chqDatediv").show();
+        } else if ($(this).val() == "CA") {
+            $("#chqDepDatediv").hide();
+            $("#chqNodiv").hide();
+            $("#chqDatediv").hide();
+        }
+
+
+    });
+
+ 
+    $('#discountPercent').keyup(function () {
+        var receiptAmt = Number($('#receiptamount').val());
+        var grandTot = Number($('#getBalanceBF').val());
+
+    });
+
+
+    $('#receiptamount').focusout(function () {
+
+        var receiptAmt = Number($('#receiptamount').val());
+        $('#receiptamount').val(receiptAmt.toFixed(2).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,"))
+
+
+    });
+
+    $('#receiptamount').keyup(function () {
+        var receiptAmt = Number($('#receiptamount').val());
+        var arrears = Number($('#getArrears').val());
+        if (arrears == 0)
+        {
+           
+        }
+        else
+        {
+            if (arrears < receiptAmt) {
+                sweetAlert("Oops...", 'Receipt Amount cannot be graterthan  to Arrears Amount.', "error");
+                $('#receiptamount').val('');
+                closeModal();
+            }
+            else if (receiptAmt == 0) {
+                sweetAlert("Oops...", 'Receipt Amount is Zero.', "error");
+                $('#receiptamount').val('');
+                closeModal();
+            }
+        }
+        
+
+    });
+
+</script>
+
+<style>
+    #inamount{
+        font-size:25px;
+        font-weight:bold;
+        color:#000;
+    }
+    #getInvoiceNo,#getBalanceBF,#getpaymentreceived,#getArrears, #receiptamount{
+        font-size:16px;
+        font-weight:bold;
+        color:#000000;
+    }
+
+</style>

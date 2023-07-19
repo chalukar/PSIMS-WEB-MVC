@@ -1,0 +1,198 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.StockMovement>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "List of Transfer Stock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<div class="box box-primary ">
+    <form method="Post" action="TransferIndex">
+        <table class="table table-striped">
+            <tr>
+
+                <td>
+                    <label>Select</label><br />
+                    <select class="form-control" name="option">
+                        <option>--Select--</option>
+                        <option value="today" id="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="thisWeek">This Week</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="lastYear">Last Year</option>
+                    </select>
+                </td>
+                <td>
+                    `
+                    <label>From</label><br />
+                    <input type="text" class="datepicker form-control" name="fromDate" autocomplete="off" />
+                </td>
+                <td>
+                    <label>To</label><br />
+                    <input type="text" class="datepicker form-control" name="toDate" autocomplete="off" />
+                </td>
+  
+                <td></td>
+                <td>
+                    <br />
+                    <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="box box-body box-primary">
+
+    <p>
+        @Html.ActionLink("Transfer Stock", "TransferStock", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+        @*@Html.ActionLink("New Transfer Stock", "StockTransferEntry", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })*@
+    </p>
+    <table class="table table-striped" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Transfer ID
+                </th>
+                <th>
+                    Transferred Date
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Batch No
+                </th>
+                <th>
+                    Source
+                </th>
+                <th>
+                    Destination
+                </th>
+                <th>
+                    Initial Qty
+                </th>
+                <th>
+                    Transferred Qty
+                </th>
+                <th>
+                    Remarks
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Action
+                </th>
+
+
+            </tr>
+        </thead>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.transferID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.TransferdOn)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Stock.BatchNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.FromLocation.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ToLocation.LocationName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InitQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DistributedQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Remarks)
+            </td>
+            <td class="txtCheckBox">
+                @{
+                    if (item.Status == 0)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:orange " class="badge" readonly>Pending</a>
+                    }
+                    else if (item.Status == 1)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:yellowgreen " class="badge" readonly>Partial</a>
+                    }
+                    else if (item.Status == 2)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Completed</a>
+                    }
+
+                }
+            </td>
+            <td>
+
+                <div class="dropdown">
+                    <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+
+                        @{
+                            if (item.Status == 0)
+                            {
+                                <li>@Html.ActionLink("Details", "Details", new { id = item.ID }) </li>
+                                <li>@Html.ActionLink("Delete", "TransferStockDelete", new { id = item.ID })</li>
+
+                            }
+                            else if (item.Status == 1)
+                            {
+                                <li>@Html.ActionLink("Details", "Details", new { id = item.ID }) </li>
+                            }
+                            else if (item.Status == 2)
+                            {
+                                <li>@Html.ActionLink("Details", "Details", new { id = item.ID }) </li>
+                            }
+                        }
+
+
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+        }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+    $(function () {
+        $(".datepicker").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+
+        });
+    });
+</script>

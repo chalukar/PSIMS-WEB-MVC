@@ -1,0 +1,105 @@
+﻿@model IEnumerable<IdentitySample.Models.ApplicationUser>
+
+@{
+    ViewBag.Title = "User List";
+}
+
+<div class="box box-body box-primary">
+    <p>
+       @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+    <table class="table">
+        <tr class="dataTableHead">
+
+            <th>
+                User Name
+            </th>
+            <th>
+                Full Name
+            </th>
+            <th>
+                Email
+            </th>
+
+            <th>Email confirmed?</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>
+                Actions
+            </th>
+        </tr>
+
+        @foreach (var item in Model)
+    {
+    <tr>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.UserName)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FullName)
+        </td>
+
+        <td>
+            @Html.DisplayFor(modelItem => item.Email)
+        </td>
+
+        <td>
+            @*Html.DisplayFor(modelItem => item.EmailConfirmed)*@
+            @{if (item.EmailConfirmed == true)
+                  {
+                <span style="color:Green"> Active </span>
+                  }
+                  else
+                  {
+                <span style="color:red"> InActive </span>
+                  }
+            }
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Location.LocationName)
+        </td>
+        <td>
+            @*Html.DisplayFor(modelItem => item.EmailConfirmed)*@
+            @{if (item.Active == true)
+            {
+                <span style="color:Green"> Active </span>
+            }
+            else
+            {
+                <span style="color:red"> InActive </span>
+            }
+            }
+        </td>
+
+        @*<td>
+            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+            @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+            <span onclick="return confirm('Are you sure to Inactive ?')"><a href="@Url.Action("Deactivate","UsersAdmin",new { id=item.Id})" class="delLink" style="color:red;">Inactive</a></span> | 
+            <span onclick="return confirm('Are you sure to Active ?')"><a href="@Url.Action("Activate", "UsersAdmin", new { id = item.Id })" class="delLink" style="color:green;">Active</a></span>      
+        </td>*@
+    <td>
+
+        <div class="dropdown">
+            <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                Actions
+                <span class="caret"></span>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                <li>@Html.ActionLink("Edit", "Edit", new { id = item.Id }) </li>
+                <li>@Html.ActionLink("Details", "Details", new { id = item.Id })</li> 
+
+                <li><span onclick="return confirm('Are you sure to Inactive ?')"><a href="@Url.Action("Deactivate","UsersAdmin",new { id=item.Id})" class="delLink" style="color:red;">  Inactive</a></span> </li>
+                <li><span onclick="return confirm('Are you sure to Active ?')"><a href="@Url.Action("Activate", "UsersAdmin", new { id = item.Id })" class="delLink" style="color:green;">  Active</a></span>      </li>
+
+
+            </ul>
+        </div>
+
+    </td>
+    </tr>
+    }
+
+    </table>
+
+</div>

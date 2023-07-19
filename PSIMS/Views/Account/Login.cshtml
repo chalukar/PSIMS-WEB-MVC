@@ -1,0 +1,108 @@
+﻿@model IdentitySample.Models.LoginViewModel
+
+@{
+    ViewBag.Title = "Log in";
+}
+@Styles.Render("~/Content/css")
+@Styles.Render("~/Scripts/AdminLTE/plugins/css")
+@Scripts.Render("~/bundles/jquery")
+@Scripts.Render("~/bundles/bootstrap")
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Passion+One' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Oxygen' rel='stylesheet' type='text/css'>
+    <link href="~/Scripts/AdminLTE/plugins/iCheck/square/blue.css" rel="stylesheet" />
+    <title>Admin</title>
+</head>
+<body>
+    <div class="container">
+        <div class="row main">
+            <div class="panel-heading">
+                <div class="panel-title text-center">
+                    <h1 class="title"> LIMAX MEDICA </h1>
+                    <hr />
+                </div>
+            </div>
+            <div class="main-login main-center">
+            @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                
+                <form class="form-horizontal" method="post" action="#">
+                    <div class="form-group">
+                        <label for="username" class="cols-sm-2 control-label">Username</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                               
+                               
+                                <span class="input-group-addon"><i class="fa fa-user fa" aria-hidden="true"></i></span>
+                                @Html.TextBoxFor(m => m.Username, new { @class = "form-control", placeholder = "Enter your Username" })
+                                @Html.ValidationMessageFor(m => m.Username, "", new { @class = "text-danger" })
+                                @*<input type="text" class="form-control" name="username" id="username" placeholder="Enter your Username" />*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="cols-sm-2 control-label">Password</label>
+                        <div class="cols-sm-10">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-lock fa-lg" aria-hidden="true"></i></span>
+                                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+                                @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                @*<input type="password" class="form-control" name="password" id="password" placeholder="Enter your Password" />*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="cols-sm-10">
+                            <div class="form-group">
+                                <div class="checkbox" style="margin-left:15px">
+                                    @Html.CheckBoxFor(m => m.RememberMe, new { @class = "x" })
+                                    @Html.LabelFor(m => m.RememberMe)
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group ">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block login-button">Sign in</button>
+
+                    </div>
+                    <div class="login-register">
+                        @Html.ActionLink("Forget your password?", "ForgotPassword")   
+                    </div>
+                  
+                </form>
+            }
+            </div>
+        </div>
+    </div>
+   
+</body>
+</html>
+
+
+    <script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+        @Scripts.Render("~/Scripts/AdminLTE/plugins")")
+
+
+    }
+    <script>
+        $(document).ready(function () {
+            $('.x').iCheck({
+                checkboxClass: 'icheckbox_square-blue',
+                radioClass: 'iradio_square-blue',
+                increaseArea: '20%' // optional
+            });
+        });
+
+    </script>

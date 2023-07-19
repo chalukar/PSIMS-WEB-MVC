@@ -1,0 +1,133 @@
+﻿@* 
+ This partial controls the top menu of the AdminLTE Template, being called automatically by _AdminLteLayout
+    TODO: All of the content in here is stand-in that must be replaced by the real behavior of your app
+*@
+
+@using PSIMS.Models
+@using PSIMS.Controllers
+@using PSIMS.ViewModel
+
+@{
+    ViewBag.Layout = null;
+}
+
+
+<header class="main-header">
+    <!-- Logo -->
+    <a href="~/Home/Index" class="logo">
+        <!-- mini logo for sidebar mini 50x50 pixels -->
+        @*<span class="logo-mini"><b>L</b>M</span>*@
+        <!-- logo for regular state and mobile devices -->
+        <span class="logo-lg"><b>LIMAX</b> MEDICA</span>
+    </a>
+    <!-- Header Navbar: style can be found in header.less -->
+
+   <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>
+        <!-- Navbar Right Menu -->
+        <div class="navbar-collapse collapse">
+
+
+            <div class="navbar-custom-menu">
+                <ul class="nav navbar-nav">
+                    
+                    <!-- Notifications Menu -->
+                    <li class="dropdown notifications-menu">
+                        <!-- Menu toggle button -->
+                        <a href="#" class="dropdown-toggle alertNumber" data-toggle="dropdown">
+                            <i class="fa fa-bell-o"></i>                    
+                            
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="header">Notifications</li>
+                            <li>
+                                <!-- Inner Menu: contains the notifications -->
+                                <ul class="menu alertSign">
+                                @*    <li>
+                                        <!-- start notification -->
+                                        <a href="#">
+                                            <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                                        </a>
+                                    </li><!-- end notification -->  *@                                  
+                                </ul>
+                            </li>
+                           
+                        </ul>
+                    </li>
+                    
+                   
+                </ul>
+                @Html.Partial("_LoginPartial")
+
+
+            </div><!-- /.navbar-custom-menu -->
+   
+        
+            
+        </div><!-- /.container-fluid -->           
+       
+    </nav>
+</header>
+
+<script>
+    var count = 0, count2 = 0, total = 0;
+    $(document).ready(function () {
+        
+        $.get('../../../Home/CheckExpiry', null, function (data) {
+            //$('.label-warning').html(data);
+            $('.menu').append('<li><a href="../../../../Home/Notifications"><i class="fa fa-warning text-yellow"></i> ' + data + ' items to expire/expired.</a></li>');
+
+            if (data != null)
+            {
+                $('.alertNumber').append('<span class="label label-warning notifications">!</span>');
+            }
+            else {
+                $('.alertNumber').append('<span class="label label-warning notifications">0</span>');
+            }
+
+            count = data;
+        }, 'json');
+
+        $.get('../../../Home/StockLevel', null, function (data) {
+            //$('.label-danger').html(data);
+            $('.menu').append('<li><a href="../../../../Home/Notifications"><i class="fa fa-warning text-yellow"></i> ' + data + ' items are low in qty.</a></li>');
+
+                if (data != null) {
+                    $('.alertNumber').append('<span class="label label-warning notifications">!</span>');
+                }
+                else {
+                    $('.alertNumber').append('<span class="label label-warning notifications">0</span>');
+                }
+        }, 'json');
+    });
+
+   // <li><a href="#"><i class="fa fa-users text-aqua"></i> 5 new members joined today</a></li>
+</script>
+
+
+<!-- jvectormap -->
+@*<script src="plugins/jvectormap/jquery-jvectormap-1.2.2.min.js"></script>
+    <script src="plugins/jvectormap/jquery-jvectormap-world-mill-en.js"></script>*@
+<!-- jQuery Knob Chart -->
+@*<script src="bower_components/jquery-knob/dist/jquery.knob.min.js"></script>*@
+<!-- daterangepicker -->
+@*<script src="bower_components/moment/min/moment.min.js"></script>
+    <script src="bower_components/bootstrap-daterangepicker/daterangepicker.js"></script>*@
+<!-- datepicker -->
+@*<script src="bower_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>*@
+<!-- Bootstrap WYSIHTML5 -->
+@*<script src="plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js"></script>*@
+<!-- Slimscroll -->
+<script src="~/Scripts/jquery.slimscroll.min.js"></script>
+<!-- FastClick -->
+@*<script src="bower_components/fastclick/lib/fastclick.js"></script>*@
+<!-- AdminLTE App -->
+@*<script src="dist/js/adminlte.min.js"></script>*@
+<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
+@*<script src="dist/js/pages/dashboard.js"></script>*@
+<!-- AdminLTE for demo purposes -->
+@*<script src="dist/js/demo.js"></script>*@
+

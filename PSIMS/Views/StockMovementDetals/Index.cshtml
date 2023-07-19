@@ -1,0 +1,118 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.StockMovementDetals>
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.FromLocation.LocationCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Item.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Stock.BatchNo)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ToLocation.LocationCode)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TransferID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.InitQty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.DistributedQty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TransferdBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.TransferdOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReceivedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReceivedOn)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ReceivedQty)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Status)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LocationID)
+        </th>
+        <th></th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.FromLocation.LocationCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Stock.BatchNo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ToLocation.LocationCode)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransferID)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.InitQty)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.DistributedQty)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Remarks)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransferdBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.TransferdOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReceivedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReceivedOn)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ReceivedQty)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Status)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LocationID)
+        </td>
+        <td>
+            @Html.ActionLink("Edit", "Edit", new { id=item.ID }) |
+            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+        </td>
+    </tr>
+}
+
+</table>

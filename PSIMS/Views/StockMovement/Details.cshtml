@@ -1,0 +1,83 @@
+﻿@model PSIMS.Models.InventoryModel.StockDistribution
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>StockDistribution</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Stock.BatchNo)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Stock.BatchNo)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ItemID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FromLocationID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromLocationID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ToLocationID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToLocationID)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.DistributedQty)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.DistributedQty)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Remarks)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Remarks)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreateBy)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreateBy)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>

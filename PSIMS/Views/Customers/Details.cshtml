@@ -1,0 +1,191 @@
+﻿@model PSIMS.Models.SalesModel.Customer
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<div class="box box-body box-primary">
+    <div>
+        <h4>Customer</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                ID
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ID)
+            </dd>
+            <dt>
+                Customer Name
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CustomerName)
+            </dd>
+            <dt>
+                Company Name
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Companyname)
+            </dd>
+            <dt>
+                Registration No
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Registation_No, new { @style = "text-transform: uppercase" })
+            </dd>
+            <dt>
+                Telephone No
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.TelPhoneNo)
+            </dd>
+
+            <dt>
+                Mobile No
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MobileNo)
+            </dd>
+
+            <dt>
+                Email Address
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            <dt>
+                Address
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address)
+            </dd>
+
+            <dt>
+                Address(Optional)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Address_line2)
+            </dd>
+
+            <dt>
+                City
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.City)
+            </dd>
+
+            <dt>
+                State/Distric/province
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.State)
+            </dd>
+            <dt>
+                Latitude
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Latitude)
+            </dd>
+            <dt>
+                Longitude
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Longitude)
+            </dd>
+            <dt>
+                Status
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Status)
+            </dd>
+
+            <dt>
+                Created By
+            </dt>
+
+            <dd>
+
+                @{
+            var UN = Model.CreateBy;
+            var name = db.Users.Where(u => u.Id == UN).FirstOrDefault().UserName ?? "n/a";
+            @name
+
+                }
+
+
+            </dd>
+
+            <dt>
+                Created On
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreateOn)
+            </dd>
+            <dt>
+                Last Updated By
+            </dt>
+
+            <dd>
+                @{
+            var UN1 = Model.LastUpdateBy;
+            if (UN1 == null)
+            {
+                @Html.DisplayFor(model => model.LastUpdateBy)
+    }
+    else
+    {
+        var Uname = db.Users.Where(u => u.Id == UN1).FirstOrDefault().UserName ?? "n/a";
+        @Uname
+}
+
+                }
+            </dd>
+
+            <dt>
+                Last Updated On
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.LastUpdateOn)
+            </dd>
+            <dt>
+                Is Name Dispaly
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CustNameIsActive)
+            </dd>
+            @*<dt>
+            Image
+        </dt>
+
+        <dd>
+            <img src='~/IMG/@Html.ValueFor(model => model.ImageURL)' alt="" height=150 width=200 />
+
+        </dd>*@
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-flat" }) 
+       @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>

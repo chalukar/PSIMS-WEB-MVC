@@ -1,0 +1,91 @@
+﻿@model PSIMS.Models.InventoryModel.Item
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class=" box box-primary box-body">
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <h4>Item Registration</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+
+                    @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control",@Style = " text-transform: uppercase" ,@placeholder = "Enter REF or Product No. "} })
+                    <p><em>Please Enter REF or Product No.</em></p>
+                    @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+                    <span style="color:red"><i>@ViewBag.DuplicateError</i></span>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.ManufacturerID, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.ManufacturerID, ViewBag.ManufacturerID as IEnumerable<SelectListItem>, "--Select Manufacturer--", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ManufacturerID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.ProductCategoryID, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.ProductCategoryID, ViewBag.ProductCatID as IEnumerable<SelectListItem>, "--Select Product Category--", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.ProductCategoryID, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.AlertQty, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.AlertQty, new { htmlAttributes = new { @class = "form-control NumbersOnly", @placeholder = "Enter for minimum sellable unit" } })
+                    @Html.ValidationMessageFor(model => model.AlertQty, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Description, 3, 45, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase", @placeholder = "Item Description " } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.HiddenFor(model => model.UserID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.HiddenFor(model => model.UserID, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.UserID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            </div>
+            @*
+                <div class="form-group">
+                    @Html.LabelFor(model => model.LastUpdated, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.LastUpdated, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.LastUpdated, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+            *@
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create" class="btn btn-primary btn-flat" />
+                </div>
+            </div>
+        </div>
+    }
+
+    <div>
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </div>
+
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

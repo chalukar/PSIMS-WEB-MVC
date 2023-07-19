@@ -1,0 +1,118 @@
+﻿@model PSIMS.Models.Finance.Payment
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="well col-md-8">
+            <div class="row">
+                <div class="col-xs-4 col-sm-4 col-md-4">
+                    <address>
+                        <strong>Limax Medica (Pvt) Ltd</strong><br>
+                        PO BOX 41,Maharagama,Sri Lanka
+                        <br>
+                        <abbr>Tel:</abbr> +94 777 316 736 / 71 4479 513<br />
+                        <abbr>Fax:</abbr> +94 112 846 779<br />
+                        <abbr>Email:</abbr>limax@sltnet.lk<br />
+                    </address>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 text-center">
+                    <h4>Cash/Cheque Receipt</h4>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4">
+                    <p>Date : @Model.PaymentDate</p>
+                    <p>Reciept No.:#@Model.ID</p>
+                    <p>Invoice No. :#@Model.SalesID</p>
+                    @{
+                        if (@Model.PayMode == "CA")
+                        {
+                            <p>Payment Method:Cash</p>
+                        }
+                        else if (@Model.PayMode == "CH")
+                        {
+                            <p>Payment Method:Cheque</p>
+                        }
+                    }
+
+
+                </div>
+            </div>
+            <div class="row">
+                @*<div class="text-center">
+                        <h3>Cash / Cheque Receipt</h3>
+                    </div>*@
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <p class="col-md-6 control" style="width: 650px; display: table;">
+                                <span style="display: table-cell; width: 180px;">Received with thanks from </span>
+                                <span style="display: table-cell; border-bottom: 0.5px solid black;"> @Model.CompanyName</span>
+                            </p>
+                        </div>
+                        <div class="form-group">
+                            <p class="col-md-6 control" style="width: 650px; display: table;">
+                                <span style="display: table-cell; width: 120px;">The sum of Rupees </span>
+                                <span style="display: table-cell; border-bottom:0.5px solid black;">@Model.NumberToWords</span>
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <p class="col-md-6 control" style="width:300px; display: table;">
+                                <span style="display: table-cell; width: 100px;">Cheque No:</span>
+                                <span style="display: table-cell; border-bottom: 0.5px solid black;">@Model.ChequeNo</span>
+                            </p>
+
+                        </div>
+                    </div>
+
+                    <div class="col-xs-6 col-sm-6 col-md-6">
+                        <div class="form-group">
+                            <p class="col-md-6 control" style="width: 280px; display: table;">
+                                <span style="display: table-cell; width: 100px;">Bank Name:</span>
+                                <span style="display: table-cell; border-bottom: 0.5px solid black;"> @(Model.BankID.HasValue ? @Model.Bank.BankName : null)</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <p class="col-md-6 control" style="width: 300px; display: table;">
+                                <span style="display: table-cell; width: 100px;">Recieve Amount:</span>
+                                <span style="display: table-cell; border-bottom: 0.5px solid black;">Rs.@Model.PaidAmount</span>
+
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-4 col-sm-4 col-md-4">
+
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4 text-center">
+
+                    </div>
+                    <div class="col-xs-4 col-sm-4 col-md-4">
+                        <p>.........................................</p>
+                        <p class="control" for="name">Authorised Signatury</p>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row no-print">
+                <div class="col-xs-12">
+                    <a href="#" onclick="window.print();" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
+                    <a href="/Payments/Create" class="btn btn-success"><i class="fa fa-sticky-note"></i>  Back to Payment Receipt Entry</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,113 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.StockMovement>
+
+@{
+    ViewBag.Title = "Stock Transfer Note";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+
+<div class="box box-primary ">
+    <form method="Post" action="transferID">
+        @*<form id="form1">*@
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <label>Transfer ID</label> <br />
+                    <select id="transferid" name="transferid" class="form-control"></select>
+                </td>
+                <td></td>
+                <td>
+                    <br />
+                    <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="renderTable" class="box box-primary box-body ">
+    <table class="table table-responsive table-striped" id="datatable">
+        <thead>
+            <tr class="dataTableHead">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Batch No
+                </th>
+                <th>
+                    Source
+                </th>
+                <th>
+                    Destination
+                </th>
+                <th>
+                    Transferred Qty
+                </th>  
+            </tr>
+        </thead>
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.transferID)
+            </td>
+             <td>
+             @Html.DisplayFor(modelItem => item.Item.Name)
+         </td>
+         <td>
+             @Html.DisplayFor(modelItem => item.Stock.BatchNo)
+         </td>
+        <td>
+             @Html.DisplayFor(modelItem => item.FromLocation.LocationName)
+         </td>
+         <td>
+             @Html.DisplayFor(modelItem => item.ToLocation.LocationName)
+         </td>
+         <td>
+             @Html.DisplayFor(modelItem => item.DistributedQty)
+         </td>
+
+        </tr>
+        }
+
+    </table>
+</div>
+<script>
+	$(document).ready(function () {
+
+		$('.datepicker').datepicker();
+
+
+		$('.x').iCheck({
+			checkboxClass: 'icheckbox_minimal',
+			radioClass: 'iradio_minimal',
+			increaseArea: '20%' // optional
+		});
+
+    	$('#datatable').DataTable({
+			dom: 'Bfrtip',
+			buttons: [
+				'copy', 'csv', 'excel', 'pdf', 'print'
+			]
+        });
+
+        $.get('../../../StockMovement/PopulateReportTransferID', {}, function (data) {
+            $('#transferid').empty();
+            $('#transferid').append($("<option value=''>--Select Transfer ID--</option>"));
+            $.each(data, function (key, value) {
+                $('#transferid').append($("<option></option>").val(value.ID).html(value.transferID));
+            });
+        }, 'json');
+
+
+	});
+</script>
+
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

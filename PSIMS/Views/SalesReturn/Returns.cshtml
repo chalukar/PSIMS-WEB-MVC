@@ -1,0 +1,323 @@
+﻿@model PSIMS.Models.Sales
+
+@{
+    ViewBag.Title = "Sales Returns";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    decimal discount = 0;
+    decimal discountPercent = 0;
+    decimal amount = Model.Amount;
+
+
+    if (amount == 0)
+    {
+        discount = Model.Discount;
+        discountPercent = 0;
+    }
+    else
+    {
+        discount = Model.Discount;
+        discountPercent = (discount * 100) / amount;
+    }
+    //decimal discount = Model.Discount;
+    //decimal discountPercent = 0;
+
+
+
+
+    int count = 0;
+}
+
+
+<div class="box box-primary">
+    <form id="form1"></form>
+
+
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Sales Summary</h3>
+            <table class="table table-condensed">
+                <tr>
+                    <td>Sales ID:</td>
+                    <td>@Model.ID <input type="hidden" name="SalesID" value="@Model.ID" form="form1" /></td>
+                </tr>
+                <tr>
+                    <td>Date</td>
+                    <td> @Model.Date </td>
+                </tr>
+                <tr>
+                    <td>Sub Total :</td>
+                    <td> @Model.Amount </td>
+                </tr>
+                <tr>
+                    <td>Discount % :</td>
+                    <td><span id="disPer">@discountPercent</span> </td>
+                </tr>
+                <tr>
+                    <td>Grand Total </td>
+                    <td>@Model.GrandTotal</td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="col-md-8"></div>       
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped">
+                <thead class="dataTableHead">
+                    <tr>
+                        <th>Item Name</th>
+                        <th>Loc.Stock ID</th>
+                        <th>Batch No</th>
+                        <th>Pack Size</th>
+                        <th>Qty</th>
+                        <th>Pack Rate</th>
+                        <th>Unit Price</th>
+                        <th>Discount</th>
+                        <th>Amount</th>
+                        <th>Return Qty</th>
+                        <th>Associated amt</th>
+                    </tr>
+                </thead>
+
+                @foreach (var item in Model.SalesItems)
+                {
+                <tr>
+                    @{count++;}
+                    <td>@item.LocationStock.Item.Name </td>
+                    <td>@item.StockID <input type="hidden" name="StockID_@count" value="@item.StockID" form="form1" />  </td>
+                    <td>@item.LocationStock.Stock.BatchNo <input type="hidden" name="BatchNo_@count" value="@item.LocationStock.Stock.BatchNo" form="form1" />  </td>
+                    <td id="packsize"><b>@item.PackSize <input type="hidden" id="packsize_@count" value="@item.PackSize" class="packsize" /> </b></td>
+                    @*<td id="qty"><b>@item.Qty <input type="text" id="qty_@count" value="@item.Qty" class="actualQty" /> </b></td>*@
+
+                    <td id="qty" class="act_qty"><b>@item.Qty</b> <input type="hidden" id="qryval" name="actqty_@count" value="@item.Qty" form="form1" /> </td>
+
+                    <td id="rate" class="rate">@item.Rate <input type="hidden" name="Rate_@count" value="@item.Rate" form="form1" /> </td>
+                    <td id="up" class="up">@item.LocationStock.Stock.unitprice <input type="hidden" name="UP_@count" value="@item.LocationStock.Stock.unitprice" form="form1" /> </td>
+                   
+                    <td id="discount" class="discount">
+                        @item.UnitDisCountAmt
+                                        @*@if (item.iDiscount_type == 0)
+                                        {
+
+
+                                        }
+                                        else if (item.iDiscount_type == 1)
+                                        {
+                                            @item.UnitDisCountAmt<text>%</text>
+                                        }
+                                        else if (item.iDiscount_type == 2)
+                                        {
+                                            <text>(</text>@item.UnitDisCountAmt<text>)</text>
+                                        }*@
+                                        <input type="hidden"  name="dis_@count" value="@item.UnitDisCountAmt" form="form1" />
+                                    </td>
+                    <td>@item.Amount</td>
+                    <td><input type="text" tabindex="@count" style="width:60px" name="Qty_@count" id="retQty_@count" class="retQty" onblur="calculate(this, @count);" onkeyup="validateQty(@count);" form="form1" /></td>
+                    <td><input type="text" class="returnsAmt border-left" name="Amount_@count"  id="amtHere_@count" form="form1" /></td>
+                </tr>
+                }
+                
+            </table>
+            <button type="button" style="background-color:#16a085; color:white" class="btn pull-right" data-toggle="modal" id="btnGenerateSummary" data-target="#myModal">
+                Generate return summary
+            </button>
+            
+        </div>
+    </div>
+    <hr />
+
+    <!-- Modal -->
+
+    <div class="modal fade bs-example-modal-sm" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">Returns summary</h4>
+                </div>
+
+                <div class="modal-body">
+
+                    <table>
+                        <tr>
+                            <td><label>Sub Total</label></td>
+                            <td>
+                                @* <span id="returnSubTotal">0</span>*@
+                                <input type="text" class="borderless" readonly id="returnSubTotal" name="SubTotal" form="form1" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><label>Discount @@ @discountPercent % : </label></td>
+                            <td>
+                                @*<span id="discountAmount">0</span>*@
+                                <input type="text" class="borderless" readonly id="discountAmount" name="Discount" form="form1" />
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td><label>Net total :</label></td>
+                            <td>
+                                @*<span id="NetTotal"> 0</span>*@
+                                <input type="text" readonly class="borderless" id="NetTotal" name="NetTotal" form="form1" />
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <input type="submit" id="btnSalesReturn" class="btn btn-primary" value="Return Sales !" form="form1" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @****** Counter *****@
+    <input type="hidden" value="@count" name="counter" form="form1" />
+
+</div>
+
+
+
+<script>
+   
+    function calculate(obj, retQty) {
+        var rate = Number($.trim($(obj).closest('tr').children('td.rate').text()));
+        var qty = Number($.trim($(obj).closest('tr').children().children('input.retQty').val()));
+        var acttQty = $("#qryval").val();
+            //Number($.trim($(obj).closest('tr').children('td.qty').text()));
+        var unitPrice = Number($.trim($(obj).closest('tr').children('td.up').text())); 
+        var Discount = Number($.trim($(obj).closest('tr').children('td.discount').text())); 
+            
+        alert(Discount);
+        var qtypart = String(qty).split(".");
+        var actqtypart = String(acttQty).split(".");
+        
+
+        var output = qtypart[0];
+        var output1 = qtypart[1];
+
+        var actqty = actqtypart[0];
+        var actqty1 = actqtypart[1];
+
+        //calculate returns amount
+        if (actqty < output) {
+            alert('return qty greater!');
+            $('#retQty_' + i).val('');
+        }
+        else {
+            var BA = (output * rate);
+            if (output1 == '' || output1 == null || output1 == '00') {
+                var BU = (0 * unitPrice);
+            }
+            else {
+                var BU = (output1 * unitPrice);
+            }
+            // var BF = (BU * unitPrice);
+
+           
+            var amount = BA + (BU);
+            var redDisAmt = ((Discount / 100) * amount);
+            //alert(redDisAmt);
+            var discWithAmt = (amount - redDisAmt).toFixed(2);
+            
+        }
+       
+        //var amount = rate * qty;
+
+        //set returns amount
+        $(obj).closest('tr').children().children('input.returnsAmt').val(discWithAmt);
+        
+        //Number($.trim($(obj).closest('tr').children().children('input.returnsAmt').val()));
+
+        //calculate subTotal
+        var tempSubTotal =  $.trim($('#returnSubTotal').html());
+        tempSubTotal = tempSubTotal + amount;
+
+
+        var discountPer = @discountPercent;
+        var discountAmt = discountPer *0.01*amount; //calculating discount amount from returns subtotal
+        var netTotal = amount - discountAmt ;
+
+        //set values in the respective fields
+    }
+    var netTotal=0;
+    $("#btnGenerateSummary").on('click', function(){
+        var temp_x = 0;
+        for(var i = 1; i<= @count; i++){
+            temp_x +=  Number($.trim($('#amtHere_'+i).val()));
+        }
+
+        
+            $('#returnSubTotal').val(temp_x);
+            var discountPer = @discountPercent;
+            var discountAmt = discountPer *0.01*temp_x; //calculating discount amount from returns subtotal
+            $('#discountAmount').val(discountAmt);
+
+             netTotal = temp_x - discountAmt ;
+            $('#NetTotal').val(netTotal); 
+                  
+
+    });
+
+   // allow numbers only
+    $('.retQty').keyup(function () { 
+        this.value = this.value.replace(/[^0-9\.]/g,'');
+    });
+
+
+    //POST data
+    $('#btnSalesReturn').on('click', function(){
+
+        if(netTotal == 0){
+            alert("Please enter qty to be returned.");
+            return false;
+        }
+
+        else{       
+            $.post('../../SalesReturn/ReturnItems', $('#form1').serialize(), function(){
+            
+            },'Json');
+        }
+    
+    });
+
+
+    //check the input amount 
+   
+
+    function validateQty(i){
+        var returnQty = Number($('#retQty_'+i).val());
+        var actualQty = Number($('#qty_' + i).val());
+
+
+        if(returnQty > actualQty){
+            alert('New alert : return qty greater!');
+            $('#retQty_'+i).val('');
+        }
+    }
+
+
+    //Calculate amount based on input qty
+    //$('#getQty').keyup(function () {
+    //    var available = Number($('#getAvailability').val());
+    //    var quantity = Number($('#getQty').val());
+    //    var rate = Number($('#getRate').val());
+    //    if (quantity > available) {
+    //        $('#getQty').val(available);
+    //        quantity = available;
+    //    }
+    //    var amount = (quantity * rate).toFixed(2);
+    //    $('#getAmount').val(amount);
+    //});
+
+</script>
+
+<style>
+    .borderless{
+        border:none;
+    }
+</style>

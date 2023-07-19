@@ -1,0 +1,173 @@
+﻿@model PSIMS.Models.Finance.PaymentSettelmentMaster
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class="container">
+    <div class="row">
+        <div class="receipt col-xs-12 col-sm-12 col-md-12 ">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                    .
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                    <div class="receiptInfo">
+                        <div class="receiptCode"><text>0000</text>@Model.ID</div>
+                        <div class="receiptPayentDate">@DateTime.Now.ToString("yyyy-MM-dd hh:mm tt")</div>
+                        <div class="receiptPayentDate">Deposit Date:@Model.PaymentDepositDate.ToString("yyyy-MM-dd hh:mm tt")</div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 text-left">
+                    <div class="receiptInfo2">
+                        <div class="rec_received">
+                            @if (@Model.Customer.CustNameIsActive == true)
+                            {
+                                @Model.Customer.CustomerName<text>(000</text>@Model.Customer.ID<text>)</text><br>
+                                @Model.Customer.Companyname<br />
+                                @Model.Customer.Address<text>,</text> @Model.Customer.Address_line2<text>,</text> @Model.Customer.City<text>,</text>@Model.Customer.State
+                            }
+                            else
+                            {
+                                @Model.Customer.Companyname<br />
+                                @Model.Customer.Address<text>,</text> @Model.Customer.Address_line2<text>,</text> @Model.Customer.City<text>,</text>@Model.Customer.State
+                            }
+                            @*@Model.Customer.Companyname <br />
+        @Model.Customer.Address*@
+                        </div>
+
+                        <div class="numToWords">@Model.NumberToWords</div>
+                        @*<div class="ReInvoiceNo">#@Model.InvoiceNos</div>*@
+
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-4 col-md-4 text-left ReInvoiceNo">
+                        @foreach (var item in Model.paymentSettelmentDetails)
+                        {
+                            if (item.PaymentType == "FP") // Full Settelemnt
+                            {
+                                @item.InvoiceID<text>(FP)</text><text>,</text>;
+                            }
+                            else if (item.PaymentType == "PP") // Part Settelemnt
+                            {
+                                @item.InvoiceID<text>(PP)</text><text>,</text>;
+                            }
+                            else if (item.PaymentType == "BP") // Balance Settelemnt
+                            {
+                                @item.InvoiceID<text>(BP)</text><text>,</text>;
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-sm-4 col-md-4 text-left">
+                    <div class="ChqueNo">
+                        <div class="ReInvoiceNo">@Model.ChequeNo</div>
+
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 text-center">
+                    <div class="receiptBank">
+                        <div class="bank">@(Model.BankID.HasValue ? @Model.Bank.BankName : null)</div>
+                    </div>
+
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 text-right">
+                    <div class="receiptAmnt">
+                        <div class="amount">@Model.ReceiptAmount</div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="info">
+                    FP - Full Payment, PP - Part Payment , BP - Balance Payment </>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row no-print">
+        <div class="col-xs-12">
+          
+            <a href="#" onclick="window.print();" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
+            <a href="/PaymentSettements/PaymentReceiptForSales" class="btn btn-success"><i class="fa fa-sticky-note"></i> Payment Receipt Entry</a>
+            <a href="/PaymentSettements/ReceiptHistory" class="btn btn-warning"><i class="fa fa-angle-left"></i> BacK</a>
+        </div>
+    </div>
+</div>
+<style>
+    .info {
+        text-align: left;
+        font-size: 10px;
+        margin-top:-10px;
+    }
+
+    .receipt {
+        background-color: #fff;
+    }
+
+    .receiptInfo {
+        float: right;
+    }
+
+    .receiptCode {
+        text-align: left;
+        padding-left: 45px;
+        padding-top: 25px;
+        padding-bottom: 75px;
+    }
+
+    .receiptPayentDate {
+        text-align: left;
+    }
+
+    .receiptInfo2 {
+        padding-top: 30px;
+        padding-left: 10px;
+        float: left;
+    }
+
+    .receiptInfo22 {
+        padding-left: 10px;
+        float: left;
+    }
+
+    .rec_received {
+        padding-bottom: 60px;
+    }
+
+    .numToWords {
+        padding-bottom: 55px;
+    }
+
+    .ReInvoiceNo {
+        padding-bottom: 25px;
+        padding-left: 40px;
+    }
+
+    .ChqueNo {
+        margin-left: 90px;
+    }
+
+    .receiptAmnt {
+        margin-left: 10px;
+        margin-top: 5px;
+    }
+
+    .receiptBank {
+        margin-left: 75px;
+    }
+</style>
+

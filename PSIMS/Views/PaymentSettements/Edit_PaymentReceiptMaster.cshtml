@@ -1,0 +1,177 @@
+﻿@model PSIMS.Models.Finance.PaymentSettelmentMaster
+
+@{
+    ViewBag.Title = "Edit -Payment Receipt";
+
+}
+
+
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    if (ViewBag.ErrorMessage == "1")
+    {
+        <div class="box box-primary ">
+            <div class=" error">
+                Soory this record can not be edit.its already printed.
+            </div>
+            <div>
+                <div>
+                    @Html.ActionLink("Back to List", "ReceiptHistory", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+                </div>
+            </div>
+        </div>
+
+    }
+    else
+    {
+        <div class="box box-primary ">
+            <div class="form-horizontal">
+                <h4>Payment Receipt Summary</h4>
+                <hr />
+                @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                @Html.HiddenFor(model => model.ID)
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.InvoiceNos, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.InvoiceNos, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.InvoiceNos, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.PaymentDate, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                        @Html.ValidationMessageFor(model => model.PaymentDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ReceiptAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ReceiptAmount, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ReceiptAmount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.CustomerAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.CustomerAmount, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.CustomerAmount, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentMode, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="checkbox">
+                        <label> @Html.RadioButtonFor(model => model.PaymentMode, "1", new { @class = "icheck2" }) Cash </label>
+                        <label> @Html.RadioButtonFor(model => model.PaymentMode, "2", new { @class = "icheck2" }) Cheque </label>
+                        @Html.ValidationMessageFor(model => model.PaymentMode, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.BankID, "BankID", htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @*@Html.DropDownList("BankID", null, htmlAttributes: new { @class = "form-control" })*@
+                        @Html.DropDownList("BankID", new SelectList(Enumerable.Empty<SelectListItem>()), htmlAttributes: new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.BankID, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.PaymentDepositDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.PaymentDepositDate, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.PaymentDepositDate, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ChequeNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                    <div class="col-md-10">
+                        @Html.EditorFor(model => model.ChequeNo, new { htmlAttributes = new { @class = "form-control" } })
+                        @Html.ValidationMessageFor(model => model.ChequeNo, "", new { @class = "text-danger" })
+                    </div>
+                </div>
+
+                @*<div class="form-group">
+            @Html.LabelFor(model => model.CustomerID, "CustomerID", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownList("CustomerID", null, htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CustomerID, "", new { @class = "text-danger" })
+            </div>
+        </div>*@
+
+
+                <div class="form-group">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-primary btn-flat" />
+                        <div class="viewbagupdateMsg">@ViewBag.ErrorMessage_Update</div>
+                    </div>
+                </div>
+
+                <div>
+                    <div>
+                        @Html.ActionLink("Back to List", "ReceiptHistory", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+}
+
+
+
+
+<script>
+    $(document).ready(function () {
+
+        $('.datepicker').datepicker();
+    });
+
+    $(document).ready(function() {  
+        $.ajax({  
+            url: "/PaymentSettements/PopulateBank",  
+            type: "GET",  
+            contentType: "application/json; charset=utf-8",  
+            datatype: JSON,  
+            success: function(result) {  
+                $(result).each(function() {  
+                    $("#BankID").append($("<option>Select Bank Name</option>").val(this.ID).html(this.BankName));  
+                });  
+            },  
+            error: function(data) {}  
+        });  
+    });  
+</script>
+
+<style>
+    .error {
+        color: red;
+        font-size: 14px;
+    }
+    .viewbagupdateMsg{
+        color:green;
+        font-size:16px;
+    }
+
+</style>
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

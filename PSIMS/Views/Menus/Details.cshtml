@@ -1,0 +1,51 @@
+﻿@model PSIMS.Models.MenuModels
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<div class="box box-primary box-body">
+    <div>
+        <h4>MenuModels</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.MainMenuName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MainMenuName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.SubMenuName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SubMenuName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Url)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Url)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.FaIconName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.FaIconName)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.MenuId }) |
+        @Html.ActionLink("Back to List", "Index")
+    </p>
+    </div>

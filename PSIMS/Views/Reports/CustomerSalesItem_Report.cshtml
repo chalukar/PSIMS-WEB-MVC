@@ -1,0 +1,117 @@
+﻿@model IEnumerable<PSIMS.Models.SalesItem>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Customer Sales Item";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+
+<div id="renderTable" class="box box-primary box-body ">
+    <table class="table table-responsive table-striped" id="datatable">
+        <thead>
+            <tr class="dataTableHead">
+                <th>
+                    ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Date)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.LocationStock.TrxID)
+                </th>
+                <th>
+                    Description
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.Qty)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Rate)
+                </th>
+                <th>
+                    Discount(% OR Amt)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    Pack Size
+                </th>
+
+      
+
+
+            </tr>
+
+            @foreach (var item in Model)
+            {
+                var itemdesc = item.LocationStock.Item.Name + "/" + item.LocationStock.Item.Description;
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.LocationStock.TrxID)
+                    </td>
+                    <td>
+                        @itemdesc
+
+                    </td> 
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Qty)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Rate)
+                    </td>
+                    <td>
+                        @{
+                            if (item.iDiscount_type == 0)
+                            {
+                                @Html.DisplayFor(modelItem => item.UnitDisCountAmt)
+                            }
+                            else
+                            {
+                               
+                                @Html.DisplayFor(modelItem => item.UnitDisCountAmt)
+                            }
+                        }
+
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Amount)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PackSize)
+                    </td>
+             
+
+                </tr>
+            }
+
+</table>
+    <script>
+        $(document).ready(function () {
+            $('.datepicker').datepicker();
+
+            $('.x').iCheck({
+                checkboxClass: 'icheckbox_minimal',
+                radioClass: 'iradio_minimal',
+                increaseArea: '20%' // optional
+            });
+
+            $('#datatable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+
+    </script>
+    <script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

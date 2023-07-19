@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Sales Invoice Option";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class=" box  box-primary box-body">
+    <div class="row">
+       
+
+        <div class="col-md-12">
+            <h5>Please Seclect option forsales invoice option</h5>
+            <a href='@Url.Action("Index","SalesEntry", null)' class="btn btn-success btn-lg"> Direct Sales Invoice</a>
+            <a href='@Url.Action("Quote_Index","SalesEntry", null)' class="btn btn-warning btn-lg"> Quotation Sales Invoice</a>
+
+        </div>
+    </div>
+    </div>

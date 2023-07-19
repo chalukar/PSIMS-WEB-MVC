@@ -1,0 +1,89 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.Item>
+
+@{
+    ViewBag.Title = "List of Items";
+}
+
+<div class="box box-body box-primary">
+
+<p>
+   @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+</p>
+<table class="table" id="mainTable">
+    <thead>
+        <tr class="dataTableHead">
+            <th>
+                ID
+            </th>
+            <th>
+                Item Code
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Manufacturer
+            </th>
+           
+            <th>
+                Category
+            </th>
+            <th>
+                Alert Qty
+            </th>
+
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Manufacturer.ManufacturerName)
+            </td>
+           
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductCategory.CategoryName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.AlertQty)
+            </td>
+            <td>
+
+                <div class="dropdown">
+                    <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID }) </li>
+                        <li>@Html.ActionLink("View", "Details", new { id = item.ID }) </li>
+                        <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+
+
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+    }
+</tbody>
+</table>
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#mainTable').DataTable();
+    });
+</script>

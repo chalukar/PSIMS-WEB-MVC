@@ -1,0 +1,185 @@
+﻿@model PSIMS.Models.Finance.PaymentSettelmentDetails
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Edit - Payment Receipt Details";
+}
+
+
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+        if (ViewBag.ErrorMessage == "1")
+        {
+            <div class="box box-primary ">
+                <div class=" error">
+                    Soory.... This record can not be edit.its already printed.
+                </div>
+                <div>
+                    <div>
+                        @Html.ActionLink("Back to List", "ReceiptHistory", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="box box-primary ">
+                <div class="form-horizontal">
+                    <h4>Payment Receipt Details</h4>
+                    <hr />
+                    @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                    @Html.HiddenFor(model => model.ID)
+
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ID, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.ID, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.ID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaymentSettelmentMasterID, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.PaymentSettelmentMasterID, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.PaymentSettelmentMasterID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.Audit_tray_recipt_MasterID, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.Audit_tray_recipt_MasterID, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.Audit_tray_recipt_MasterID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InvoiceID, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.InvoiceID, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.InvoiceID, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InvoiceDate, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.InvoiceDate, new { htmlAttributes = new { @class = "form-control ", @readonly = "readonly" } })
+                            @Html.ValidationMessageFor(model => model.InvoiceDate, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.InvGrandTot, htmlAttributes: new { @class = "control-label col-md-2", @readonly = "readonly" })
+                        <div class="col-md-6">
+                            @Html.EditorFor(model => model.InvGrandTot, new { htmlAttributes = new { @class = "form-control" } })
+                            @Html.ValidationMessageFor(model => model.InvGrandTot, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+                   
+                  
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.ReceiptAmount, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-4">
+                            @*Hiddent text*@
+                           
+                            @Html.EditorFor(model => model.ReceiptAmount, new { htmlAttributes = new { @type = "number", @class = "form-control", @min = "0" } })
+                            @Html.ValidationMessageFor(model => model.ReceiptAmount, "", new { @class = "text-danger" })
+                        </div>
+                        @*<div class="col-md-4 hidetextbox_receiptAmt">
+                            <input type="text" name="ReceiptAmt_Hide" id="ReceiptAmt_Hide" readonly class="form-control input-sm " />*@
+                            @*@Html.EditorFor(model => model.ReceiptAmount, new { htmlAttributes = new { @type = "number", @class = "form-control ", disabled = "disabled", @min = "0", @id = "ReceiptAmt_Hide" } })*@
+                        @*</div>*@
+                    </div>
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.UnitBalance, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="col-md-4">
+                            @Html.EditorFor(model => model.UnitBalance, new { htmlAttributes = new { @type = "number", @class = "form-control", @min = "0" } })
+                            @Html.ValidationMessageFor(model => model.UnitBalance, "", new { @class = "text-danger" })
+                        </div>
+                       
+                    </div>
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.PaymentType, htmlAttributes: new { @class = "control-label col-md-2" })
+                        <div class="checkbox">
+                            <label> @Html.RadioButtonFor(model => model.PaymentType, "PP", new { @class = "icheck2" }) Part Payment  </label>
+                            <label> @Html.RadioButtonFor(model => model.PaymentType, "FP", new { @class = "icheck2" }) Full Payment </label>
+                            <label> @Html.RadioButtonFor(model => model.PaymentType, "BP", new { @class = "icheck2" }) Balance Payment </label>
+                            @Html.ValidationMessageFor(model => model.PaymentType, "", new { @class = "text-danger" })
+                        </div>
+                    </div>
+
+                    @*<div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="button" id="btnchangeval" value="Set" class="btn btn-primary" />
+                        </div>
+                    </div>*@
+                    <div class="form-group">
+                        <div class="col-md-offset-2 col-md-10">
+                            <input type="submit" id="btnSave" value="Save" class="btn btn-success" />
+                            <div class="viewbagupdateMsg">@ViewBag.ErrorMessage_Update</div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    @Html.ActionLink("Back to List", "ReceiptHistory", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+                </div>
+            </div>
+        }
+     
+
+    }
+
+<Script>
+    //$(document).ready(function () {
+    //    $('#btnchangeval').on('click', function () {
+    //        var _ReceiptAmt_hide = Number($('#ReceiptAmt_Hide').val());
+    //        var _ReceiptAmt = Number($('#ReceiptAmt').val());
+    //        var _UnitBalance = Number($('#UnitBalance').val());
+    //        if (_ReceiptAmt != "") {
+    //            if (_ReceiptAmt_hide > _ReceiptAmt) {
+    //                var bal_val = _ReceiptAmt_hide - (_ReceiptAmt);
+    //                var new_nuit_Bal = _UnitBalance + (bal_val);
+    //                $('#UnitBalance').val(new_nuit_Bal.toFixed(2));
+    //            }
+    //            else {
+    //                var bal_val = _ReceiptAmt -(_ReceiptAmt_hide);
+    //                //alert(bal_val);
+    //                //alert(_UnitBalance);
+    //                var new_nuit_Bal = (_UnitBalance - bal_val);
+    //                $('#UnitBalance').val(new_nuit_Bal.toFixed(2));
+    //            }
+    //        }
+    //        else {
+    //            $("#btnSave").prop('disabled', true);
+    //        }
+    //    });
+
+    //});
+    //$(document).ready(function () {
+
+    //    $(".ID").attr('disabled', 'disabled');
+
+    //});
+    
+
+    </script>
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<style>
+    .error{
+        color:red;
+        font-size:14px;
+        padding-top:20px;
+        padding-bottom:20px;
+    }
+    .hidetextbox_receiptAmt {
+        /*display: none;*/
+    }
+
+</style>

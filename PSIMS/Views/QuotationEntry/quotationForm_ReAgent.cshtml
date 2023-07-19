@@ -1,0 +1,404 @@
+﻿@model PSIMS.Models.QuotationModel.Quotation
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<section class="quotation">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="row">
+                <div class="col-md-6 col-lg-6 pull-left">
+                    <div class="panel-body">
+                        Date :@Model.QuoteDate.ToString("yyyy-MM-dd")<br>
+                        <br>
+                        Order No :@Model.QuotationCode<br>
+                        Your Ref :@Model.YourRef<br />
+                        Customer:@Model.Customer.CustomerName<br>
+                        Company :@Model.Customer.Companyname <br>
+                        <br />
+                        <p>Dear Sir/Madam,</p>
+                    </div>
+
+                </div>
+                <div class="col-md-3 col-lg-3 pull-right">
+                    <div class="panel-body">
+                   
+                    </div>
+
+                </div>
+            </div>
+            <div class="col-md-12">
+                <p class="quote_header">@Model.Header_Note_Line01</p><br />
+                <p class="quote_sub_header">@Model.Header_Note_Line02</p>
+
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="table-responsive">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <td><strong>Description</strong></td>
+                                    <td class="text-center"><strong>Pack Size</strong></td>
+                                    <td class="text-center"><strong>Qty</strong></td>
+                                    <td class="text-center"><strong>Unit Price <br />(Rs.)</strong></td>
+                                    <td class="text-center"><strong>Total Price<br />(Rs.)</strong></td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @{int count2 = 1;}
+                                @foreach (var item in Model.QuotationItems)
+                                {
+                                    <tr>
+                                        <td class="itemDes">
+                                            @item.ItemDesciption<br />
+                                            @*@item.ItemModel.ToString().ToUpper()*@
+                                        </td>
+                                        <td class="packsize">
+                                            @item.PackSize
+                                        </td>
+                                        <td class="qty">
+                                            @item.QuotationQty
+                                        </td>
+                                        <td class="up">
+                                            @item.QuotationPackRate
+                                        </td>
+                                        <td class="total">
+                                            @item.QuotationTotal
+                                        </td>
+                                        @{count2++;}
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="remarks"><strong>Remarks: </strong><br />@Model.Remarks</div>
+            <div class="remarks">
+                <strong>Terms & Condition:</strong><br />
+                <p>@Model.Terms_Conditions</p>
+            </div>
+        </div>
+        <div class="col-xs-6">
+                <div class="subtotal">
+                    <div class="table-responsive1 pull-right">
+                        <table class="table table-condensed table-bordered">
+                            <tbody>
+                                <tr>
+                                    <th class="sub_total1">Sub Total</th>
+                                    <td class="sub_total">@Model.Amount</td>
+                                </tr>
+                                <tr>
+                                    <th class="discount1">
+                                        Discount
+                                        @{
+                                            decimal percent = Convert.ToDecimal(@Model.Discount / @Model.Amount * 100);
+                                        }
+                                        <text>(@Math.Round(percent, 2) %)</text>
+                                    </th>
+                                    <td class="discount">@Model.Discount</td>
+                                </tr>
+                                <tr>
+                                    <th class="tax1">
+                                        VAT
+                                        @{
+                                            decimal taxpercent;
+                                            decimal amt = @Model.Amount;
+                                            decimal disamt = Convert.ToDecimal(@Model.Discount);
+                                            decimal subtot = (amt - disamt);}
+                                        @if (subtot == 0)
+                                        {
+                                            taxpercent = 0;
+                                        }
+                                        else
+                                        {
+                                            taxpercent = Convert.ToDecimal(@Model.Vat / subtot * 100);
+                                        }
+
+                                        <text>(@Math.Round(taxpercent, 2) %)</text>
+
+                                    </th>
+                                    <td class="tax">@Model.Vat</td>
+                                </tr>
+                                <tr>
+                                    <th class="grandtotal1">Grand Total</th>
+                                    <td class="grandtotal">@Model.GrandTotal</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <!-- /.col -->
+        <div class="col-xs-6">
+
+        </div>
+        <!-- /.col -->
+        @*</div>
+            </div>
+            </div>*@
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="Warranty">
+                <strong>Warranty:</strong><br />
+                @Model.QuotationItems.First().Warranty
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="specialOfer_header">
+                Special Offers:
+                <div class="Special_Offers"><br />@Model.Speical_Offers</div>
+            </div>
+            <div class="Footer_line1">
+                <p>We trust our offer meet with your requirment and for further assistant and clarification please do not hesitate to contact the undersigned Number.071 4479513 / 0777316736</p>
+                Thank You<br />
+                Your Truly<br />
+                <p class="Footer_name">limax medica (pvt) ltd</p>
+            </div>
+
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="col-md-4 pull-left">
+                <div class="Signature-left">
+                    <p>............................................</p>
+                    <p>Lavaendran</p>
+                </div>
+            </div>
+            <div class="col-md-4 pull-left">
+                <div class="Signature-left">
+                    <p>............................................</p>
+                    <p>Authorized by</p>
+                </div>
+            </div>
+            <div class="col-md-4 pull-right">
+                <div class="footer-logo">
+                    @*<p>limax medica (pvt) ltd</p>
+                        <p>No 405/5b piliyandala Road</p>
+                        <p>Maharagama</p>
+                        <p>Sri Lanaka</p>
+                        <p>Hot Line:0777-316739 / 0714-82308</p>*@
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<section class="Button_option">
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <a href="#" onclick="window.print();" target="_blank" class="btn btn-success"><i class="fa fa-backward"></i> Print</a>
+            <a href="/Quotations/Index" target="" class="btn btn-primary"><i class="fa fa-print"></i> Back</a>
+            <a href="/QuotationEntry/Index" target="" class="btn btn-danger"><i class="fa fa-quote-left"></i> New Quotation</a>
+        </div>
+    </div>
+</section>
+
+<style>
+    .table {
+        border: none;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .quotation {
+        width: auto;
+        background-color: #fff;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .Button_option {
+        width: auto;
+        background-color: #fff;
+        font-family: 'Times New Roman', Times, serif;
+        padding: 10px 10px 10px 10px;
+        text-align: center;
+    }
+
+    p.quote_header {
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        text-decoration: underline
+    }
+
+    p.quote_sub_header {
+        font-size: 14px;
+        padding-bottom: 5px;
+        float: left;
+        margin-top: -21px;
+        /*padding-right:25px;*/
+    }
+
+    .height {
+        min-height: 200px;
+    }
+
+    .icon {
+        font-size: 47px;
+        color: #5CB85C;
+    }
+
+    .iconbig {
+        font-size: 77px;
+        color: #5CB85C;
+    }
+
+    .table-responsive {
+        /*width:595px;*/
+        /*height: 842px;*/
+    }
+
+    .table > tbody > tr > .emptyrow {
+        border-top: none;
+    }
+
+    .table > thead > tr > .emptyrow {
+        border-bottom: none;
+    }
+
+    .table > thead > tr > .text-center {
+        text-align: right;
+    }
+
+    .table > tbody > tr > .highrow {
+        border-top: 3px solid;
+    }
+
+    .table > tbody > tr > .itemDes {
+        width: 600px;
+        padding-right: 10px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .table > tbody > tr > .packsize {
+        width: 60px;
+        padding-left: 50px;
+        text-align: right;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .table > tbody > tr > .qty {
+        width: 60px;
+        padding-left: 50px;
+        text-align: right;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .table > tbody > tr > .up {
+        width: 90px;
+        padding-left: 50px;
+        text-align: right;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .table > tbody > tr > .total {
+        width: 100px;
+        float: right;
+        text-align: right;
+    }
+
+    .table > tbody > tr > .sub_total1 {
+        /*padding-top: 385px;*/
+        /* padding-top: 0px; ** */
+    }
+
+    .table > tbody > tr > .sub_total {
+        width: 100px;
+        float: right;
+        text-align: right;
+    }
+
+    .table > tbody > tr > .discount {
+        width: 100px;
+        float: right;
+        text-align: right;
+    }
+
+    .table > tbody > tr > .tax {
+        width: 100px;
+        float: right;
+        text-align: right;
+    }
+
+    .table > tbody > tr > .grandtotal1 {
+        text-align: left;
+        width: 200px;
+    }
+
+    .table > tbody > tr > .grandtotal {
+        width: 100px;
+        float: right;
+        text-align: right;
+    }
+
+    .remarks {
+        padding-left: 15px;
+        text-align: left;
+        width: 500px;
+        height: 55px;
+    }
+    .Warranty {
+        font-weight: normal;
+        padding-left: 15px;
+        font-size: 12px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+    .specialOfer_header {
+        font-weight: bold;
+        padding-left: 15px;
+        font-size: 14px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .Special_Offers {
+        padding-bottom: 10px;
+        padding-left: 15px;
+        font-size: 12px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    .Footer_line1 {
+        padding-left: 15px;
+        font-size: 14px;
+        font-family: 'Times New Roman', Times, serif;
+    }
+
+    p.Footer_name {
+        text-transform: uppercase;
+        font-family: 'Times New Roman', Times, serif;
+        font-weight: bold;
+        height: 75px;
+    }
+
+    .Signature-left {
+        padding-left: 15px;
+    }
+
+    .footer-logo {
+        text-transform: uppercase;
+        font-size: 12px;
+        font-style: italic;
+        line-height: 10px;
+        font-weight: bold;
+    }
+</style>

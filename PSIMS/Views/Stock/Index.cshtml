@@ -1,0 +1,119 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.Stock>
+
+@{
+    ViewBag.Title = "List of Warehouse Stock";
+}
+
+<div class="box box-body box-primary">
+
+    <p>
+    
+    </p>
+    <br />
+    <table class="table table-striped table-responsive" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr style="background-color:#3d566e; color:#ecf0f1">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Batch No
+                </th>
+                <th>
+                    Pack Size
+                </th>
+                <th>
+                    Initial Qty
+                </th>
+                @*<th>
+            Aval.Qty
+        </th>*@
+                <th>
+                    aval.Qty
+                </th>
+                <th>
+                    Cost Price
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    Expire Date
+                </th>
+                <th>
+                    PurchaseID
+                </th>
+                <th>Action </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Name).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BatchNo).ToString().ToUpper()
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.PackSize)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InitialQty)
+            </td>
+            @*<td>
+            @Html.DisplayFor(modelItem => item.Qty)
+        </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.MovingQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CostPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.unitprice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpiryDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PurchaseID)
+            </td>
+            <td>
+
+                <div class="dropdown">
+                    <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID })</li>
+                        <li>@Html.ActionLink("View", "Details", new { id = item.ID })</li>
+                        <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+        }
+    </table>
+
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

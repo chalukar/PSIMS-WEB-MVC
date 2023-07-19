@@ -1,0 +1,126 @@
+﻿@model IEnumerable<PSIMS.Models.QuotationModel.QuotationItem>
+
+@{
+    ViewBag.Title = "Quotation Item Details";
+}
+
+<div class="box box-primary box-body">
+
+    <dl class="dl-horizontal">
+
+
+        <dt>Quotation Order No</dt>
+        <dd>@Model.First().QuotationCode</dd>
+        <dt>Quotation ID</dt>
+        <dd>@Model.First().QuotationID</dd>
+    </dl>
+    <table class="table table-striped" id="dtaTable">
+        <thead>
+            <tr class="dataTableHead">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Loc.S ID
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Item Desc
+                </th>
+                <th>
+                    Item Model
+                </th>
+                <th>
+                    Unit Price
+                </th>
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Quotation Sales Price
+                </th>
+                <th>
+                    Quotation pack Rate
+                </th>
+                <th>
+                    Total Price
+                </th>
+
+                <th>
+                    Warranty
+                </th>
+                <th>
+                    Spaical Offer
+                </th>
+                <th>
+                    Action
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            var ItemModel = item.ItemModel;
+            var strArray = ItemModel.Split(',');
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationStockID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemDesciption)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ItemModel)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Unitprice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuotationQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuotationSalesprice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuotationPackRate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.QuotationTotal)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Warranty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SpecialOffer)
+            </td>
+            <td class="dropdown">
+                <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Actions
+                    <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li>@Html.ActionLink("Details Edit", "DetailsEdit", new { id = item.ID })</li>
+                    <!-- Button trigger modal -->
+
+                </ul>
+            </td>
+
+        </tr>
+
+        }
+        <p>
+            @*@Html.ActionLink("Edit", "Edit", new { id = Model.QuotationID }, new { @class = "btn btn-primary btn-flat" })*@
+            @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+        </p>
+    </table>
+
+    </div>
+

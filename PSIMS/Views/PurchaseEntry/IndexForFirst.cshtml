@@ -1,0 +1,1060 @@
+﻿@model PSIMS.ViewModel.PurchaseEntryVM
+@{
+    ViewBag.Title = "New Purchase Entry";
+}
+
+
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+<script src="~/Scripts/select2/dist/js/select2.min.js"></script>
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+
+<!--*********** modal for suppliers ********** -->
+
+<div id="modal_supplier" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="FormAddSupplier">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Supplier Registation</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="SupplierName" class="col-sm-2 col-form-label">Supplier Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm text-uppercase" id="SupplierName" name="SupplierName">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Companyname" class="col-sm-2 col-form-label">Company Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="Companyname" name="Companyname">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Registation_No" class="col-sm-2 col-form-label">Registation No</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="Registation_No" name="Registation_No">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Email" class="col-sm-2 col-form-label">Email</label>
+                        <div class="col-sm-10">
+                            <input type="Email" class="form-control form-control-sm" id="Email" name="Email">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="TelPhoneNo" class="col-sm-2 col-form-label">Office Number</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="TelPhoneNo" name="TelPhoneNo">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="MobileNo" class="col-sm-2 col-form-label">Mobile No</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="MobileNo" name="MobileNo">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="Address" class="col-sm-2 col-form-label">Address</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="Address" name="Address">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Address_line2" class="col-sm-2 col-form-label">Address (Line 2)</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="Address_line2" name="Address_line2">
+                            <small id="Address_line2Help" class="form-text text-muted">Optional</small>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="City" class="col-sm-2 col-form-label">City</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="City" name="City">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="State" class="col-sm-2 col-form-label">State/Distric/province</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="State" name="State">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Country" class="col-sm-2 col-form-label">Country</label>
+                        <div class="col-sm-10">
+                            <select id="selectCountry" class="form-control text-uppercase"></select>
+                            @*<input type="text" class="form-control form-control-sm" id="Country" name="Country">*@
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="Description" class="col-sm-2 col-form-label">Description</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="Description" name="Description">
+
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="CreateBy" class="col-sm-2 col-form-label">CreateBy</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="CreateBy" name="CreateBy">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="addSupplier" class="btn btn-default" data-dismiss="modal">Add Supplier</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    @*$('#renderSupplierForm')
+    .html("Loading...")
+    .load('@Url.Action("_SupplierCreatePV", "Supplier")');*@
+
+    $('#addSupplier').on('click', function () {
+        $.post('../../../Supplier/Create', $('#FormAddSupplier').serialize(), function (data) {
+            $('#modal_supplier').modal('toggle');
+            if (data == 'duplicate') {
+
+                // alert("Duplicate data!");
+                swal("Duplicate data!", "Try Again", "warning")
+            }
+            else {
+                populateSupplier();
+                //alert("Success");
+                swal("one record added successfully", "Good Job!", "success")
+            }
+
+        }, "Json");
+        return false;
+    });
+</script>
+
+<!--*********** modal for suppliers **********-->
+<!-- model for Clearance-->
+<div id="modal_clearance" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="FormAddLcearance">
+                @Html.AntiForgeryToken()
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Cost Price</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label for="UnitPrice" class="col-sm-2 col-form-label">Unit Price</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="unitPrice" name="unitPrice" placeholder="Unit Price ($)">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+
+                        <div class="col-xs-8 col-xs-offset-2">
+                            <div class="input-group">
+
+                                <div class="input-group-btn search-panel">
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span id="search_concept">Filter by</span> <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" role="menu">
+                                        <li><a href="#InvoiceNo">Shipping Invoice No</a></li>
+                                    </ul>
+                                </div>
+                                <input type="hidden" name="search_param" value="all" id="search_param">
+                                <input type="text" id="searchVal" class="form-control text-uppercase" name="searchVal" placeholder="Search by Supplier Invoice No...">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" id="GeshippClearSearch" name="searchbtn"><span class="glyphicon glyphicon-search"></span></button>
+                                    <button class="btn btn-default" type="button" id="GesUnitprice" name="GesUnitprice"><span class="glyphicon glyphicon-edit"></span>Convert to LKR Cost Price</button>
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="Qty" class="col-sm-2 col-form-label">Qty</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="qty" name="qty" placeholder="Total Qty" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="ShippingCose" class="col-sm-2 col-form-label">Shipping Cost</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="shippingcost" name="shippingcost" placeholder="shipping Cost($)" readonly>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="DollerPrice" class="col-sm-2 col-form-label">Doller Price</label>
+                        <div class="col-sm-10">
+                            <input type="Email" class="form-control form-control-sm" id="dollerprice" name="dollerprice" placeholder="Enter One Doller($) Rei Lankan Rupees Price" readonly>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="ClearanceAmt" class="col-sm-2 col-form-label">Clearance Amtount</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="clearanceAmt" name="clearanceAmt" placeholder="Total Clearance Amount" readonly>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="form-group row">
+                        <label for="CostPrice" class="col-sm-2 col-form-label">Cost Price (LKR)</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control form-control-sm" id="costprice" name="costprice" readonly>
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button" id="addcostprice" class="btn btn-primary" data-dismiss="modal">Add Cost Price</button>
+                        <button type="button" id="btnclear" class="btn btn-info" data-dismiss="modal">Clear</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+
+                    </div>
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--End-->
+
+
+<div class=" box  box-primary box-body">
+
+    <div class="row ">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-10">
+                    Supplier<br />
+                    <select id="SelectSupplier" class="form-control text-uppercase"></select>
+                    <span class="error"> Required field !</span>
+                </div>
+                @*<div class="col-md-2 pull-left">
+                        <br />
+                        <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target=".bs-example-modal-sm" style="padding:5px;"></button>
+                    </div>*@
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            Supplier Invoive No(Purchase ID)<br />
+            <input type="text" id="PurchaseID" class="form-control text-uppercase" />
+            <span class="error"> Required field !</span>
+        </div>
+        <div class="col-md-4">
+            Date<br />
+            <input type="text" id="InvocingDate" class="form-control datepicker checkDateNoGraterThanToday" />
+            <span class="error"> Required field !</span>
+        </div>
+    </div>
+    <hr />
+    @****************************@
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">Item</div>
+                <div class="col-sm-8"><select id="selectItem" class="form-control text-uppercase"></select><span class="error"> Required field !</span></div>
+            </div>
+            @*<div class="row">
+                    <div class="col-sm-4">Price Option</div>
+                    <div class="col-sm-8">
+                        <select id="selectPriceOption" class="form-control text-uppercase">
+                            <option value="0">-- Select Price Option --</option>
+                            <option value="1">Box/Pack price</option>
+                            <option value="2">Unit Price</option>
+                        </select>
+                        <span class="error"> Required field !</span>
+                    </div>
+                </div>*@
+            <div class="row">
+                <div class="col-sm-4">Batch No</div>
+                <div class="col-sm-8"><input type="text" id="BatchNo" class="form-control text-uppercase" /><span class="error"> Required field !</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">Pack Size</div>
+                <div class="col-sm-4"><input type="text" id="PackSize" class="form-control text-uppercase NumbersAndDecimal" /><span class="error"> Required field !</span></div>
+                <div class="col-sm-4"><input type="text" id="PackSize_Code" class="form-control text-uppercase" /><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Box/Pack Qty</div>
+                <div class="col-sm-8"><input type="number" id="Qty" step="0.01" min="0" placeholder="0.00" value="" class="form-control" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" /><span class="error"> Required field !</span></div>
+            </div>
+            @*<div class="row">
+                    <div class="col-sm-4">Total Qty</div>
+                    <div class="col-sm-8"><input type="number" id="totQty" step="0.01" value="0.00" placeholder="0.00" class="form-control"  onchange="setTwoNumberDecimal"/><span class="error"> Required field !</span></div>
+                </div>*@
+            <div class="row">
+                <div class="col-sm-4">Cost Price</div>
+                <div class="col-sm-6">
+                    <input type="text" id="CP" class="form-control NumbersAndDecimal" placeholder="Cost Price (LKR)" /><span class="error"> Required field !</span>
+                </div>
+                <div class="col-sm-2">
+                    <button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#modal_clearance" style="padding:5px;"></button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">Box Selling Price</div>
+                <div class="col-sm-8"><input type="text" id="SP" class="form-control NumbersAndDecimal" /><span class="error"> Required field !</span></div>
+            </div>
+            @*<div class="row">
+                    <div class="col-sm-4">Unit Selling Price</div>
+                    <div class="col-sm-8"><input type="text" id="USP" class="form-control NumbersAndDecimal" /><span class="error"> Required field !</span></div>
+                </div>*@
+
+            <div class="row">
+                <div class="col-sm-4">Expiry</div>
+                <div class="col-sm-8"><input type="text" id="Expiry" class="form-control datepicker checkDateNoLessThanToday" /><span class="error"> Required field !</span></div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-8"><button type="button" id="btnAdd" class="btn btn-primary">Add to list</button></div>
+            </div>
+        </div>
+
+        <div class="col-sm-8">
+            <div style=" background-color:#34495e; color:white; padding:10px">Purchase Items</div>
+            @********table here***********@
+            <div id="orderItems" class="tablecontainer" style="height:300px; overflow-y:scroll; border:1px solid #BFAEAE">
+
+            </div>
+            <div>
+                <br />
+                <button style="padding: 5px 30px 5px 30px" type="button" class="btn btn-primary pull-right" id="btnNext" data-toggle="modal" data-target="#myModal">
+                    Next <span class="glyphicon glyphicon-triangle-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Button trigger modal -->
+<!-- Modal for payment details -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div style="background-color:#c0392b; color:white;" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Payment Status</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tr>
+                        <td>Amount</td>
+                        <td><input type="number" readonly ng-model="a" id="Amount" class="form-control" /><span class="error"> required</span></td>
+                    </tr>
+                    <tr>
+                        <td>Discount %</td>
+                        <td><input type="number" ng-model="d" id="Discountpre" class="form-control" /> <span class="error"> Invalid</span></td>
+                        <td>Discount Amount</td>
+                        <td><input type="number" ng-model="d" id="Discount" class="form-control NumbersAndDecimal" /> <span class="error"> Invalid</span></td>
+
+                    </tr>
+                    <tr>
+                        <td>Vat %</td>
+                        <td><input type="number" ng-model="t" id="Taxpre" class="form-control " /><span class="error"> Invalid</span></td>
+                        <td>Vat Amount</td>
+                        <td><input type="number" ng-model="t" id="Tax" class="form-control NumbersAndDecimal" /><span class="error"> Invalid</span></td>
+
+                    </tr>
+
+
+                    <tr>
+                        <td>GrandTotal</td>
+                        @*<td><input type="text" value="{{(a-d)+t}}" class="form-control" id="GrandTotal" readonly /><span class="error"> Invalid</span></td>*@
+                        @*<td><input type="text" ng-bind="((a-d)+e)+t" class="form-control" id="GrandTotal" readonly /><span class="error"> Invalid</span></td>*@
+                        <td><input type="text" ng-bind="(a-d)+t" class="form-control" id="GrandTotal" readonly /><span class="error"> Invalid</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>Remarks(Notes)</td>
+                        <td><textarea style="width:100%" id="Description" class="textOnly"></textarea></td>
+                    </tr>
+                    <tr>
+
+                        <td>Payment</td>
+
+                        <td>
+                            <label style="margin-left:5px;"><input type="radio" value="true" id="Payment" name="payment" class="x" />&nbsp; Paid</label>
+                            <label style="margin-left:5px;"><input type="radio" value="false" name="payment" class="x" checked />&nbsp; Credit</label>
+                        </td>
+
+                        @*<td><label style="margin-left:5px;"><input type="checkbox" id="Payment" />Full Payment</label></td>*@
+                    </tr>
+                </table>
+            </div>
+            <div class="modal-footer" style="margin-top:-30px">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class=" btn btn-primary" id="btnSubmit" value="Submit" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--********** JavaScripts **********-->
+<script>
+  
+    function populateSupplier() {
+        $.get('/PurchaseEntry/PopulateSupplier', {}, function (data) {
+            $('#SelectSupplier').empty();
+            $('#SelectSupplier').append($("<option value='0'>--Select Supplier--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectSupplier').append($("<option></option>").val(value.ID).html(value.SupplierName));
+            });
+        }, 'json');
+
+    } function setTwoNumberDecimal(event) {
+        this.value = parseFloat(this.value).toFixed(2);
+    }
+    //populating supplier dropdown
+    populateSupplier();
+
+
+    //Compare Selling price and cost price ...
+
+    //$('#SP').on('blur', function () {
+    //    var cp = Number($('#CP').val());
+    //    var sp = Number($('#SP').val());
+
+    //    if (sp <= cp) {
+    //        alert('Selling Price cannot be lesser or equal to Cost Price');
+    //        $('#SP').val('');
+    //    }
+    //});
+
+
+    //check date
+
+
+    $(document).on('ready', function () {
+
+        //for calculating amount automatically
+        $('#btnNext').on('click', function () {
+            var subTotal = 0;
+            var total = 0;
+            $('#Amount').val('');
+            $('#Discount').val('');
+            $('#Discountpre').val('');
+            $('#Tax').val('');
+            $('#Taxpre').val('');
+            $('#GrandTotal').val('');
+
+            $('#mytable tr').each(function () {
+                var qty = $.trim($(this).find(".tdQty").html());
+                var cp = $.trim($(this).find(".tdCp").html());
+                total = Number(qty) * Number(cp);
+                subTotal += total;
+            });
+
+            $('#Amount').val(subTotal);
+            $('#GrandTotal').val(subTotal);
+        });
+
+        //Calculate Discount
+        $('#Discount').keyup(function () {
+
+            var total = Number($('#Amount').val());
+            var DisAmt = Number($('#Discount').val());
+            var taxAmt = Number($('#Tax').val());
+            var taxpre = Number($('#Taxpre').val());
+            var percent = Number($('#Discountpre').val());
+
+            if (percent == 0) {
+                var percent = ((DisAmt / total) * 100).toFixed(2);
+                $('#Discountpre').val(percent);
+                var taxcal = (total - (DisAmt))
+
+                var discountAmount = ((percent / 100) * taxcal).toFixed(2);
+                var taxAmt = ((taxpre / 100) * taxcal).toFixed(2);
+                var grandTotal = total + (taxAmt - (discountAmount));
+                $('#Tax').val(taxAmt);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+
+            }
+            else if (percent != 0) {
+                var percent = ((DisAmt / total) * 100);
+                var taxcal = (total - (DisAmt))
+
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var taxAmt = ((taxpre / 100) * taxcal).toFixed(2);
+                var grandTotal = total + (taxAmt - (discountAmount));
+
+
+                $('#Tax').val(taxAmt);
+                $('#Discountpre').val(percent);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+
+        //Calculate Discount Presantage
+        $('#Discountpre').keyup(function () {
+
+            var total = Number($('#Amount').val());
+            var percent = Number($('#Discountpre').val());
+            var taxAmt = Number($('#Tax').val());
+            var taxpre = Number($('#Taxpre').val());
+
+            if (percent == 0) {
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var diccal = (total - (discountAmount));
+                var taxcal = ((taxpre / 100) * diccal).toFixed(2);
+                var grandTotal = total + (taxcal - (discountAmount));
+
+                $('#Discount').val(discountAmount);
+                $('#Tax').val(taxcal);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (percent != 0) {
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var diccal = (total - (discountAmount));
+                var taxamt = ((taxpre / 100) * diccal).toFixed(2);
+                var grandTotal = total + (taxamt - (discountAmount));
+                $('#Tax').val(taxamt);
+                $('#Discount').val(discountAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+        //Calculate Vat Precentage
+        $('#Taxpre').keyup(function () {
+
+            var subtotal = Number($('#Amount').val());
+            var taxpercent = Number($('#Taxpre').val());
+            var dispercent = Number($('#Discountpre').val());
+            var disAmt = Number($('#Discount').val());
+
+            if (dispercent == 0) {
+                var taxAmount = ((taxpercent / 100) * subtotal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#Tax').val(taxAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (dispercent != 0) {
+
+                var discal = (subtotal - (disAmt));
+                var taxAmount = ((taxpercent / 100) * discal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#Tax').val(taxAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+
+        //Calculate sales Tax
+        $('#Tax').keyup(function () {
+            var subtotal = Number($('#Amount').val());
+            var salAmt = Number($('#Tax').val());
+            var dispercent = Number($('#Discountpre').val());
+            var disAmt = Number($('#Discount').val());
+
+            if (dispercent == 0) {
+                var taxpercent = ((salAmt / subtotal) * 100).toFixed(2);
+                $('#Taxpre').val(taxpercent);
+
+                var taxAmount = ((taxpercent / 100) * subtotal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (dispercent != 0) {
+                var discal = (subtotal - (disAmt));
+                var taxpercent = ((salAmt / discal) * 100).toFixed(2);
+                $('#Taxpre').val(taxpercent);
+
+                var taxAmount = ((taxpercent / 100) * discal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+        });
+
+
+        //for icheckbox
+        $('.x').iCheck({
+            checkboxClass: 'icheckbox_minimal',
+            radioClass: 'iradio_minimal',
+            increaseArea: '20%' // optional
+        });
+
+
+        //populating Items dropdown
+        $.get('/PurchaseEntry/PopulateItem', {}, function (data) {
+            $('#selectItem').empty();
+            $('#selectItem').append($("<option value='0'>--Select Items--</option>"))
+            $.each(data, function (key, value, sort) {
+                $('#selectItem').append($('<option></option>').val(value.ID).html(value.Name));
+            });
+        }, 'json');
+
+        //populating Country dropdown
+        $.get('/PurchaseEntry/PopulateCountry', {}, function (data) {
+            $('#selectCountry').empty();
+            $('#selectCountry').append($("<option value='0'>--Select Country--</option>"))
+            $.each(data, function (key, value, sort) {
+                $('#selectCountry').append($('<option></option>').val(value.CountryID).html(value.CountryName));
+            });
+        }, 'json');
+
+        //datepicker
+        $(function () {
+            $(".datepicker").datepicker({
+                format: 'yyyy-mm-dd'
+            });
+        });
+    });
+
+    var purchaseItems = [];
+    $('#btnAdd').on('click', function () {
+
+        //jQuery Validations
+        var isValidation = true;
+        if ($('#SelectSupplier').val() == "0") {
+            isValidation = false;
+            $('#SelectSupplier').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectSupplier').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#PurchaseID').val().trim() == '') {
+            isValidation = false;
+            $('#PurchaseID').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#PurchaseID').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#InvocingDate').val() == '') {
+            isValidation = false;
+            $('#InvocingDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#InvocingDate').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#selectItem').val() == "0") {
+            isValidation = false;
+            $('#selectItem').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectItem').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#selectPriceOption').val() == "0") {
+            isValidation = false;
+            $('#selectPriceOption').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectPriceOption').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#Qty').val() == '') {
+            isValidation = false;
+            $('#Qty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Qty').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#BatchNo').val() == "") {
+            isValidation = false;
+            $('#BatchNo').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#BatchNo').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#PackSize_Qty').val() == "") {
+            isValidation = false;
+            $('#PackSize_Qty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#PackSize_Qty').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#PackSize_Code').val() == "") {
+            isValidation = false;
+            $('#PackSize_Code').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#PackSize_Code').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#CP').val() == '' || isNaN($('#CP').val().trim())) {
+            isValidation = false;
+            $('#CP').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#CP').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#SP').val() == '' || isNaN($('#SP').val().trim())) {
+            isValidation = false;
+            $('#SP').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SP').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#Expiry').val() == '') {
+            isValidation = false;
+            $('#Expiry').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Expiry').siblings('span.error').css('visibility', 'hidden');
+        }
+
+
+        if (isValidation) {
+            purchaseItems.push({
+                ItemID: $('#selectItem').val(),
+                ItemName: $('#selectItem option:selected').text(),
+                BatchNo: $('#BatchNo').val(),
+                PackSize_Qty: $('#PackSize').val() ,
+                PackSize_Code: $('#PackSize_Code').val(),
+                Qty: $('#Qty').val(),
+                CostPrice: $('#CP').val(),
+                SellingPrice: $('#SP').val(),
+                Expiry: $('#Expiry').val(),
+                //LocationID: $('#SelectLocation').val(),
+                PurchaseID: $('#PurchaseID').val() + ' / ' + $('#SelectSupplier').val(),
+                BonusIncluded: 0
+            });
+
+            $('#selectItem').val('0').focus();
+            $('#BatchNo,#PackSize,#PackSize_Code, #Qty, #CP, #SP, #Expiry').val('');
+        }
+        GeneratedItemsTable();
+    });
+
+    $('#btnSubmit').on('click', function () {
+        var isAllValid = true;
+
+        if (purchaseItems.length == 0) {
+            isAllValid = false;
+            alert('Please Add items to purchase!');
+        }
+
+        if ($('#SelectSupplier').val() == "0") {
+            isAllValid = false;
+            $('#SelectSupplier').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectSupplier').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#PurchaseID').val().trim() == '') {
+            isAllValid = false;
+            $('#PurchaseID').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#PurchaseID').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#InvocingDate').val() == '') {
+            isAllValid = false;
+            $('#InvocingDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#InvocingDate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#Amount').val() == '' || isNaN($('#Amount').val())) {
+            isAllValid = false;
+            $('#Amount').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Amount').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if (isNaN($('#Discount').val())) {
+            $('#Discount').siblings('span.error').css('visibility', 'visible');
+        }
+        if (isNaN($('#Tax').val())) {
+            $('#Tax').siblings('span.error').css('visibility', 'visible');
+        }
+        //if (isNaN($('#CleAmt').val())) {
+        //    $('#CleAmt').siblings('span.error').css('visibility', 'visible');
+        //}
+
+        if (isAllValid) {
+            var data = {
+                ID: $.trim($('#PurchaseID').val() + '--' + $('#SelectSupplier').val()),
+                Date: $('#InvocingDate').val().trim(),
+                SupplierID: $('#SelectSupplier').val(),
+                Amount: $('#Amount').val(),
+                Discount: $('#Discount').val(),
+                Tax: $('#Tax').val(),
+                //Clearance: $('#CleAmt').val(),
+                GrandTotal: $('#GrandTotal').val(),
+                IsPaid: $('#Payment').is(":checked") ? 1 : 0,
+                Description: $('#Description').val(),
+                PurchaseItems: purchaseItems
+            }
+            $(this).val('Please wait...');
+
+
+            //post data to server
+            $.ajax({
+                url: 'SavePurchase',
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (d) {
+                    //check is successfully save to database
+                    if (d.status == true) {
+                        //will send status from server side
+                        alert('Successfully done.');
+                        location.reload(true);
+                        //clear form
+                        purchaseItems = [];
+                        $('#PurchaseID').val('');
+                        $('#InvocingDate').val('');
+                        $('#SelectSupplier').val('0');
+
+                    }
+                    else {
+                        alert('Failed');
+                    }
+                    $('#submit').val('Save');
+                },
+                error: function () {
+                   // alert('Error. Please try again.');
+                    sweetAlert("Oops...", ' Please try again.', "error");
+                    closeModal();
+                    $('#btnSubmit').val('Save');
+                }
+            });
+        }
+    });
+
+    function GeneratedItemsTable() {
+        if (purchaseItems.length > 0) {
+            var $table = $('<table id="mytable" class="table table-striped table-hover"/>');
+            $table.append('<thead><tr style="background-color:rgb(201, 211, 218);"><th>Item</th><th>Batch No</th><th>PackSize</th><th>PS Code</th><th>Qty</th><th>CP</th><th>SP</th><th>Expiry</th><th>Delete</th></tr></thead>');
+            var $tbody = $('<tbody/>');
+
+            // var $table = $('.tableList');
+            // var $tbody = $('<tbody/>');
+
+            $.each(purchaseItems, function (i, val) {
+                var $row = $('<tr/>');
+                //$row.append($('<td/>').html(val.ItemID));
+                $row.append($('<td/>').html(val.ItemName));
+                $row.append($('<td/>').html(val.BatchNo));
+                $row.append($('<td/>').html(val.PackSize_Qty));
+                $row.append($('<td/>').html(val.PackSize_Code));
+                $row.append($('<td class="tdQty"/>').html(val.Qty));
+                $row.append($('<td class="tdCp"/>').html(val.CostPrice));
+                $row.append($('<td/>').html(val.SellingPrice));
+                $row.append($('<td/>').html(val.Expiry));
+                $row.append($('<td/>').html('<a href=# onclick="removeItem(this)" ><span class="glyphicon glyphicon-trash"></span></a>'));
+                $tbody.append($row);
+            });
+            $table.append($tbody);
+            $('#orderItems').html($table);
+        }
+        else {
+            alert(" Purachase Items List is empty !");
+        }
+    }
+
+    //removes record on clicking remove icon and associated array
+    function removeItem(obj) {
+        var $index = $(obj).parent().parent()[0].sectionRowIndex;
+        alert($index);
+        purchaseItems.splice($index, 1);
+        $(obj).parent().parent().remove();
+        GeneratedItemsTable();
+    }
+
+
+    $(function () {
+        $('#GeshippClearSearch').click(function () {
+            GetshippClearUsingAjax();
+        });
+
+    });
+
+    function GetshippClearUsingAjax() {
+        var SearchVal = $("#searchVal").val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetformShippClear")',
+            //url: "/Payments/GetformPayment?SerachBy="+ SerachBy + "&SerachValue=" + SerachValue,
+            data: { "SearchVal": SearchVal },
+            dataType: 'json',
+            success: function (response) {
+                console.log(response);
+
+                if (response != null) {
+
+                    $('#qty').val(response._Qty);
+                    $('#shippingcost').val(response._ShippingCost);
+                    $('#dollerprice').val(response._DollerPrice);
+                    $('#clearanceAmt').val(response._ClearanceAmt);
+                }
+            },
+            error: function (response) {
+                sweetAlert("Oops...", 'Looks like you forgot to enter Serach value.', "error");
+                closeModal();
+            }
+        });
+
+
+    }
+    //Calculate Cost Price
+
+    $('#GesUnitprice').click(function () {
+        var _unitprice = Number($('#unitPrice').val());
+        var _qty = Number($('#qty').val());
+        var _shippCost = Number($('#shippingcost').val());
+        var _dollerprice = Number($('#dollerprice').val());
+        var _clearance = Number($('#clearanceAmt').val());
+        var SearchVal = $("#searchVal").val();
+
+        if (_unitprice == 0 || _unitprice == '' || _unitprice == null ||
+            SearchVal == 0 || SearchVal == '' || SearchVal == null ||
+             _qty == 0 || _qty == '' || _qty == null
+            //_shippCost == 0 || _shippCost == '' || _shippCost == null ||
+            //_dollerprice == 0 || _dollerprice == '' || _dollerprice == null ||
+            // _clearance == 0 || _clearance == '' || _dollerprice_clearance == null
+            ) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter correct values.', "error");
+            closeModal();
+        }
+        else
+        {
+            var _costpricetot = ((((_qty * _unitprice) + _shippCost) * _dollerprice) + _clearance).toFixed(2);
+            var _costprice = (_costpricetot / _qty);
+           // alert(_costprice)
+            $('#costprice ').val(_costprice.toFixed(2));
+
+        }
+
+    });
+    $('#addcostprice').click(function () {
+        var _costpriceps = Number($('#costprice').val());
+
+        $('#CP ').val(_costpriceps.toFixed(2));
+
+
+    });
+    $('#btnclear').click(function () {
+        $('#unitPrice').val('');
+        $('#qty').val('');
+        $('#shippingcost').val('');
+        $('#dollerprice').val('');
+        $('#clearanceAmt').val('');
+        $("#searchVal").val('');
+        $("#costprice").val('');
+    });
+
+    $("#SP").attr('disabled', 'disabled');
+
+    $('#Qty').keyup(function () {
+        var qty = Number($('#Qty').val());
+
+        if (qty == 0.00 || qty == null || qty == '') {
+            alert("Qty can not be zero")
+        }
+        else {
+            $("#SP").removeAttr('disabled');
+        }
+
+    });
+
+    $(document).ready(function () {
+
+        // Initialize select2
+        $("#selectItem").select2();
+        $('#SelectSupplier').select2();
+
+        // Read selected option-Item
+        $('#selectItem').click(function () {
+            var username = $('#selectItem option:selected').text();
+            var userid = $('#selectItem').val();
+
+
+        });
+        // Read selected option-Supplier
+        $('#SelectSupplier').click(function () {
+            var username = $('#SelectSupplier option:selected').text();
+            var userid = $('#SelectSupplier').val();
+
+            //$('#result').html("id : " + userid + ", name : " + username);
+        });
+    });
+
+
+
+</script>
+
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    *[role="form"] {
+        max-width: 530px;
+        padding: 10px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 0.3em;
+    }
+
+        *[role="form"] h2 {
+            margin-left: 1em;
+            margin-bottom: 1em;
+        }
+    /*
+    .tablecontainer table {
+        width: 100%;
+        border-collapse: collapse;
+        border-top: 1px solid #BFAEAE;
+        border-right: 1px solid #BFAEAE;
+    }
+
+    .tablecontainer th {
+        border-bottom: 2px solid #BFAEAE !important;
+        background-color: #3d566e;
+        color: #ecf0f1;
+    }
+
+    .tablecontainer th, .tablecontainer td {
+        text-align: left;
+        border-left: 1px solid #BFAEAE;
+        padding: 5px;
+        border-bottom: 1px solid #BFAEAE;
+    }*/
+</style>

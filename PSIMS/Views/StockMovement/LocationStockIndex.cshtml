@@ -1,0 +1,101 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.LocationStock>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Location Stock";
+
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+
+<div class="box box-body box-primary">
+    <table class="table table-striped" id="dtaTable">
+        <thead class="dataTableHead">
+
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Batch No
+                </th>
+                <th>
+                    Tranx ID
+                </th>
+                <th>
+                    Tranx Date
+                </th>
+                <th>
+                    Location
+                </th>
+                <th>
+                    Qty In
+                </th>
+                <th>
+                    Qty Out
+                </th>
+                <th>
+                    Final Qty
+                </th>
+                <th>
+                    Received By
+                </th>
+
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Item.Name).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.BatchNo).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TrxID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TrxDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.LocationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FinalQty)
+                </td>
+                <td>
+                    @{var name = db.Users.Where(u => u.Id == item.UserID).FirstOrDefault().UserName ?? "n/a";}
+                    @name
+
+                </td>
+
+
+            </tr>
+        }
+
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

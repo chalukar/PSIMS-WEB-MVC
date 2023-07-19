@@ -1,0 +1,260 @@
+﻿@model PSIMS.Models.PurchaseModel.Supplier
+
+@{
+    ViewBag.Title = "Edit";
+}
+
+<div class="box box-primary box-body">
+
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <h4>Supplier</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        
+                <div class="form-group col-md-6">
+                    Supplier Name
+                    @Html.EditorFor(model => model.SupplierName, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase" } })
+                    @Html.ValidationMessageFor(model => model.SupplierName, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Company Name
+                    @Html.EditorFor(model => model.Companyname, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase" } })
+                    @Html.ValidationMessageFor(model => model.Companyname, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    VAT No
+                    @Html.EditorFor(model => model.Registation_No, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase" } })
+                    @Html.ValidationMessageFor(model => model.Registation_No, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Email Address
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Telephone No
+                    @Html.EditorFor(model => model.TelPhoneNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TelPhoneNo, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Mobile No
+                    @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MobileNo, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            <div class="form-group col-md-6">
+                Fax No
+                @Html.EditorFor(model => model.FaxNo, new { htmlAttributes = new { @class = "form-control" } })
+
+                @Html.ValidationMessageFor(model => model.FaxNo, "", new { @class = "text-danger" })
+                <p style="color:red">@ViewBag.DuplicateError</p>
+            </div>
+
+                <div class="form-group col-md-6">
+                    Address
+                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Address Line (Optional)
+                    @Html.EditorFor(model => model.Address_line2, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Address_line2, "", new { @class = "text-danger" })
+                    <p style="color:red"></p>
+                </div>
+                <div class="form-group col-md-6">
+                    City
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+
+
+                <div class="form-group col-md-6">
+                    Status
+                    @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Country
+                    @Html.DropDownListFor(model => model.CountryID, ViewBag.CountryList as IEnumerable<SelectListItem>, "--select Country--", new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.country.CountryName, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+                <div class="form-group col-md-6">
+                    Status
+                    @Html.EnumDropDownListFor(model => model.status, "-- Select Status --", htmlAttributes: new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+
+                </div>
+                <div class="form-group col-md-6">
+                    Description <br />
+                    @Html.TextAreaFor(model => model.Description, 3, 45, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+                <div class="form-group col-md-6">
+                    <div class="col-md-offset-2 col-md-10">
+                        <input type="submit" value="Save" class="btn btn-primary btn-flat" />
+                    </div>
+                </div>
+            
+
+          
+        </div>
+    </div>
+
+        @*<div class="form-horizontal">
+            <h4>Supplier</h4>
+            <hr />
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.HiddenFor(model => model.ID)
+        
+            <div class="form-group">
+                @Html.LabelFor(model => model.SupplierName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.SupplierName, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.SupplierName, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.TelPhoneNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.TelPhoneNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.TelPhoneNo, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.MobileNo, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.MobileNo, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.MobileNo, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Registation_No, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Registation_No, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase" } })
+                    @Html.ValidationMessageFor(model => model.Registation_No, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Companyname, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Companyname, new { htmlAttributes = new { @class = "form-control", @Style = " text-transform: uppercase" } })
+                    @Html.ValidationMessageFor(model => model.Companyname, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Address, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Address, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Address_line2, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.Address_line2, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Address_line2, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.City, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.City, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.City, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.State, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.EditorFor(model => model.State, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.State, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.country.CountryName, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.DropDownListFor(model => model.CountryID, ViewBag.CountryList as IEnumerable<SelectListItem>,"--Select Country--", new { @class = "form-control" })
+
+                    @Html.ValidationMessageFor(model => model.country.CountryName, "", new { @class = "text-danger" })
+                    <p style="color:red">@ViewBag.DuplicateError</p>
+                </div>
+            </div>
+            <div class="form-group">
+
+                Status
+                @Html.EnumDropDownListFor(model => model.status, "-- Select Status --", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.status, "", new { @class = "text-danger" })
+
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.TextAreaFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.HiddenFor(model => model.LastUpdateBy, htmlAttributes: new { @class = "control-label col-md-2" })
+                <div class="col-md-10">
+                    @Html.HiddenFor(model => model.LastUpdateBy, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.LastUpdateBy, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Save" class="btn btn-primary btn-flat" />
+
+                </div>
+            </div>
+        </div>*@
+    }
+
+    <div>
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}
+
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+<script src="~/Scripts/jquery.validate.min.js"></script>
+<script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>

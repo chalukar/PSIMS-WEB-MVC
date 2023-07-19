@@ -1,0 +1,111 @@
+﻿@model IEnumerable<PSIMS.Models.SalesReturnDetail>
+
+@{
+    ViewBag.Title = "Sales Returned Items";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-primary box-body">
+    <table class="table">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Sales ID
+                </th>
+                <th>
+                    Loc.Stock ID
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.BatchNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Qty)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Rate)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+      
+
+        @foreach (var item in Model)
+        {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesReturn.SalesID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BatchNo)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.status)*@
+                @{
+                    if (item.status == 0)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+
+                    }
+                    else if (item.status == 1) // To Stock
+                    {
+
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Return To Stock</a>
+                    }
+                    else if (item.status == 2) //to Discard
+                    {
+
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Return To Discard</a>
+                    }
+
+                }
+            </td>
+               
+     
+            <td>
+                <div class="dropdown">
+                    <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li>@Html.ActionLink("To Stock", "BackToStockOrDiscard", new { id = item.ID, actinName = "ToStock" }) </li>
+                        <li>@Html.ActionLink("Discard", "BackToStockOrDiscard", new { id = item.ID, actinName = "Discard" })</li>
+                    </ul>
+                </div>
+            </td>
+
+        </tr>
+        }
+
+    </table>
+    <p>
+        Please return all items and get fresh sales.
+    </p>
+</div>
+

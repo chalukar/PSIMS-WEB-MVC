@@ -1,0 +1,41 @@
+﻿@model PSIMS.Models.SalesModel.InvoiceOptionEntry
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-body box-primary">
+
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                ID
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InvOptID)
+            </dd>
+            <dt>
+                Type Of Invoice
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InvoiceName)
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-warning btn-flat" />
+                @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+            </div>
+        }
+    </div>
+</div>

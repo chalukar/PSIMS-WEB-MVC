@@ -1,0 +1,35 @@
+﻿@model PSIMS.Models.SalesModel.InvoiceOptionEntry
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-body box-primary">
+
+    <div>
+        <h4>Details of Invoice Type</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                ID
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InvOptID)
+            </dd>
+            <dt>
+                Type Of Invoice
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InvoiceName)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.InvOptID }, new { @class = "btn btn-primary btn-flat" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>

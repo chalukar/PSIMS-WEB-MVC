@@ -1,0 +1,121 @@
+﻿@model IEnumerable<PSIMS.Models.PurchaseModel.Purchase>
+
+@{
+                /**/
+
+                ViewBag.Title = "List of Purchases";
+}
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class="box box-body box-primary">
+    <br />
+    <table class="table table-hover dataTable  table-striped table-responsive">
+        <thead>
+            <tr style="background-color:#3d566e; color:#ecf0f1">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Create Date
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Supplier.SupplierName)
+                </th>
+                <th>
+                    Invoice Date
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Amount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Discount)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Tax)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.GrandTotal)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.IsPaid)
+                </th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.LastUpdated)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Supplier.SupplierName).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Date)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Amount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Tax)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.GrandTotal)
+                </td>
+                <td class="txtCheckBox">
+                    @{
+                        if (item.IsPaid)
+                        {
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Paid</a>
+                        }
+                        else
+                        {
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Due</a>
+                        }
+                    }
+                </td>
+                <td>
+
+                    <div class="dropdown">
+                        <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Actions
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            @{
+                                if (item.isStockTransferred == false)
+                                {
+                                    <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID })</li>
+                                    <li>@Html.ActionLink("Details", "Details", new { id = item.ID })</li>
+                                    <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+                                }
+                                else
+                                {
+                                    <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID })</li>
+                                    <li>@Html.ActionLink("Details", "Details", new { id = item.ID })</li>
+                                }
+                            }
+                        </ul>
+                    </div>
+
+                </td>
+            </tr>
+        }
+    </table>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.table').dataTable();
+    });
+</script>

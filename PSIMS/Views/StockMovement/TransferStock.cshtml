@@ -1,0 +1,587 @@
+﻿@{
+    ViewBag.Title = "Stock Transfer";
+}
+<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+
+<div class="box box-body box-primary">
+    <div style="padding-left:50px;padding-right:50px;">
+        <div class="row">
+            <div class="form-horizontal">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        Trnsfer ID<br />
+                        <input type="text" id="transferID" name="transferID" class="form-control text-uppercase" readonly />
+                        <span class="error"> Required field !</span>
+                    </div>
+                    <div class="col-md-12">
+                        <table class="table table-striped table-bordered" id="tbl">
+                            <tr>
+                                <th>#</th>
+                                <th>Stock ID</th>
+                                <th>Source</th>
+                                <th>Destination</th>
+                                <th>Item</th>
+                                @*<th>Purchase ID</th>*@
+                                <th>BatchNo</th>
+                                <th>AvailQty</th>
+                                <th>Dist Qty</th>
+                                <th>Notes</th>
+                                <th>Actions</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div style="padding-left:20px; float:left;">
+                    <a class="btn btn-info" href="/StockMovement/TransferIndex"><i class="fa fa-angle-left"></i> Back</a>
+                </div>
+                <div style="padding-right:20px; float:right;display:inline-block;">
+                    <button class="btn btn-primary" onclick="addRow();" name="btnTicket" id="btnAdd" value="Add"><i class="fa fa-plus"></i> Add New</button>
+                    <button class="btn btn-primary" name="btnSave" id="btnSave" onclick="SaveBulk();" value="Save All"><i class="fa fa-save"></i> Save All</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    populateTransferID();
+
+    function populateTransferID() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/StockMovement/PopulateTransferID',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result != null) {
+
+                    var d = new Date();
+                    var trDate = d.getFullYear() + "" + (d.getMonth() + 1) + "" + d.getDate();
+                    var trID = result.ID + 1;
+
+                    var gatYrID = trDate + trID
+
+                    $('#transferID').val(gatYrID);
+
+                }
+
+            },
+            error: function (result) {
+                alert('error');
+            }
+        });
+    }
+
+    function addRow() {
+        var table = document.getElementById("tbl"); //get the table
+        var rowcount = table.rows.length; //get no. of rows in the table
+        //append the controls in the row
+        var tblRow = '<tr id="row' + rowcount + '"><td><label id="lblID' + rowcount + '">' + rowcount + '</label></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Stock ID" id="txtStockId' + rowcount + '" readonly/></td>';
+        tblRow += '<td><select class="form-control" id="txtSource' + rowcount + '" disabled></select></td>';
+        tblRow += '<td><select class="form-control" id="txtDestination' + rowcount + '" ></select></td>';
+        tblRow += '<td><select class="form-control" id="txtItem' + rowcount + '" ></select></td>';
+        //tblRow += '<td><select class="form-control" id="txtpurchaseID' + rowcount + '" ></select></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Batch No" id="txtBatchNo' + rowcount + '" /></td>';        
+        tblRow += '<td><input type="number" class="form-control" placeholder="Avail Qty" id="txtAvailQty' + rowcount + '"  readonly/></td>';
+        tblRow += '<td><input type="number" class="form-control" placeholder="Dist  Qty" id="txtDistQty' + rowcount + '" /></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Notes" id="txtNotes' + rowcount + '" /></td>';
+        //tblRow += '<td><div class="input-group input-append date"><input type="text" class="form-control" placeholder="Created" id="txtCreated' + rowcount + '" />';
+        //tblRow += '<span class="input-group-addon"><span class="fa fa-calendar"></span></span></div></td>';
+        //tblRow += '<td><input type="text" class="form-control" placeholder="Completed" id="txtCompleted' + rowcount + '" /></td>';
+        tblRow += '<td><div class="button-group" class="btn-group-horizontal"><button class="btn btn-info" id="btnSave' + rowcount + '" onclick="SaveSingleRow(' + rowcount + ')"><i class="fa fa-save"></i> Save</button></div></td></tr>';
+        //append the row to the table.
+        $("#tbl").append(tblRow);
+
+        // Add or Remove the class on clicking the table row
+        SourceLocation('#txtSource' + rowcount, "Warehouse");
+        DestinationLocation('#txtDestination' + rowcount, "");
+
+        PopulateItemCode('#txtItem' + rowcount, "");
+    }
+
+    function SaveSingleRow(id) {
+        var StockId = $("#txtStockId" + id).val();
+        var Source = $("#txtSource" + id).val();
+        var SourceText = $("#txtSource" + id).find(":selected").text();
+        var Destination = $("#txtDestination" + id).val();
+        var DestinationText = $("#txtDestination" + id).find(":selected").text();
+        var Item = $("#txtItem" + id).val();
+        var ItemText = $("#txtItem" + id).find(":selected").text();
+        //var PurchaseID = $("#txtpurchaseID" + id).find(":selected").text();
+        var BatchNo = $("#txtBatchNo" + id).val();       
+        var AvailQty = $("#txtAvailQty" + id).val();
+        var DistQty = $("#txtDistQty" + id).val();
+        var Notes = $("#txtNotes" + id).val();
+        var TransferID = $("#transferID").val();
+        //var Created = $("#txtCreated" + id).val();
+        //var Completed = $("#txtCompleted" + id).val();
+
+        console.log("Stock ID : " + StockId);
+        console.log("Source : " + Source);
+        console.log("Destination : " + Destination);
+        console.log("Item : " + Item);
+        //console.log("PurchaseID : " + PurchaseID);
+        console.log("BatchNo : " + BatchNo);
+        console.log("AvailQty : " + AvailQty);
+        console.log("DistQty : " + DistQty);
+        console.log("Notes : " + Notes);
+        //console.log("Created : " + Created);
+        //console.log("Completed : " + Completed);
+
+
+        var isAllValid = true;
+
+
+        if ($(Item).val() == '0') {
+            isAllValid = false;
+            $(Item).siblings('span.error').css('visibility', 'visible');
+        }
+
+        if (AvailQty =='0')
+        {
+            isAllValid = false;
+            alert('Error.');
+        }
+        if ($('#transferID').val() == "") {
+            isValidation = false;
+            $('#transferID').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#transferID').siblings('span.error').css('visibility', 'hidden');
+        }
+       
+
+        if (isAllValid) {
+            var data = {
+                StockId: StockId,
+                ItemId: Item,
+                FromLocationID: Source,
+                ToLocationID: Destination,
+                BatchNo: BatchNo,
+                //PurchaseID: PurchaseID,
+                InitQty: AvailQty,
+                DistQty: DistQty,
+                Remarks: Notes,
+                transferID: TransferID
+            }
+
+
+            console.log("entering ajax");
+
+            $.ajax({
+                url: 'SaveStockMovement',
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (d) {
+                    //check is successfully save to database
+                    if (d.status == true) {
+                        //will send status from server side
+                        alert('Successfully done.');
+                        location.reload(true);
+                    }
+                    else {
+                        // alert('Failed');
+                        swal("Successfully Saved!", "The item has been transferred!", "success");
+                    }
+                    //$('#submit').val('Save');
+                },
+                error: function () {
+                    swal("Failed!", "Error");
+                    //$('#btnSubmit').val('Save');
+                }
+            });
+            //}
+
+        }
+       
+        $("#row" + id).remove();
+
+        var tblRow = '<tr id="row' + id + '"><td><label id="lblID' + id + '">' + id + '</label></td>';
+        tblRow += '<td><label id="lblStockId' + id + '" >' + StockId + '</label></td>';
+        tblRow += '<td><label id="lblSource' + id + '" >' + SourceText + '</label></td>';
+        tblRow += '<td><label id="lblDestination' + id + '" >' + DestinationText + '</label></td>';
+        tblRow += '<td><label id="lblItem' + id + '" >' + ItemText + '</label></td>';
+        //tblRow += '<td><label id="lblPurchaseID' + id + '" >' + PurchaseID + '</label></td>';
+        tblRow += '<td><label id="lblBatchNo' + id + '" >' + BatchNo + '</label></td>';
+        tblRow += '<td><label id="lblAvailQty' + id + '" >' + AvailQty + '</label></td>';
+        tblRow += '<td><label id="lblDistQty' + id + '" >' + DistQty + '</label></td>';
+        tblRow += '<td><label id="lblNotes' + id + '" >' + Notes + '</label></td>';
+        //tblRow += '<td><div class="input-group input-append date"><label type="text" id="lblCreated' + id + '" >' + Created + '</label>';
+        //tblRow += '<span class="input-group-addon"><span class="fa fa-calendar"></span></span></div></td>';
+        //tblRow += '<td><label id="lblCompleted' + id + '" >' + Completed + '</label></td>';
+        tblRow += '<td><div class="button-group"><button class="btn btn-warning" id="btnEdit' + id + '" onclick="EditRow(' + id + ')" style="float: none;" ><i class="fa fa-pencil-square-o"></i> Edit</button>';
+        tblRow += '<button class="btn btn-danger" id="btnDelete' + id + '" onclick="DeleteRow(' + id + ')" style="float: none;"><i class="fa fa-remove"></i> Delete</button></div></td></tr>';
+        $("#tbl").append(tblRow);
+    }
+
+    function SaveBulk() {
+        var rowCount = $('#tbl tr').length;
+        console.log("Table has " + rowCount + " rows");
+
+        for (var i = 1; i < rowCount; i++) {
+            console.log(i);
+
+            SaveSingleRow(i);
+        }
+
+    }
+
+    function EditRow(id) {
+        var StockId = $("#lblStockId" + id).html();
+        var Source = $("#lblSource" + id).html();
+        var SourceText = $("#lblSource" + id).html();
+        var Destination = $("#lblDestination" + id).html();
+        var DestinationText = $("#lblDestination" + id).html();
+        var Item = $("#lblItem" + id).html();
+        var ItemText = $("#lblItem" + id).html();
+        //var PurchaseID = $("#lblPurchaseID" + id).html();
+        var BatchNo = $("#lblBatchNo" + id).html();
+        var AvailQty = $("#lblAvailQty" + id).html();
+        var DistQty = $("#lblDistQty" + id).html();
+        var Notes = $("#lblNotes" + id).html();
+        //var Created = $("#lblCreated" + id).html();
+        //var Completed = $("#lblCompleted" + id).html();
+
+        $("#row" + id).remove();
+
+        var tblRow = '<tr id="row' + id + '"><td><label id="lblID' + id + '">' + id + '</label></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Stock ID" value=' + StockId + ' id="txtStockId' + id + '" readonly/></td>';
+        tblRow += '<td><select class="form-control" id="txtSource' + id + '" disabled></select></td>';
+        tblRow += '<td><select class="form-control" id="txtDestination' + id + '" ></select></td>';
+        tblRow += '<td><select class="form-control" id="txtItem' + id + '" ></select></td>';
+        //tblRow += '<td><select class="form-control" id="txtpurchaseID' + id + '" ></select></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="BatchNo" value=' + BatchNo + ' id="txtBatchNo' + id + '" /></td>';
+
+        tblRow += '<td><input type="text" class="form-control" placeholder="AvailQty" value=' + AvailQty + ' id="txtAvailQty' + id + '"  readonly/></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Dist Qty"  value=' + DistQty + ' id="txtDistQty' + id + '" /></td>';
+        tblRow += '<td><input type="text" class="form-control" placeholder="Notes" value=' + Notes + ' id="txtNotes' + id + '" /></td>';
+        //tblRow += '<td><div class="input-group input-append date"><input type="text" class="form-control" placeholder="Created" value=' + Created + ' id="txtCreated' + id + '" />';
+        //tblRow += '<span class="input-group-addon"><span class="fa fa-calendar"></span></span></div></td>';
+        //tblRow += '<td><input type="text" class="form-control" placeholder="Completed" value=' + Completed + ' id="txtCompleted' + id + '" /></td>';
+        tblRow += '<td><button class="btn btn-info" id="btnUpdate' + id + '" onclick="UpdateRow(' + id + ')" ><i class="fa fa-check-square"></i> Update</button></td></tr>';
+        $("#tbl").append(tblRow);
+
+        SourceLocation('#txtSource' + id, SourceText);
+        DestinationLocation('#txtDestination' + id, DestinationText);
+
+        //PopulateItemCode('#txtItem' + id, ItemText);
+        PopulatePurchaseID('#txtpurchaseID' + id, PurchaseID);
+    }
+
+    function UpdateRow(id) {
+        var StockId = $("#txtStockId" + id).val();
+        var Source = $("#txtSource" + id).val();
+        var SourceText = $("#txtSource" + id).find(":selected").text();
+        var Destination = $("#txtDestination" + id).val();
+        var DestinationText = $("#txtDestination" + id).find(":selected").text();
+        var Item = $("#txtItem" + id).val();
+        var ItemText = $("#txtItem" + id).find(":selected").text();
+        var BatchNo = $("#txtBatchNo" + id).val();
+        var AvailQty = $("#txtAvailQty" + id).val();
+        var DistQty = $("#txtDistQty" + id).val();
+        var Notes = $("#txtNotes" + id).val();
+        //var Created = $("#txtCreated" + id).val();
+        //var Completed = $("#txtCompleted" + id).val();
+
+        $("#row" + id).remove();
+        var tblRow = '<tr id="row' + id + '"><td><label id="lblID' + id + '">' + id + '</label></td>';
+        tblRow += '<td><label id="lblStockId' + id + '" >' + StockId + '</label></td>';
+        tblRow += '<td><label id="lblSource' + id + '" >' + SourceText + '</label></td>';
+        tblRow += '<td><label id="lblDestination' + id + '" >' + DestinationText + '</label></td>';
+        tblRow += '<td><label id="lblItem' + id + '" >' + ItemText + '</label></td>';
+        tblRow += '<td><label id="lblBatchNo' + id + '" >' + BatchNo + '</label></td>';
+        tblRow += '<td><label id="lblAvailQty' + id + '" >' + AvailQty + '</label></td>';
+        tblRow += '<td><label id="lblDistQty' + id + '" >' + DistQty + '</label></td>';
+        tblRow += '<td><label id="lblNotes' + id + '" >' + Notes + '</label></td>';
+        //tblRow += '<td><div class="input-group input-append date"><label type="text" id="lblCreated' + id + '" >' + Created + '</label>';
+        //tblRow += '<span class="input-group-addon"><span class="fa fa-calendar"></span></span></div></td>';
+        //tblRow += '<td><label id="lblCompleted' + id + '" >' + Completed + '</label></td>';
+        tblRow += '<td><div class="btn-group"><button class="btn btn-warning" id="btnEdit' + id + '" onclick="EditRow(' + id + ')" style="float: none;" ><i class="fa fa-pencil-square-o"></i> Edit</button>';
+        tblRow += '<button class="btn btn-danger" id="btnDelete' + id + '" onclick="DeleteRow(' + id + ')" style="float: none;"><i class="fa fa-remove"></i> Delete</button></div></td></tr>';
+        $("#tbl").append(tblRow);
+    }
+
+    function DeleteRow(id) {
+        $("#row" + id).remove();
+    }
+
+    var urlLocation = '/StockMovement/PopulateLocationId';
+    var urlItem = '/StockMovement/PopulateItemId';
+    //var urlPurchaseID = '/StockMovement/PopulateIPurchaseid';
+    var urlBatchNo = '/StockMovement/PopulateItemId';
+    var urlBatchNo = '/StockMovement/PopulateBatchNo';
+
+    function SourceLocation(source, sourceSelectedText) {
+
+        // console.log("PopulateLocationId Called.");
+        // console.log("1. " + sourceSelectedText + "2. " + destSelectedText);
+
+        $.get('/StockMovement/PopulateLocationId', {}, function (data) {
+            //Populate From Location
+            $(source).empty();
+
+            $(source).append($("<option value='0'>--Select Source Location--</option>"));
+            $.each(data, function (key, value) {
+                if (sourceSelectedText == value.LocationName)
+                    $(source).append($("<option selected='selected'></option>").val(value.ID).html(value.LocationName));
+                else
+                    $(source).append($("<option></option>").val(value.ID).html(value.LocationName));
+            });
+
+        }, 'json');
+    }
+
+
+    function DestinationLocation(destination, destSelectedText) {
+
+        // console.log("PopulateLocationId Called.");
+        // console.log("1. " + sourceSelectedText + "2. " + destSelectedText);
+
+        $.get('/StockMovement/PopulateDestLocationId', {}, function (data) {
+            //Populate From Location
+
+
+
+            //Populate To Location
+            $(destination).empty();
+            $(destination).append($("<option value='0'>--Select Destination Location--</option>"));
+            $.each(data, function (key, value) {
+                if (destSelectedText == value.LocationName)
+                    $(destination).append($("<option selected='selected'></option>").val(value.ID).html(value.LocationName));
+                else
+                    $(destination).append($("<option></option>").val(value.ID).html(value.LocationName));
+            });
+        }, 'json');
+    }
+
+    //function Populate Item Codes
+    function PopulateItemCode(ItemCtrl, ItemText) {
+
+        console.log("about to call PopulateItemCode");
+
+        $.get(urlItem, {}, function (data) {
+            //Populate From Item
+            $(ItemCtrl).empty();
+
+            $(ItemCtrl).append($("<option value='0'>--Select Item Code--</option>"));
+            $.each(data, function (key, value) {
+                if (ItemText == value.ItemCode)
+                    $(ItemCtrl).append($("<option selected='selected'></option>").val(value.ID).html(value.ItemCode));
+                else
+                    $(ItemCtrl).append($("<option></option>").val(value.ID).html(value.ItemCode));
+            });
+        }, 'json');
+    }
+
+    //function Populate Purchase ID From Stock
+    //function PopulatePopulateIPurchaseID(ItemCtrl, ItemText) {
+
+    //    console.log("about to call PopulatePurchase ID");
+
+    //    $.get(urlItem, {}, function (data) {
+    //        //Populate From Item
+    //        $(ItemCtrl).empty();
+
+    //        $(ItemCtrl).append($("<option value='0'>--Select Pirchase ID-</option>"));
+    //        $.each(data, function (key, value) {
+    //            if (ItemText == value.ItemCode)
+    //                $(ItemCtrl).append($("<option selected='selected'></option>").val(value.ID).html(value.ItemCode));
+    //            else
+    //                $(ItemCtrl).append($("<option></option>").val(value.ID).html(value.ItemCode));
+    //        });
+    //    }, 'json');
+    //}
+
+    console.log("about to call SourceLocationId");
+
+    $('#tbl').on('keydown', 'input[type=text]', function (event) {
+        var $textbox = $(this);
+        console.log($textbox.attr("id"));
+        console.log($textbox.val());
+        // Add or Remove the class on clicking the table row
+        SearchTextBox('#' + $textbox.attr("id"));
+    });
+
+    $('#tbl').on('blur', 'input[type=text]', function (event) {
+        var $textbox = $(this);
+        console.log($textbox.attr("id"));
+        console.log($textbox.val());
+        // Add or Remove the class on clicking the table row
+        GetAvailQty('#' + $textbox.attr("id"));
+    });
+
+
+    console.log("about to call SourceLocationId");
+
+    function SearchTextBox(id) {
+
+        console.log("SourceLocation Called.");
+
+        $(id).autocomplete({
+            source: function (request, response) {
+
+                console.log("autocomplete Called.");
+                /*
+                if (id.includes("txtSource")) {
+                    //Get Value for from location
+                    $.get({
+                        url: urlLocation,
+                        dataType: "json",
+                        data: { search: $(id).val() },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                //return { label: item.LocationName, value: item.LocationName };
+                            }));
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Error");
+                        }
+                    });
+                }
+                else if (id.includes("txtDestination")) {
+                    //Get Value for To Location
+                    $.get({
+                        url: urlLocation,
+                        dataType: "json",
+                        data: { search: $(id).val() },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.LocationName, value: item.LocationName };
+                            }));
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Error");
+                        }
+                    });
+                }
+                */
+                //if (id.includes("txtItem")) {
+                //    //Get Value for To Location
+                //    $.get({
+                //        url: urlItem,
+                //        dataType: "json",
+                //        data: {},
+                //        success: function (data) {
+                //            response($.map(data, function (item) {
+                //                return { label: item.Name, value: item.Name };
+                //            }));
+                //        },
+                //        error: function (xhr, status, error) {
+                //            alert("Error");
+                //        }
+                //    });
+                //}
+
+                if (id.includes("txtBatchNo")) {
+
+                    var SourceLocation = "#txtSource" + id.match(/\d+/)[0];
+                    var txtItem = "#txtItem" + id.match(/\d+/)[0];
+
+                    console.log(SourceLocation);
+                    console.log($(SourceLocation));
+                    //Get Value for To Location
+                    $.get({
+                        url: urlBatchNo,
+                        dataType: "json",
+                        data: { search: $(SourceLocation).val(), ItemId: $(txtItem).val() },
+                        success: function (data) {
+                            response($.map(data, function (item) {
+                                return { label: item.BatchNo, value: item.BatchNo };
+                            }));
+                        },
+                        error: function (xhr, status, error) {
+                            alert("Error");
+                        }
+                    });
+                }
+
+            }
+        });
+        console.log("SourceLocation End");
+    }
+
+    //Get the quantity available
+    function GetAvailQty(id) {
+        console.log("GetAvailQty Called.");
+        console.log("Get Availability Outside Id : " + id);
+        if (typeof id !== "undefined" && id.includes('txtBatchNo')) {
+            console.log("Get Availability Inside Id : " + id);
+            console.log(id);
+            var txtStockId = "#txtStockId" + id.match(/\d+/)[0];
+            var txtItem = "#txtItem" + id.match(/\d+/)[0];
+            var txtSource = "#txtSource" + id.match(/\d+/)[0];
+            var txtAvailQty = "#txtAvailQty" + id.match(/\d+/)[0];
+            
+            $(id).blur(function (request, response) {
+                //Get Value for from location
+                /*
+                $.get({
+                    url: urlLocation,
+                    dataType: "json",
+                    data: { "_itemId": $(txtItem).val(), "_locationId": $(txtSource).val(), "_batchNo": $(txtBatchNo).val() },
+                    success: function (data) {
+                        response($.map(data, function (item) {
+                            //$(txtAvailQty).val(value.Qty).html(value.Qty);
+                            return { label: item.Qty, value: item.Qty };
+                        }));
+                    },
+                    error: function (xhr, status, error) {
+                        alert("Error");
+                    }
+                });
+                */
+
+                console.log("Item ID : " + $(txtItem).val());
+
+                $.get('/StockMovement/GetAvailQty', { "_itemId": $(txtItem).val(), "_locationId": $(txtSource).val(), "_batchNo": $(id).val() }, function (data) {
+                    $('#AvailQty').empty();
+                    $.each(data, function (key, value) {
+                        $(txtStockId).val(value.ID).html(value.ID);
+                        $(txtAvailQty).val(value.MovingQty).html(value.MovingQty);
+                    });
+                }, 'json');
+
+            }
+            );
+        }
+    }
+
+  
+
+
+</script>
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    *[role="form"] {
+        max-width: 530px;
+        padding: 10px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 0.3em;
+    }
+
+        *[role="form"] h2 {
+            margin-left: 1em;
+            margin-bottom: 1em;
+        }
+
+</style>
+

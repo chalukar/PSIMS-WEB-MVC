@@ -1,0 +1,146 @@
+﻿@model PSIMS.Models.QuotationModel.Quotation
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<div class="box box-primary box-body">
+
+    <h3>Are you sure you want to delete this?</h3>
+    <div>
+        <h4>Quotation</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ID)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.QuotationCode)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.QuotationCode)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Customer.CustomerName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Customer.CustomerName)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.YourRef)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.YourRef)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Amount)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Amount)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Discount)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Discount)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Vat)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Vat)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.GrandTotal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.GrandTotal)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Header_Note_Line01)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Header_Note_Line01)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Header_Note_Line02)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Header_Note_Line02)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.QuoteDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.QuoteDate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.ExpiryQuote)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ExpiryQuote)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CreatedOn)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.UserID)
+            </dt>
+
+            <dd>
+                @{
+                    var UN = Model.UserID;
+                    var name = db.Users.Where(u => u.Id == UN).FirstOrDefault().UserName ?? "n/a";
+                    @name
+
+                }
+            </dd>
+
+        </dl>
+
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            <div class="form-actions no-color">
+                <input type="submit" value="Delete" class="btn btn-warning btn-flat" />
+                <div>
+                    @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+                </div>
+            </div>
+        }
+    </div>
+</div>

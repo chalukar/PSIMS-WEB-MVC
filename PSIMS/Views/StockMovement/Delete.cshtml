@@ -1,0 +1,88 @@
+﻿@model PSIMS.ViewModel.StockDistributionVM
+
+@{
+    ViewBag.Title = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Delete</h2>
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>StockDistribution</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            ID
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ID)
+        </dd>
+
+        <dt>
+            Item Code
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ItemID)
+        </dd>
+
+        @*<dt>
+            Batch No
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.BatchNo)
+        </dd>
+
+        <dt>
+            Source
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ToLocation.LocationName)
+        </dd>
+        <dt>
+            Destination
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FromLocation.LocationName)
+        </dd>
+
+        <dt>
+            Qty
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.InitQty)
+        </dd>
+
+        <dt>
+            Remarks
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Remarks)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.CreatedOn)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CreatedOn)
+        </dd>*@
+
+    </dl>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Delete" class="btn btn-default" /> |
+            @Html.ActionLink("Back to List", "Index")
+        </div>
+    }
+</div>

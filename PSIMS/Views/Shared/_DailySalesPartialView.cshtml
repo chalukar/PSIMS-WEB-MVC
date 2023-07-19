@@ -1,0 +1,107 @@
+﻿@model IEnumerable<PSIMS.Models.Sales>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+
+<table class="table datatable table-striped" id="datatable">
+    <thead>
+        <tr class="dataTableHead">
+            <th>
+                Date
+            </th>
+            <th>
+                Bill No.
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Discount
+            </th>
+            <th>
+                Vat
+            </th>
+            <th>
+                Total
+            </th>
+            <th>
+                Transaction By
+                
+            </th>
+        </tr>
+    </thead>
+    @{decimal GrandTtl = 0;}
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Discount)
+
+                @{
+                    decimal percent = item.Discount / item.Amount * 100;
+                }
+                <text>(@Math.Round(percent, 2) %)</text>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Tax)
+                @{
+                decimal amt = item.Amount;
+                decimal disamt = item.Discount;
+                decimal subtot = (amt - disamt);
+                decimal taxpercent = item.Tax / subtot * 100;
+
+                 }
+                        <text>(@Math.Round(taxpercent, 2) %)</text>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GrandTotal)
+
+                @{GrandTtl += (decimal)item.GrandTotal;}
+            </td>
+            <td>
+                @*Html.DisplayFor(modelItem => item.UserID)*@
+
+                @{  ApplicationDbContext db = new ApplicationDbContext();
+                  var UserName = db.Users.Where(u => u.Id == item.UserID).First().UserName ?? "n/a";}
+                @UserName
+            </td>
+        </tr>
+        
+    }
+    <tfoot>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td><b>Grand Total : </b></td>
+            <td><strong>@GrandTtl</strong> </td>
+            <td></td>
+    </tr>
+</tfoot>
+</table>
+
+<script>
+    $(document).ready(function () {
+        //var table = $('#datatable').dataTable({
+        //    "paging": false,
+        //    "info": true,
+        //    "filter":false
+        //});
+        $('#datatable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    });
+</script>

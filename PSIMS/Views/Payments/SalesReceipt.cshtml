@@ -1,0 +1,153 @@
+﻿@model PSIMS.Models.Finance.Payment
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<div class="container">
+    <div class="row">
+        <div class="receipt col-xs-12 col-sm-12 col-md-12 ">
+            <div class="row">
+                <div class="col-xs-6 col-sm-6 col-md-6">
+                    .
+                </div>
+                <div class="col-xs-6 col-sm-6 col-md-6 text-right">
+                    <div class="receiptInfo">
+                        <div class="receiptCode">#@Model.ID</div>
+                        <div class="receiptPayentDate">@Model.PaymentDate</div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-sm-12 col-md-12 text-left">
+                    <div class="receiptInfo2">
+                        <div class="rec_received">@Model.CompanyName</div>
+                        <div class="numToWords">@Model.NumberToWords</div>
+                        <div class="ReInvoiceNo">#@Model.SalesID</div>
+                        
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-4 col-sm-4 col-md-4 text-left">
+                    <div class="ChqueNo">
+                        <div class="ReInvoiceNo">@Model.ChequeNo</div>
+
+                    </div>
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 text-center">
+                    <div class="receiptBank">
+                        <div class="bank">@(Model.BankID.HasValue ? @Model.Bank.BankName : null)</div>
+                    </div>
+
+                </div>
+                <div class="col-xs-4 col-sm-4 col-md-4 text-right">
+                    <div class="receiptAmnt">
+                        <div class="amount">@Model.PaidAmount</div>
+                    </div>
+
+                </div>
+            </div>
+                @*<div class="row">
+            <div class="col-xs-4 col-sm-4 col-md-4 text-left">
+                <div class="receiptInfo2">
+                    <div class="rec_received">@Model.CompanyName</div>
+                    <div class="numToWords">@Model.NumberToWords</div>
+                    <div class="ReInvoiceNo">#@Model.SalesID</div>
+                    <div class="ChqueNo">@Model.ChequeNo</div>
+
+
+                </div>
+            </div><div class="col-xs-4 col-sm-4 col-md-4 text-center">
+            <div class="receiptBank">
+                <div class="bank">@(Model.BankID.HasValue ? @Model.Bank.BankName : null)</div>
+            </div>
+
+        </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 text-right">
+                <div class="receiptAmnt">
+                    <div class="amount">@Model.PaidAmount</div>
+                </div>
+
+            </div>
+
+
+        </div>*@
+
+            </div>
+        </div>
+        <div class="row no-print">
+            <div class="col-xs-12">
+                <a href="#" onclick="window.print();" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
+                <a href="/Payments/Create" class="btn btn-success"><i class="fa fa-sticky-note"></i> Payment Receipt Entry</a>
+                <a href="/SalesEntry/index" class="btn btn-warning"><i class="fa fa-angle-left"></i> Back to Sales Entry</a>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .receipt {
+            background-color: #fff;
+        }
+
+        .receiptInfo {
+            float: right;
+        }
+
+        .receiptCode {
+            text-align: left;
+            padding-left: 45px;
+            padding-top: 30px;
+            padding-bottom: 80px;
+        }
+
+        .receiptPayentDate {
+            text-align: left;
+
+        }
+
+        .receiptInfo2 {
+            padding-top: 30px;
+            padding-left: 10px;
+            float: left;
+        }
+        .receiptInfo22 {
+
+            padding-left: 10px;
+            float: left;
+        }
+
+        .rec_received {
+            padding-bottom: 60px;
+        }
+
+        .numToWords {
+            padding-bottom:60px;
+        }
+
+        .ReInvoiceNo {
+            padding-bottom: 35px;
+        }
+
+        .ChqueNo {
+            margin-left: 90px;
+
+        }
+        .receiptAmnt{
+            margin-left:10px;
+         margin-top:10px;
+        }
+        .receiptBank {
+            margin-left:75px;
+  
+        }
+
+                   
+    </style>
+
+
+
+
+          
+       

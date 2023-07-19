@@ -1,0 +1,31 @@
+﻿@model PSIMS.Models.Account.RoleEditViewModel
+@{
+    ViewBag.Title = "Edit Roles";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="box box-primary box-body">
+    <h2>Edit Role</h2>
+
+    @Html.ActionLink("Return to Role Manager", "Index")
+    <hr />
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.Id)
+        <div>
+            Role name
+        </div>
+        <p>
+            @Html.TextBoxFor(model => model.Name)
+        </p>
+
+        <div>
+            Access Type
+        </div>
+        <p>
+            @Html.DropDownListFor(model=>model.AccessTypeCode, (IEnumerable<SelectListItem>)ViewBag.AccessTypes, new { @class = "form-control" })
+        </p>
+        <input type="submit" value="Save" />
+    }
+</div>

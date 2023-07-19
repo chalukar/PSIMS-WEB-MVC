@@ -1,0 +1,827 @@
+﻿@model IEnumerable<PSIMS.Models.QuotationModel.Quotation>
+@using IdentitySample.Models;
+@{
+    /**/
+
+    ViewBag.Title = "Sales Entry Based on Quotation";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+@****  loading Spinner ******@
+<div id="fade"></div>
+<div id="modalSpinner">
+    <img id="loader" src="~/Content/images/477.GIF" />
+</div>
+@**************************@
+
+
+
+<div class="box box-danger box-body">
+    <div class="row">
+        <div class="col-xs-8 col-xs-offset-2">
+            <div class="input-group">
+                <div class="input-group-btn search-panel">
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span id="search_concept">Filter by</span> <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" role="menu">
+                        @*<li><a href="#InvoiceNo">Invoice Order</a></li>
+                            <li><a href="#custName">Customer Name</a></li>*@
+                    </ul>
+                </div>
+                <input type="hidden" name="search_param" value="all" id="search_param">
+                <input type="text" id="searchVal" class="form-control" name="searchVal" placeholder="Search quotation order number..." autofocus>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" id="GeQuotationSearch" name="searchbtn"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div id="MainDiv" class="col-md-8">
+        <!--Data Select Option For Transfer Invoce-->
+        <div class="box box-danger box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <strong>Location ID</strong><br />
+                                <input type="text" name="StockID" id="getStockID" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <input type="hidden" name="StockID" id="getStockID" readonly />
+                                <strong>Item</strong><br />
+                                <input type="text" id="getItem" class="form-control input-sm" readonly />
+                                <input type="hidden" name="disc_type" id="disc_type" class="form-control input-sm" readonly />
+                            </td>
+                            
+
+                        </tr>
+                    </table>
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <input type="hidden" name="StockID" id="getStockID" readonly />
+                                @*<strong>Item</strong><br />
+            <input type="text" id="getItem" readonly class="form-control input-sm" />*@
+                            </td>
+                            <td>
+                                <input type="hidden" id="getAvailability" readonly class="form-control input-sm" />
+                                <input type="hidden" name="locQty" id="locgetQty" class="form-control input-sm" />
+                                <strong>Qty</strong><br />
+
+                                <input type="text" tabindex="1" name="Qty" id="getQty" class="form-control input-sm"  readonly/> 
+                                <input type="hidden" tabindex="1" name="pQty" id="getQtyP" class="form-control input-sm" />
+                                <input type="hidden" tabindex="1" name="cQty" id="getQtyC" class="form-control input-sm" />
+
+                            </td>
+
+
+                            <td>
+                                <strong>Sales Price</strong><br />
+                                <input type="hidden" name="Rate" id="getunitRete" readonly class="form-control input-sm " />
+                                <input type="text" name="Rate" id="getRate" readonly class="form-control input-sm " />
+                            </td>
+                            <td>
+                                <strong>Pack Size</strong><br />
+                                <input type="hidden" name="PackQty" id="getPackQty" readonly class="form-control " />
+                                <input type="text" name="PackSize" id="getPackSize" readonly class="form-control " />
+                            </td>
+                            @*<td>
+                                <strong>Total Price</strong><br />
+                                <input type="text" name="TotPrice" id="getTotPrice" readonly class="form-control " />
+
+                            </td>*@
+
+                            <td>
+
+                                <strong>Discount</strong><br />
+                                <input type="text" name="getDisAmt" id="getDisAmt" value="0" class="form-control input-sm " data-toggle="modal" data-target="#myModal_discount" readonly />
+                                <strong></strong>
+                                @*<button class="glyphicon glyphicon-plus" data-toggle="modal" data-target="#myModal_discount" style="padding:5px;"></button>*@
+                            </td>
+
+                            <td>
+                                <strong>Amount</strong><br />
+                                <input type="text" id="getAmount" readonly class="form-control input-sm" />
+                            </td>
+                            <td>
+                                <br />
+                                <input type="button" tabindex="2" value="Add to list" id="btnAdd" style="float:right; margin-right:10px" class="btn btn-primary btn-sm" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discount Calculation Modal -->
+        <div class="modal fade" id="myModal_discount" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Discount Calculation</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="col-sm-8">
+                                    <label> Discount %<input type="text" id="disc_prc" name="disc_prc" class="form-control" /></label>
+                                    <button type="button" id="btn_disc_prc" value="1" class="btn btn-primary" data-dismiss="modal">Convert to Dis.%</button>
+
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="col-sm-8">
+                                    <label> Discount Amount<input type="text" id="disc_amt" name="disc_amt" class="form-control" /></label>
+                                    <button type="button" id="btn_disc_amt" value="2" class="btn btn-primary" data-dismiss="modal">Convert to Dis.Amt</button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box box-danger box-body">
+            <div class="row">
+                <div class="col-md-12">
+
+                    <table class="table table-striped table-hover" id="maintable">
+                        <thead>
+                            <tr style="background-color:#3d566e; color:#ecf0f1">
+                                <th>ID</th>
+                                <th>L.S ID</th>
+                                <th>Item Name</th>
+                                <th>Item Desciption</th>
+                                <th>Batch No</th>
+                                <th>Pack Size</th>
+                                <th>Pack Rate</th>
+                                <th>Total</th>
+                                <th>Req Qty</th>
+                                <th>Loc Qty</th>
+                                <th>Ex.Date</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+
+    <div class="col-md-4">
+        <div class="box box-danger box-body" style="height:auto" ;width="auto">
+            <!-- Begin of Form to be serialized  -->
+            <form id="formSerialized">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12">
+                                <h4>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp; &nbsp; Sales Items</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="height:450px; ">
+                                <table class="table table-condensed table-striped table-responsive">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Item</th>
+                                            <th>Pack Size</th>
+                                            <th>Qty</th>
+                                            <th>Rate</th>
+                                            <th>Dis.Amt</th>
+                                            <th>Amt</th>
+                                            <th><span class="glyphicon glyphicon-trash"></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblAppendHere"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6"> <h3 class="pull-right">Total :</h3> </div>
+                            <div class="col-md-6"> <input type="hidden" class="setTotal" style="width:90px; border:hidden;" overflow-y:scroll; readonly /> <h3><span class="setTotalText pull-right">XXX</span></h3></div>
+                        </div>
+
+                        @*  test *@
+                        <div class="row footer" id="btnModalTrigger">
+                            <div class="col-md-12">
+                                <button data-toggle="modal" class="btn btn-block" data-target="#myModal" style="background-color:#16a085; cursor:pointer">
+                                    <h4 style="color:#ffffff; text-align:center;"> NEXT &nbsp;<span class="glyphicon glyphicon-forward"></span> &nbsp; &nbsp; </h4>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal -->
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#c0392b; color:white;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Check out</h4>
+                            </div>
+                            <div class="modal-body" style="margin:auto">
+                                <div class="container-fluid">
+                                    <!--One coloum-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Total</label>
+                                            <input type="text" name="Total" class="form-control setTotal" style=" border:hidden" readonly />
+                                        </div>
+                                    </div>
+
+                                    <!--two coloum Tax-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Tax %</label>
+                                            <input type="text" tabindex="3" maxlength="3" name="salestaxPercent" class="form-control NumbersAndDecimal" id="salestaxPercent" required />
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Tax Amount</label>
+                                            <input type="text" name="salestaxAmt" class="form-control NumbersAndDecimal" id="salestaxAmt" />
+                                        </div>
+                                    </div>
+                                    <!--One coloum Grand Total-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Grand Total</label>
+                                            <input type="text" name="GrandTotal" class="form-control " id="grandTotal" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label>Remarks</label>
+                                            <textarea rows="4" cols="50" name="remarks" class="form-control " id="remarks"></textarea>
+
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label>Referance</label>
+                                            <textarea rows="2" cols="50" name="referance" class="form-control " id="referance"></textarea>
+
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <!--two coloum Customer /Invoice Type-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Customer Name</label>
+                                            <select id="SelectCustomer" name="CustName" class="form-control "></select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label>Invoice Option</label>
+                                            <select id="SelectInvoiceOption" name="InvOpt" class="form-control "></select>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <div class="modal-footer" style="padding:3px;background-color:#16a085; cursor:pointer" tabindex="5" id="btnCheckOut">
+                                            <h4 style="color:#ffffff; text-align:center"> Payment &nbsp;<span class="glyphicon glyphicon-check glyphicon-align-right"></span> &nbsp; &nbsp; </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--End of form to be serialized-->
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- ***********  Scripts  ************-->
+<script type="text/javascript">
+
+    $(document).ready(function () {
+        $('#GeQuotationSearch').click(function () {
+            GetQuotationItemListUsingAjax(); // call Quotation Item List Items
+            //GetPayUsingAjax(); // call Payment Value
+
+        });
+    });
+
+    $(".someInputClass").focus(function () {
+        $("#myModal_discount").modal("show");
+    });
+
+
+    //Get Data from Sales Table
+    function GetQuotationItemListUsingAjax() {
+        var SearchVal = $("#searchVal").val();
+        $.ajax({
+            type: 'GET',
+            url: '@Url.Action("GetQuotationItemList")',
+            data: { "SearchVal": SearchVal },
+            dataType: 'json',
+            success: function (data) {
+     
+                $('#maintable tbody').empty();
+                    $.each(data, function (i, item) {
+                        var rows = "<tr>"
+                            + "<td>" + item.ID + "</td>"
+                            + "<td>" + item.LocationStockID + "</td>"
+                            + "<td>" + item.ItemName + "</td>"
+                            + "<td>" + item.ItemDesciption + "</td>"
+                            + "<td>" + item.Loc_BatchNo + "</td>"
+                            + "<td>" + item.PackSize + "</td>"
+                            + "<td>" + item.QuotationPackRate + "</td>"
+                            + "<td>" + item.QuotationTotal + "</td>"
+                            + "<td>" + item.QuotationQty.toFixed(2) + "</td>"
+                            + "<td>" + item.FinalQty.toFixed(2) + "</td>"
+                            + "<td>" + dateFormat(item.Loc_ExpiryDate) + "</td>"
+                        
+                            + "</tr>";
+                        $('#maintable tbody').append(rows);
+                    });
+
+                function dateFormat(value) {
+                    
+                    //debugger;
+
+                    if (value == null) {
+                        return "";
+                    }
+                    else {
+
+                        date = new Date(parseInt((value).match(/\d+/)[0]));
+                       
+                    return date.getFullYear() + "-" + ((date.getMonth() + 1) + "").padStart(2, "0") + "-" + (date.getDate() + "").padStart(2, "0") ;
+                    }
+                }
+            },
+            error: function (data) {s
+                alert('error');
+            }
+        });
+    }
+
+
+    //loading jquery datatable
+    $(document).ready(function () {
+        $('#maintable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "format": 'M/D/YYYY',
+            "iDisplayLength": 10,
+            "aLengthMenu": [[5, 10, 25, 50, 100, 500, 1000, -1], [5, 10, 25, 50, 100, 500, 1000, "All"]],
+        });
+    });
+
+    $(".someInputClass").focus(function () {
+        $("#myModal_discount").modal("show");
+    });
+
+
+    //On clicking table row
+    document.getElementById('maintable').onclick = function (event) {
+        event = event || window.event;
+        var target = event.target || event.srcElement;
+        while (target && target.nodeName != 'TR') {
+            target = target.parentElement;
+        }
+        var cells = target.cells;
+        if (!cells.length || target.parentNode.nodeName == 'THEAD') {
+            return;
+        }
+        //alert(cells[1].innerHTML);
+        $(function () {
+            $('#getStockID').val($.trim(cells[1].innerHTML));
+            $('#getItem').val($.trim(cells[2].innerHTML));
+            $('#getPackSize').val($.trim(cells[5].innerHTML));
+            $('#getRate').val($.trim(cells[6].innerHTML));
+            $('#getQty').val($.trim(cells[8].innerHTML));
+            $('#getAmount').val($.trim(cells[7].innerHTML));
+
+            $('#getAvailability').val($.trim(cells[8].innerHTML));
+            $('#locgetQty').val($.trim(cells[9].innerHTML));
+            $('#getunitRete').val($.trim(cells[6].innerHTML));
+
+
+
+        });
+        //clears qty and amt field
+        //$('#getQty').val('');
+        $('#getQtyP').val('');
+        $('#getQtyC').val('');
+        $('#getDisAmt').val('0');
+        $('#disc_prc').val('');
+        $('#disc_amt').val('');
+        $('#disc_type').val('0');
+
+        //$('#getAmount').val('');
+        //focuses cursor on Qty field
+        document.getElementById('getQty').focus();
+
+    }
+
+    //Calculate amount based on input qty
+    $('#getQty').keyup(function () {
+        var available = Number($('#getAvailability').val());
+        var quantity = $('#getQty').val();
+        //var packQty = $('#getRate').val();
+
+        var rate = Number($('#getRate').val());
+        var unitrate = Number($('#getunitRete').val());
+
+
+        var costpart = String(quantity).split(".");
+
+        var avalqty = String(available).split(".");
+
+        var avaliOU = avalqty[0];
+        var avaliOU1 = avalqty[1];
+
+        var output = costpart[0];
+        var output1 = costpart[1];
+
+        if (output > avaliOU) {
+            sweetAlert("Oops...", 'Check your Qty.', "error");
+            $('#getQty').val('');
+        }
+
+        var BA = (output * rate);
+        $('#getQtyP').val(BA);
+
+        if (output1 == '' || output1 == null || output1 == '00') {
+            var BU = (0 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+        else {
+            var BU = (output1 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+
+        var BAval = Number($('#getQtyP').val());
+        var BUval = Number($('#getQtyC').val());
+
+        var amount = BAval + (BUval);
+        $('#getAmount').val(amount).toFixed(2);
+
+
+
+    });
+    //Discount %
+    $('#btn_disc_prc').click(function () {
+        var available = Number($('#getAvailability').val());
+        var quantity = $('#getQty').val();
+        var Disprc = Number($('#disc_prc').val());
+
+
+        var packQty = $('#getPackQty').val();
+
+        var rate = Number($('#getRate').val());
+        var unitrate = Number($('#getunitRete').val());
+
+
+        var costpart = String(quantity).split(".");
+
+        var avalqty = String(available).split(".");
+
+        var avaliOU = avalqty[0];
+        var avaliOU1 = avalqty[1];
+
+        var output = costpart[0];
+        var output1 = costpart[1];
+
+        if (output > avaliOU || output1 > avaliOU1) {
+            sweetAlert("Oops...", 'Check your Qty.', "error");
+            $('#getQty').val('');
+        }
+
+        var BA = (output * rate);
+        $('#getQtyP').val(BA);
+
+        if (output1 == '' || output1 == null || output1 == '00') {
+            var BU = (0 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+        else {
+            var BU = (output1 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+
+        var BAval = Number($('#getQtyP').val());
+        var BUval = Number($('#getQtyC').val());
+
+        var amount = BAval + (BUval);
+        var discountAmount = ((Disprc / 100) * amount).toFixed(2);
+        var _disAmt = amount - (discountAmount)
+
+        var D_type = Number($('#btn_disc_prc').val());
+        var D = Number($('#disc_prc').val()) + '%';
+        $('#getDisAmt').val(D);
+        $('#disc_type').val(D_type);
+        $('#getAmount').val(_disAmt).toFixed(2);
+
+    });
+
+
+
+
+    //Discount Amount
+    $('#btn_disc_amt').click(function () {
+        var available = Number($('#getAvailability').val());
+        var quantity = $('#getQty').val();
+        var DisAmt = $('#disc_amt').val();
+        var packQty = $('#getPackQty').val();
+
+
+        var rate = Number($('#getRate').val());
+        var unitrate = Number($('#getunitRete').val());
+
+
+        var costpart = String(quantity).split(".");
+
+        var avalqty = String(available).split(".");
+
+        var avaliOU = avalqty[0];
+        var avaliOU1 = avalqty[1];
+
+        var output = costpart[0];
+        var output1 = costpart[1];
+
+        if (output > avaliOU || output1 > avaliOU1) {
+            sweetAlert("Oops...", 'Check your Qty.', "error");
+            $('#getQty').val('');
+        }
+
+        var BA = (output * rate);
+        $('#getQtyP').val(BA);
+
+        if (output1 == '' || output1 == null || output1 == '00') {
+            var BU = (0 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+        else {
+            var BU = (output1 * unitrate);
+            $('#getQtyC').val(BU);
+        }
+
+        var BAval = Number($('#getQtyP').val());
+        var BUval = Number($('#getQtyC').val());
+
+        var amount = BAval + (BUval);
+        var _disAmt = amount - (DisAmt)
+        var D_type = Number($('#btn_disc_amt').val());
+        var Da = Number($('#disc_amt').val());
+        $('#getDisAmt').val(Da);
+        $('#disc_type').val(D_type);
+        $('#getAmount').val(_disAmt).toFixed(2);
+
+
+
+    });
+
+    //populates RHS list
+    $('#btnAdd').on('click', function () {
+        var hidqty = $('#locgetQty').val();
+        var avaQty = $('#Qty').val();
+        var isValidation = true;
+        //Validation : Check if salesID and Qty is null
+        if ($('#getQty').val() == '' || $('#getStockID').val() == '' || $('#getQty').val() == 0 || !$.isNumeric($('#getQty').val()) || (hidqty <= avaQty)) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter quantity.', "error"); 
+            //alert();
+        }
+        else {
+            //check for duplication
+            if (CheckStockDuplication($('#getStockID').val())) {
+                sweetAlert("Redundant Record", 'This Stock has already been added. If you want to re-enter, please remove it form the list first!', "error");
+
+            }
+            else {
+                var $table = $('#tblAppendHere');
+                $table.append(
+                    '<tr class="dynamicRows">' +
+                    //gets sales ID for name , value (for form collection) but shows stock id in the list (for UX purpose)
+                    '<td>' + $('#getStockID').val() + '</td>' +
+                    '<td><input type="hidden" class="txtStockID" name="StockID"  value= "' + $('#getStockID').val() + '"/>' + $('#getItem').val() + '</td>' +
+                    '<td><input type="hidden" name="PackSize"     value="' + $('#getPackSize').val() + '"  style="width:60px;"/>' + $('#getPackSize').val() + '</td>' +
+                    '<td><input type="hidden" name="Qty"     value="' + $('#getQty').val() + '"  style="width:60px;"/>' + $('#getQty').val() + '</td>' +
+                    '<td><input type="hidden" name="Rate"    value= "' + $('#getRate').val() + '"/>' + $('#getRate').val() + '</td>' +
+                    '<td><input type="hidden" name="getDisAmt"    value= "' + $('#getDisAmt').val() + '"/>' + $('#getDisAmt').val() + '</td>' +
+                    '<td><input type="hidden" name="Amount" value="' + $('#getAmount').val() + '"  class="subAmt"/>' + $('#getAmount').val() + '</td>' +
+                    '<td><input type="hidden" name="disc_type" value="' + $('#disc_type').val() + '" "/>' + $('#disc_type').val() + '</td>' +
+                    //remove icon
+                    '<td><a href="#" class="glyphicon glyphicon-remove" onclick="removeItem(this)"></a></td>'
+                    + '</tr>'
+
+                );
+
+
+                //cleans form
+                $(function () {
+                    $clear = '';
+                    $('#getStockID').val('');
+                    $('#getItem').val('');
+                    $('#getPackSize').val('');
+                    $('#getQty').val('');
+                    $('#getRate').val('');
+                    $('#getAvailability').val('');
+                    $('#getAmount').val('');
+                    $('#getDisAmt').val('');
+                });
+
+                //calculate sub total
+                update_total();
+                return false;
+            }
+        }
+    });
+
+    //check if stock ID already exists in the list
+    function CheckStockDuplication(stockid) {
+        var flag = false;
+        $('.dynamicRows').each(function () {
+            if ($(this).find('.txtStockID').val() == stockid) {
+                flag = true;
+            }
+        });
+        return flag;
+    };
+
+
+    //calculate sub total amount
+    function update_total() {
+
+        var rows = $('.dynamicRows');
+        var total = Number();
+
+        $.each(rows, function (index, item) {
+            total += Number($(this).children('td').eq(6).text());
+        });
+        $('.setTotal').val(total.toFixed(2));
+        $('.setTotalText').text(total.toFixed(2));
+    };
+
+    //on clicking Next button
+    $('#btnModalTrigger').click(function () {
+        //$('#discountPercent').val('');
+        //$('#discountAmount').val('0');
+        $('#grandTotal').val('');
+        //$('#receivedAmt').val('');
+        $('#returnAmt').val('');
+        $('#SelectCustomer').val('');
+        $('#SelectInvoiceOption').val('');
+        $('#salestaxPercent').val('');
+        $('#salestaxAmt').val('0');
+    });
+
+    //focuses cursor on discount txtbox on modal load
+    $('#myModal').on('shown.bs.modal', function () {
+        $('#salestaxPercent').focus();
+
+    })
+
+
+
+
+    //Calculate Vat Precentage
+
+    $('#salestaxPercent').keyup(function () {
+        var subtotal = Number($('.setTotal').val());
+        var taxpercent = Number($('#salestaxPercent').val());
+        //var dispercent = Number($('#discountPercent').val());
+        //var disAmt = Number($('#discountAmount').val());
+
+        var taxAmount = ((taxpercent / 100) * subtotal);
+        var grandTotal = (subtotal + taxAmount);
+        $('#grandTotal').val(grandTotal.toFixed(2));
+        $('#salestaxAmt').val(taxAmount.toFixed(2));
+
+
+
+    });
+
+    //Calculate sales Tax
+    $('#salestaxAmt').keyup(function () {
+        var subtotal = Number($('.setTotal').val());
+        var salAmt = Number($('#salestaxAmt').val());
+        //var dispercent = Number($('#discountPercent').val());
+        //var disAmt = Number($('#discountAmount').val());
+
+        var taxpercent = ((salAmt / subtotal) * 100);
+        $('#salestaxPercent').val(taxpercent.toFixed(2));
+        var taxAmount = ((taxpercent / 100) * subtotal);
+        var grandTotal = subtotal + (taxAmount);
+        $('#grandTotal').val(grandTotal.toFixed(2));
+
+
+
+    });
+
+
+    //removes record on clicking remove icon
+    function removeItem(obj) {
+        $(obj).parent().parent().remove();
+        //updatae total amount
+        update_total();
+    };
+
+    //on clicking checkout button
+    $('#btnCheckOut').on('click', function () {
+        $('#btnCheckOut').removeAttr("disabled");
+        var grandTotal = Number($('#grandTotal').val());
+        //var PaidAmt = Number($('#receivedAmt').val());
+
+        if (($('.setTotal').val() == "" ||
+            $('.setTotal').val() == NaN ||
+            $('.setTotal').val() == null) ||
+            $('#grandTotal').val() == "" ||
+            $('#receivedAmt').val() == "" ||
+            $('#SelectCustomer').val() == null ||
+            $('#SelectInvoiceOption').val() == null) {
+            // alert("Sorry ! Sales Items are Empty");
+            sweetAlert("Oops...", 'Looks like you forgot to enter correct values.', "error");
+            closeModal();
+        }
+        else if ($('#PaymentMode').val() == 0) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter Payment Mode.', "error");
+            closeModal();
+        }
+
+
+        else {
+
+            //close bootstrap modal
+            $('#myModal').modal('hide');
+            //open loader
+            openModal();
+
+            //post form
+            $.post('../../../SalesEntry/SerializeFormData', $('#formSerialized').serialize(), function (data) {
+                if (data == null) {
+                    closeModal();
+                    swal("Some inputs may be missing!");
+                }
+                else {
+                    closeModal();
+                    window.location.href = "../../../SalesEntry/SalesInvoice/" + data;
+                }
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    function populateCustomer() {
+        $.get('/SalesEntry/PopulateCustomer', {}, function (data) {
+            $('#SelectCustomer').empty();
+            $('#SelectCustomer').append($("<option value='0'>--Select Customer--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectCustomer').append($("<option></option>").val(value.ID).html(value.CustomerName));
+
+            });
+        }, 'json');
+
+    }
+
+    populateCustomer();
+
+    function populateInvoiceType() {
+        $.get('/SalesEntry/PopulateInvoiceType', {}, function (data) {
+            $('#SelectInvoiceOption').empty();
+            $('#SelectInvoiceOption').append($("<option value='0'>--Select Invoice Option--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectInvoiceOption').append($("<option></option>").val(value.InvOptID).html(value.InvoiceName));
+
+            });
+        }, 'json');
+
+    }
+
+    populateInvoiceType();
+
+
+</script>
+
+<style>
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+        background-color: #847BAA;
+        color: #ecf0f1;
+        cursor: pointer;
+    }
+</style>

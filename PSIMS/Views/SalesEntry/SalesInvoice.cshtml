@@ -1,0 +1,361 @@
+﻿﻿﻿
+@model PSIMS.Models.Sales
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<section class="invoice">
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="text-center">
+                <div class="invoice_name">@Model.invoiceOptionEntry.InvoiceName</div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 col-md-3 col-lg-3 pull-left">
+                    <div class="custAddress">
+                        <p>
+                            @if (@Model.Customer.CustNameIsActive == true)
+                            {
+                            @Model.Customer.CustomerName<text>(000</text>@Model.Customer.ID<text>)</text><br>
+                            @Model.Customer.Companyname<br />
+                            @Model.Customer.Address
+                            @Model.Customer.Address_line2<br />
+                            @Model.Customer.City<br />
+                            @Model.Customer.State
+
+
+                            }
+                            else
+                            {
+                            @Model.Customer.Companyname<text>(000</text>@Model.Customer.ID<text>)</text><br>
+                            @Model.Customer.Address
+                            @Model.Customer.Address_line2<br />
+                            @Model.Customer.City<br />
+                            @Model.Customer.State
+                            }
+
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <div class="col-xs-6 col-md-3 col-lg-3 pull-right">
+                    <div class="InvoiceNo">
+                        <p class="inv">#@Model.ID</p><br />
+                        <p class="date">@Model.Date.ToString("yyyy-MM-dd hh:mm tt")</p><br />
+                        <p class="VatNo">.</p>
+
+                    </div>
+                    <div class="Date">
+
+                    </div>
+                    <div class="VatNo">
+                        <p>@Model.Customer.Registation_No</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table line">
+                    <thead>
+                        <tr></tr>
+                    </thead>
+                    <tbody>
+                        @{int count2 = 1;}
+                        @foreach (var item in Model.SalesItems)
+                        {
+                        <tr style="line-height:10px">
+                            <td class="ItemCode">
+                                @item.LocationStock.Item.Name
+
+                            </td>
+                            <td class="desc">
+                                @item.LocationStock.Item.Description.ToString().ToUpper()
+                            </td>
+                            <td class="exdate">
+                                @{
+                                if (item.LocationStock.Loc_ExpiryDate == null)
+                                {
+
+                                }
+                                else
+                                {
+                                @item.LocationStock.Loc_ExpiryDate.Value.ToString("MM/yy")
+                                }
+                                }
+
+                            </td>
+                            <td class="batchno">
+                                @item.LocationStock.Loc_BatchNo.ToUpper()
+                            </td>
+                            <td class="packsize">
+                                @item.LocationStock.Loc_PackSize.ToUpper()
+                            </td>
+                            <td class="qty">
+                                @item.Qty
+                            </td>
+                            <td class="rate">
+                                @item.Rate
+                            </td>
+                            <td class="discountline">
+                                @if (item.iDiscount_type == 0)
+                                {
+
+
+                                }
+                                else if (item.iDiscount_type == 1)
+                                {
+                                @item.UnitDisCountAmt<text>%</text>
+                                }
+                                else if (item.iDiscount_type == 2)
+                                {
+                                <text>(</text>@item.UnitDisCountAmt<text>)</text>
+                                }
+                            </td>
+                            <td class="amount">
+                                @item.Amount
+                            </td>
+                            @{count2++;}
+
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xs-6">
+            <div class="remarks">@Model.Remarks</div>
+        </div>
+        <div class="col-xs-6">
+            <div class="subtotal">
+                <div class="table-responsive1 pull-right">
+                    <table class="table">
+                        <tbody>
+                            <tr>
+                                <th class="sub_total1"></th>
+                                <td class="sub_total">@Model.Amount</td>
+                            </tr>
+                            @*
+                            <tr>
+                                <th class="discount1">
+
+                                    @{
+                                    decimal percent = @Model.Discount / @Model.Amount * 100;
+                                    }
+                                    <text>(@Math.Round(percent, 2) %)</text>
+                                </th>
+                                <td class="discount">@Model.Discount</td>
+                            </tr>*@
+                            <tr>
+                                <th class="tax1">
+
+
+                                    @{
+                                    decimal taxpercent;
+                                    decimal amt = @Model.Amount;
+                                    decimal disamt = @Model.Discount;
+                                    decimal subtot = (amt - disamt);}
+                                    @if (subtot == 0)
+                                    {
+                                    taxpercent = 0;
+                                    }
+                                    else
+                                    {
+                                    taxpercent = @Model.Tax / subtot * 100;
+                                    }
+
+                                    <text>(@Math.Round(taxpercent, 2) %)</text>
+
+                                </th>
+                                <td class="tax">@Model.Tax</td>
+                            </tr>
+                            <tr>
+                                <th class="grandtotal1"></th>
+                                <td class="grandtotal">@Model.GrandTotal</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+
+        </div>
+        <!-- /.col -->
+        <div class="col-xs-6">
+
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row no-print">
+        <div class="col-xs-12">
+            <a href="#" onclick="window.print();" target="_blank" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
+            <a href="/PaymentSettements/PaymentReceiptForSales" class="btn btn-success"><i class="fa fa-sticky-note"></i> Payment Receipt Entry </a>
+            <a href="/SalesEntry/index" class="btn btn-warning"><i class="fa fa-angle-left"></i> Back to Sales Entry</a>
+        </div>
+    </div>
+</section>
+
+<style>
+
+    .invoice_name {
+        font-size: 25px;
+        font-weight: bold;
+        text-align: right;
+        padding-bottom: 5px;
+    }
+
+    .custAddress {
+        padding-top: 130px;
+        float: left;
+        line-height: 18px;
+    }
+
+    .InvoiceNo {
+        float: right;
+        padding-right: 50px;
+        padding-top: 100px;
+    }
+
+    .inv {
+        float: left;
+        padding-top: 20px;
+        padding-bottom: 10px;
+    }
+
+
+    .date {
+        float: left;
+        padding-bottom: 10px;
+    }
+
+    .VatNo {
+        float: left;
+        padding-bottom: 25px;
+    }
+
+    .height {
+        min-height: 200px;
+    }
+
+    .icon {
+        font-size: 47px;
+        color: #5CB85C;
+    }
+
+    .iconbig {
+        font-size: 77px;
+        color: #5CB85C;
+    }
+
+    .table-responsive {
+        height: 465px;
+    }
+
+    .table > tbody > tr > td, .table > tfoot > tr > td {
+        padding: 1px;
+    }
+
+    .table > tbody > tr > .ItemCode {
+        float: left;
+        width: 100px;
+    }
+
+    .table > tbody > tr > .desc {
+        float: left;
+        width: 110px;
+    }
+
+    .table > tbody > tr > .exdate {
+        padding-left: -8px;
+        text-align: right;
+        padding-right: 8px;
+        width: 50px;
+    }
+
+    .table > tbody > tr > .batchno {
+        padding-left: -8px;
+        text-align: right;
+        width: 81px;
+        padding-right: 8px;
+    }
+
+    .table > tbody > tr > .packsize {
+        padding-left: -10px;
+        text-align: right;
+        width: 60px;
+    }
+
+    .table > tbody > tr > .qty {
+        padding-left: -10px;
+        text-align: right;
+        width: 55px;
+    }
+
+    .table > tbody > tr > .rate {
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .table > tbody > tr > .discountline {
+        width: 75px;
+        text-align: right;
+        padding-right: 12px;
+    }
+
+    .table > tbody > tr > .amount {
+        /*float: right;*/
+        text-align: right;
+        padding-right: 10px;
+    }
+
+    .table > tbody > tr > .sub_total1 {
+        /*padding-top: 385px;*/
+        /* padding-top: 0px; ** */
+        padding-right: 25px;
+    }
+
+    .table > tbody > tr > .sub_total {
+        /*padding-top: 385px;*/
+        padding-left: 25px;
+        padding-bottom: 10px;
+        /*padding-bottom: 05px;*/
+        float: right;
+    }
+
+    /*.table > tbody > tr > .discount1 {
+        padding-top: 10px;
+
+    }*/
+
+    /*.table > tbody > tr > .discount {
+        padding-top: 10px;
+        text-align: right;
+    }*/
+
+    .table > tbody > tr > .tax1 {
+        padding-top: 10px;
+    }
+
+    .table > tbody > tr > .tax {
+        padding-top: 10px;
+        text-align: right;
+    }
+
+    .table > tbody > tr > .grandtotal1 {
+        padding-top: 15px;
+    }
+
+    .table > tbody > tr > .grandtotal {
+        padding-top: 15px;
+        padding-left: 25px;
+        float: right;
+    }
+</style>

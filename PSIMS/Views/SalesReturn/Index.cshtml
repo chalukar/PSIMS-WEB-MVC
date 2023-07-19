@@ -1,0 +1,116 @@
+﻿@model IEnumerable<PSIMS.Models.SalesReturn>
+
+@{
+    ViewBag.Title = "Sales Return";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="box box-body box-primary">
+    <table class="table table-striped table-responsive" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Sales ID
+                </th>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Sub Total
+                </th>
+                <th>
+                    Discount Deducted
+                </th>
+                <th>
+                    Net Returned Amount
+                </th>
+                <th>
+                    Status
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SalesID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ReturnedDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Subtotal)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Discount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NetTotal)
+                </td>
+                <td>
+                    @{
+                        if (item.salesReturnStatus == 0)
+                        {
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+
+                        }
+                        else if (item.salesReturnStatus == 1) // To Stock
+                        {
+
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Return To Stock</a>
+                        }
+                        else if (item.salesReturnStatus == 2) //to Discard
+                        {
+
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Return To Discard</a>
+                        }
+
+                    }
+                </td>
+                <td>
+                    @if (item.salesReturnStatus == 0)
+                    {
+                        @Html.ActionLink("Details", "ReturnDetails", new { id = item.ID })
+                    }
+                    else if (item.salesReturnStatus == 1)
+                    {
+                        @Html.ActionLink("Details", "ReturnDetails", new { id = item.ID })
+                    }
+                    else if (item.salesReturnStatus == 2)
+                    {
+                        @Html.ActionLink("Details", "ReturnDetails", new { id = item.ID })
+                    }
+
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        //$('#dtaTable').DataTable({
+        //    "paging": true,
+        //    "ordering": true,
+        //    "info": true
+        //});
+
+        $('#dtaTable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+    });
+</script>
+

@@ -1,0 +1,118 @@
+﻿@model IEnumerable<PSIMS.Models.SalesModel.Customer>
+
+@{
+    ViewBag.Title = "List of Customers";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-body box-primary">
+    <p>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+        @Html.ActionLink("Export to CSV", "ExportToCSV", "ExportExcel", new { @class = "btn btn-primary btn bg-purple btn-flat" })
+    
+    </p>
+    <table class="table table-striped" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.CustomerName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Registation_No)
+                </th>
+
+                <th>
+                    @Html.DisplayNameFor(model => model.TelPhoneNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MobileNo)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Email)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Companyname)
+                </th>
+                <th>
+                    Status
+                </th>
+                @*<th>
+                    Image
+                </th>*@
+              
+                <th>Action</th>
+            </tr>
+            </thead>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <th>
+                        @Html.DisplayFor(model => item.ID)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CustomerName)
+                    </td>
+                    <th>
+                        @Html.DisplayFor(model => item.Registation_No, new { @Style = "text-transform: uppercase" })
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.TelPhoneNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MobileNo)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Email)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Companyname)
+                    </td>
+                    <td>
+                      @{
+                        if (item.Status == 0)
+                        {
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+                        }
+                        else
+                        {
+                            <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>InActive</a>
+                        }
+                        }
+                    </td>
+
+                    @*<td>
+                        <img src="~/IMG/@item.ImageURL" alt="" height=50 width=70/>
+                    </td>*@
+                    <td>
+                        <div class="dropdown">
+                            <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID }) </li>
+                                <li>@Html.ActionLink("Details", "Details", new { id = item.ID }) </li>
+                                <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+                               
+                            </ul>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

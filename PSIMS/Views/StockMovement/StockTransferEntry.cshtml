@@ -1,0 +1,581 @@
+﻿@model PSIMS.ViewModel.StockDistributionVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+<div class=" box  box-primary box-body">
+    <div class="row ">
+        <div class="col-md-4">
+            <div class="row">
+                <div class="col-md-10">
+                    Transfer Location<br />
+                    <select id="SelectLocation" class="form-control text-uppercase" ></select>
+                    <span class="error"> Required field !</span>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-4">
+            Trnsfer ID<br />
+            <input type="text" id="transferID" name="transferID" class="form-control text-uppercase" readonly />
+            <input id="Button1" type="button" value="button" onclick="getnum()" />
+            <span class="error"> Required field !</span>
+        </div>
+        <div class="col-md-4">
+            Date<br />
+            <input type="text" id="TransfergDate" class="form-control datepicker checkDateNoGraterThanToday" />
+            <span class="error"> Required field !</span>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="row">
+                <div class="col-sm-4">Stock ID</div>
+                <div class="col-sm-8"><input type="text" id="stockid" name="stockid" class="form-control" readonly /><span class="error">Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Source</div>
+                <div class="col-sm-8"><select id="selectSource" name="selectSource" class="form-control text-uppercase"></select><span class="error"> Required field !</span></div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-4">Destination</div>
+                <div class="col-sm-8"><select id="selectdestination" name="selectdestination" class="form-control text-uppercase"></select><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Item</div>
+                <div class="col-sm-8"><select id="selectitem" name="selectitem" class="form-control text-uppercase" onchange="getBatchNoList()"></select><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Batch No</div>
+                <div class="col-sm-8"><select id="selectbatchNo" name="selectbatchNo" class="form-control text-uppercase" onchange="getAvliQty()"></select><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Stock.Qty</div>
+                <div class="col-sm-8"><input type="text" id="availqty" name="availqty" class="form-control NumbersAndDecimal" readonly /><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">After Transferred Qty</div>
+                <div class="col-sm-8"><input type="text" id="atrfqty" name="atrfqty" class="form-control NumbersAndDecimal" readonly /><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Dist.Qty</div>
+                <div class="col-sm-8"><input type="text" id="distqty" name="distqty" class="form-control NumbersAndDecimal" /><span class="error"> Required field !</span></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4">Note</div>
+                <div class="col-sm-8"><input type="text" id="note" name="note" class="form-control text-uppercase" /><span class="error"> Required field !</span></div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-4"></div>
+                <div class="col-sm-8"><button type="button" id="btnAdd" class="btn btn-primary">Add to list</button></div>
+            </div>
+        </div>
+        
+
+        <div class="col-sm-8">
+            <div style=" background-color:#34495e; color:white; padding:10px">Stock Transfer List</div>
+            @********table here***********@
+            <div id="orderstock" class="tablecontainer" style="height:400px; overflow-y:scroll; border:1px solid #BFAEAE">
+
+            </div>
+            <div>
+                <br />
+                <input type="submit" class=" btn btn-primary" id="btnSubmit" value="Submit" />
+                @*<button style="padding: 5px 30px 5px 30px" type="button" class="btn btn-primary pull-right" id="btnSubmit" data-toggle="modal" data-target="#myModal">
+                    Submit <span class="glyphicon glyphicon-triangle-right"></span>
+                </button>*@
+            </div>
+        </div>
+    </div>
+ </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+    //populating supplier dropdown
+    populateLocation();
+    populateSource();
+    populateDestination();
+    populateItem();
+    populateTransferID()
+    //function getnum() {
+    //    //// alert(nullarray[j]);
+    //   // var locDoce = $('#SelectLocation').val();
+    //    var LocationID = $('#SelectLocation').val();
+    //    var LocationCode = $('#SelectLocation option:selected').text().substring(0, 3);
+    //    var autogencode = nullarray[j]
+    //    var gettransferID = LocationCode + autogencode
+    //    $('#transferID').val(gettransferID);
+    //    j++;
+    //    //$('#transferID').val(nullarray[j]);
+       
+
+    //    //alert(gettrID);
+       
+    //}
+
+   
+    //get location
+    function populateLocation() {
+        $.get('/StockMovement/PopulateLocation', {}, function (data) {
+            $('#SelectLocation').empty();
+            $('#SelectLocation').append($("<option value='0'>--Select Transfer Locarion--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectLocation').append($("<option></option>").val(value.ID).html(value.LocationCode + "-" + value.LocationName));
+            });
+        }, 'json');
+
+    }
+
+
+
+
+    //datepicker
+    $(function () {
+        $(".datepicker").datepicker({
+            format: 'yyyy-mm-dd'
+        });
+    });
+
+
+   
+   //Select Source
+    function populateSource() {
+
+        $.get('/StockMovement/PopulateSource', {}, function (data) {
+            $('#selectSource').empty();
+            $('#selectSource').append($("<option value='0'>--Select Source--</option>"));
+            $.each(data, function (key, value) {
+                $('#selectSource').append($("<option></option>").val(value.ID).html(value.LocationName));
+            });
+        }, 'json');
+    }
+
+
+    //Get TransferID
+    function populateTransferID() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/StockMovement/PopulateTransferID',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result != null) {
+
+                    var d = new Date();
+                    var trDate = d.getFullYear() + "" + (d.getMonth() + 1) + "" + d.getDate();
+                    var trID = result.ID + 1;
+                   
+                    var gatYrID = trDate + trID
+                    
+                    $('#transferID').val(gatYrID);
+
+                }
+
+            },
+            error: function (result) {
+                alert('error');
+            }
+        });
+    }
+
+
+
+
+    //Select Destination
+    function populateDestination() {
+
+        $.get('/StockMovement/PopulateDestionation', {}, function (data) {
+            $('#selectdestination').empty();
+            $('#selectdestination').append($("<option value='0'>--Select Destination--</option>"));
+            $.each(data, function (key, value) {
+                $('#selectdestination').append($("<option></option>").val(value.ID).html(value.LocationName));
+            });
+        }, 'json');
+    }
+
+    ////Select Destination
+    function populateItem() {
+
+        $.get('/StockMovement/PopulateItem', {}, function (data) {
+            $('#selectitem').empty();
+            $('#selectitem').append($("<option value='0'>--Select Item Code--</option>"));
+            $.each(data, function (key, value) {
+                $('#selectitem').append($("<option></option>").val(value.ID).html(value.ItemCode));
+            });
+        }, 'json');
+    }
+
+    //Clear Avalability Qty
+    $('#selectitem').focus(function () {
+        $("#availqty").val("");
+    });
+
+    //Get BatchNo Select By ItemCode
+    function getBatchNoList() {
+        debugger;
+        var stateId = $("#selectitem").val();
+        $.ajax({
+            url: '/StockMovement/PopulateBatchNo',
+            type: 'POST',
+            datatype: 'application/json',
+            contentType: 'application/json',
+            data: JSON.stringify({ stateId: +stateId }),
+            success: function (result) {
+                $("#selectbatchNo").html("");
+
+                $("#selectbatchNo").append
+                ($('<option></option>').val(null).html("---Select Batch No---"));
+                $.each($.parseJSON(result), function (i, value)
+                { $("#selectbatchNo").append($('<option></option>').val(value.ID).html(value.BatchNo)) })
+
+            },
+            error: function () { alert("Whooaaa! Something went wrong..") },
+        });
+    }
+
+    //Get Avalability QTY Select By Batch No
+    function getAvliQty() {
+        var SearchVal = $("#selectbatchNo").val();
+        $.ajax({
+            type: 'GET',
+            url: '/StockMovement/PopulateAvilQty',
+            data: { "SearchVal": SearchVal },
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result != null) {
+
+                    $('#stockid').val(result.ID);
+                    $('#availqty').val(result.MovingQty);
+
+                }
+
+            },
+            error: function (result) {
+                alert('error');
+            }
+        });
+    }
+    //after transferred qty calculatuin
+
+    $('#btnAdd').on('click', function () {
+
+
+        var avaqty = Number($('#availqty').val());
+        var disqty = Number($('#distqty').val());
+        //var afqty = Number($('#atrfqty').val());
+
+        if(avaqty == 0 ||  avaqty < disqty || disqty ==0 || disqty ==null || disqty =='' )
+        {
+            alert("Error");
+            $('#distqty').val('');
+            $('#atrfqty').val('');
+        }
+        else
+        {
+            var remainingqty = (avaqty - disqty);
+            $('#atrfqty').val(remainingqty);
+
+        }
+        
+
+    });
+
+    var TransferredStock = [];
+    $('#btnAdd').on('click', function () {
+
+        //jQuery Validations
+        var isValidation = true;
+        if ($('#SelectLocation').val() == "0") {
+            isValidation = false;
+            $('#SelectLocation').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectLocation').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#transferID').val() == "") {
+            isValidation = false;
+            $('#transferID').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#transferID').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#TransfergDate').val() == '') {
+            isValidation = false;
+            $('#TransfergDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#TransfergDate').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#selectSource').val() == "0") {
+            isValidation = false;
+            $('#selectSource').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectSource').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#selectdestination').val() == "0") {
+            isValidation = false;
+            $('#selectdestination').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectdestination').siblings('span.error').css('visibility', 'hidden');
+        }
+        
+        if ($('#selectitem').val() == "0") {
+            isValidation = false;
+            $('#selectitem').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectitem').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#selectbatchNo').val() == null) {
+            isValidation = false;
+            $('#selectbatchNo').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#selectbatchNo').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#availqty').val() == "") {
+            isValidation = false;
+            $('#availqty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#availqty').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#distqty').val() == "") {
+            isValidation = false;
+            $('#distqty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#distqty').siblings('span.error').css('visibility', 'hidden');
+        }
+        if (isValidation) {
+            TransferredStock.push({
+                StockID: $('#stockid').val(),
+                SourceID: $('#selectSource').val(),
+                SourceName: $('#selectSource option:selected').text(),
+                DestinationID: $('#selectdestination').val(),
+                DestinationName: $('#selectdestination option:selected').text(),
+                ItemID: $('#selectitem').val(),
+                ItemCode: $('#selectitem option:selected').text(),
+                BatchID: $('#selectbatchNo').val(),
+                BatchNo: $('#selectbatchNo option:selected').text(),
+                AvaliQty: $('#availqty').val(),
+                Distqty: $('#distqty').val(),
+                Note: $('#note').val(),
+                
+                TransferID: $('#transferID').val(),
+     
+                //BonusIncluded: 0
+            });
+
+            // $('#selectItem').val('0').focus();
+
+            populateSource();
+            populateDestination();
+            populateItem();
+            getBatchNoList();
+            $('#stockid, #availqty,#atrfqty,#distqty,#note').val('');
+        }
+        GeneratedItemsTable();
+    });
+       
+
+    function GeneratedItemsTable() {
+        if (TransferredStock.length > 0) {
+            var $table = $('<table id="mytable" class="table table-striped table-hover"/>');
+            $table.append('<thead><tr style="background-color:rgb(201, 211, 218);"><th>StockID</th><th>Source</th><th>Destination</th><th>ItemCode</th><th>BatchNo</th><th>Distqty</th><th>Note</th><th>Delete</th></tr></thead>');
+          
+            var $tbody = $('<tbody/>');
+
+            // var $table = $('.tableList');
+            // var $tbody = $('<tbody/>');
+
+            $.each(TransferredStock, function (i, val) {
+                var $row = $('<tr/>');
+               // $row.append($('<td/>').html(val.TransferID));
+                $row.append($('<td/>').html(val.StockID));
+                $row.append($('<td/>').html(val.SourceName));
+                $row.append($('<td/>').html(val.DestinationName));
+                $row.append($('<td/>').html(val.ItemCode));
+                $row.append($('<td/>').html(val.BatchNo));
+                $row.append($('<td/>').html(val.Distqty));
+                $row.append($('<td/>').html(val.Note));
+                $row.append($('<td/>').html('<a href=# onclick="removeItem(this)" ><span class="glyphicon glyphicon-trash"></span></a>'));
+                $tbody.append($row);
+            });
+            $table.append($tbody);
+            $('#orderstock').html($table);
+        }
+        else {
+            alert(" Stock Transferred List is empty !");
+        }
+    }
+
+    //removes record on clicking remove icon and associated array
+    function removeItem(obj) {
+        var $index = $(obj).parent().parent()[0].sectionRowIndex;
+        alert($index);
+        TransferredStock.splice($index, 1);
+        $(obj).parent().parent().remove();
+        GeneratedItemsTable();
+    }
+
+
+    $('#btnSubmit').on('click', function () {
+        var isAllValid = true;
+
+        if (TransferredStock.length == 0) {
+            isAllValid = false;
+            alert('Please Add items to locations!');
+        }
+
+        if ($('#SelectLocation').val() == "0") {
+            isAllValid = false;
+            $('#SelectLocation').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectLocation').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#transferID').val().trim() == '') {
+            isAllValid = false;
+            $('#transferID').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#transferID').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#TransfergDate').val() == '') {
+            isAllValid = false;
+            $('#TransfergDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#TransfergDate').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if (isAllValid) {
+            var data = {
+                LocationID:$('#SelectLocation').val(),
+                transferID: $('#transferID').val(),
+                Date: $('#TransfergDate').val().trim(),
+               
+                TransferredStock: TransferredStock
+            }
+            $(this).val('Please wait...');
+
+            //post data to server
+            $.ajax({
+                url: 'SaveTransferStock',
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (d) {
+                    //check is successfully save to database
+                    if (d.status == true) {
+                        //will send status from server side
+                        alert('Successfully done.');
+                        location.reload(true);
+                        //clear form
+                        TransferredStock = [];
+                        $('#SelectLocation').val('0');
+                        $('#transferID').val('');
+                        $('#TransfergDate').val('');
+
+                    }
+                    else {
+                        alert('Failed');
+                    }
+                    $('#submit').val('Save');
+                },
+                error: function () {
+                    // alert('Error. Please try again.');
+                    sweetAlert("Oops...", ' Please try again.', "error");
+                    closeModal();
+                    $('#btnSubmit').val('Save');
+                }
+            });
+        }
+    });
+
+    //var j = 0;
+    //var nullarray = [];
+    //$(function () {
+    //    var d = new Date();
+
+    //    var month = d.getMonth() + 1;
+    //    var day = d.getDate();
+
+    //    var output = d.getFullYear() + '' +
+    //        (month < 10 ? '0' : '') + month + '' +
+    //        (day < 10 ? '0' : '') + day;
+
+    //    for (var i = 0; i < 100; i++) {
+    //        var serialnum = output + "-" + i;
+    //        nullarray.push(serialnum);
+    //    }
+
+    //});
+
+   
+
+</script>
+
+
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    *[role="form"] {
+        max-width: 530px;
+        padding: 10px;
+        margin: 0 auto;
+        background-color: #fff;
+        border-radius: 0.3em;
+    }
+
+        *[role="form"] h2 {
+            margin-left: 1em;
+            margin-bottom: 1em;
+        }
+    /*
+    .tablecontainer table {
+        width: 100%;
+        border-collapse: collapse;
+        border-top: 1px solid #BFAEAE;
+        border-right: 1px solid #BFAEAE;
+    }
+
+    .tablecontainer th {
+        border-bottom: 2px solid #BFAEAE !important;
+        background-color: #3d566e;
+        color: #ecf0f1;
+    }
+
+    .tablecontainer th, .tablecontainer td {
+        text-align: left;
+        border-left: 1px solid #BFAEAE;
+        padding: 5px;
+        border-bottom: 1px solid #BFAEAE;
+    }*/
+</style>
+

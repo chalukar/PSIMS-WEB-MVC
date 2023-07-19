@@ -1,0 +1,282 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.StockMovement>
+
+@{
+    ViewBag.Title = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+
+<div class="box box-body box-primary">
+    <table class="table table-striped" id="tblReceiveStock" cellpadding="0" cellspacing="0">
+        <thead class="dataTableHead">
+            <tr>
+                <th style="width:50px">ID</th>
+                <th style="width:150px">Item Code</th>
+                <th style="width:100px">Batch No</th>
+                <th style="width:100px">Tranf.Qty</th>
+                <th style="width:100px">Tranf Date</th>
+                <th style="width:50px">Rec.Qty</th>
+                <th style="width:100px">Status</th>
+                <th style="width:100px">Remarks</th>
+                <th style="width:100px">Action</th>
+            </tr>
+        </thead>
+        @foreach (var StockMovement in Model)
+        {
+            <tr>
+                <td class="ID">
+                    <span>@StockMovement.ID</span>
+                </td>
+                <td class="ItemCode">
+                    <span>@StockMovement.Item.Name</span>
+                    @*<input type="text" value="@customer.Name" style="display:none"  readonly/>*@
+                </td>
+                <td class="BatchNo">
+                    <span>@StockMovement.Stock.BatchNo</span>
+                    @*<input type="text" value="@TransferStock.Stock.BatchNo" style="display:none" />*@
+                </td>
+                <td class="DistributedQty">
+                    <span>@StockMovement.DistributedQty</span>
+                </td>
+                <td class="TransferdOn">
+                    <span>@StockMovement.TransferdOn.ToString("yyyy-MM-dd")</span>
+                </td>
+                <td class="ReceivedQty">
+                    <span>@StockMovement.ReceivedQty</span>
+                    <input type="text" value="@StockMovement.ReceivedQty" style="display:none" />
+                </td>
+                <td class="Status">
+                    <span>
+                        @{
+                            if (StockMovement.Status == 0)
+                            {
+                                <a href="#" style="padding: 3px 10px 3px 10px; background-color:orange " class="badge" readonly>Pending</a>
+                            }
+                            else if (StockMovement.Status == 1)
+                            {
+                                <a href="#" style="padding: 3px 10px 3px 10px; background-color:yellowgreen " class="badge" readonly>Partial</a>
+                            }
+                            else if (StockMovement.Status == 2)
+                            {
+                                <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Completed</a>
+                            }
+                        }
+                    </span>
+
+                    @*<span>@TransferStock.Status</span>
+                        <input type="text" value="@TransferStock.Status" style="display:none" />*@
+                </td>
+                <td class="Remarks">
+                    <span>@StockMovement.Remarks</span>
+                    <input type="text" value="@StockMovement.Remarks" style="display:none" />
+                </td>
+                <td>
+                    <a class="Edit" href="javascript:;">Edit</a>
+                    <a class="Update" href="javascript:;" style="display:none">Update</a>
+                    <a class="Cancel" href="javascript:;" style="display:none">Cancel</a>
+                    <a class="Delete" href="javascript:;">Delete</a>
+                </td>
+            </tr>
+        }
+    </table>
+    <div class="row">
+        <div style="padding-left:20px; float:left;">
+            <a class="btn btn-info" href="/StockMovement/ReceivedIndex"><i class="fa fa-angle-left"></i> Back</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+<script type="text/javascript">
+    //$(function () {
+    //    Remove the dummy row if data present.
+    //    if ($("#tblReceiveStock tr").length > 0) {
+    //        $("#tblReceiveStock tr:eq(1)").remove();
+    //    }
+    //});
+
+    //function AppendRow(row, customerId, name, country) {
+    //    //Bind CustomerId.
+    //    $(".CustomerId", row).find("span").html(customerId);
+
+    //    //Bind Name.
+    //    $(".Name", row).find("span").html(name);
+    //    $(".Name", row).find("input").val(name);
+
+    //    //Bind Country.
+    //    $(".Country", row).find("span").html(country);
+    //    $(".Country", row).find("input").val(country);
+    //    $("#tblCustomers").append(row);
+    //};
+
+    ////Add event handler.
+    //$("body").on("click", "#btnAdd", function () {
+    //    var txtName = $("#txtName");
+    //    var txtCountry = $("#txtCountry");
+    //    $.ajax({
+    //        type: "POST",
+    //        url: "/Home/InsertCustomer",
+    //        data: '{name: "' + txtName.val() + '", country: "' + txtCountry.val() + '" }',
+    //        contentType: "application/json; charset=utf-8",
+    //        dataType: "json",
+    //        success: function (r) {
+    //            var row = $("#tblCustomers tr:last-child").clone(true);
+    //            AppendRow(row, r.CustomerId, r.Name, r.Country);
+    //            txtName.val("");
+    //            txtCountry.val("");
+    //        }
+    //    });
+    //});
+
+    //Edit event handler.
+    $("body").on("click", "#tblReceiveStock .Edit", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                $(this).find("input").show();
+                $(this).find("span").hide();
+            }
+        });
+        row.find(".Update").show();
+        row.find(".Cancel").show();
+        row.find(".Delete").hide();
+        $(this).hide();
+    });
+
+    //Update event handler.
+    $("body").on("click", "#tblReceiveStock .Update", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                span.html(input.val());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Cancel").hide();
+        $(this).hide();
+
+        var _stockMovement = {};
+        _stockMovement.ID = row.find(".ID").find("span").html();
+        _stockMovement.DistributedQty = row.find(".DistributedQty").find("span").html();
+        _stockMovement.ReceivedQty = row.find(".ReceivedQty").find("span").html();
+        _stockMovement.Status = row.find(".Status").find("span").html();
+        _stockMovement.Remarks = row.find(".Remarks").find("span").html();
+
+
+        if (_stockMovement.DistributedQty < _stockMovement.ReceivedQty) {
+
+
+            sweetAlert("Oops...", "Something went wrong!", "error");
+        }
+        else {
+
+            if (_stockMovement.ReceivedQty == 0) {
+                _stockMovement.Status = 0;
+            }
+            else if (_stockMovement.DistributedQty > _stockMovement.ReceivedQty && _stockMovement.DistributedQty != _stockMovement.ReceivedQty) {
+                _stockMovement.Status = 1;
+            }
+            else if (_stockMovement.DistributedQty == _stockMovement.ReceivedQty) {
+                _stockMovement.Status = 2;
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "/StockMovement/UpdateReceiveStock",
+                data: '{_stockMovement:' + JSON.stringify(_stockMovement) + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json"
+            });
+        }
+
+    });
+
+    //Cancel event handler.
+    $("body").on("click", "#tblReceiveStock .Cancel", function () {
+        var row = $(this).closest("tr");
+        $("td", row).each(function () {
+            if ($(this).find("input").length > 0) {
+                var span = $(this).find("span");
+                var input = $(this).find("input");
+                input.val(span.html());
+                span.show();
+                input.hide();
+            }
+        });
+        row.find(".Edit").show();
+        row.find(".Delete").show();
+        row.find(".Update").hide();
+        $(this).hide();
+    });
+
+    //Delete event handler.
+    $("body").on("click", "#tblReceiveStock .Delete", function () {
+        if (confirm("Do you want to delete this row?")) {
+            var row = $(this).closest("tr");
+            var customerId = row.find("span").html();
+            $.ajax({
+                type: "POST",
+                url: "/Home/DeleteCustomer",
+                data: '{customerId: ' + customerId + '}',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (response) {
+                    row.remove();
+                }
+            });
+        }
+    });
+
+    $('.datepicker').datepicker();
+
+
+    $('.x').iCheck({
+        checkboxClass: 'icheckbox_minimal',
+        radioClass: 'iradio_minimal',
+        increaseArea: '20%' // optional
+    });
+
+    //$(document).ready(function () {
+    //    $('#dtaTable').DataTable({
+    //        "paging": true,
+    //        "ordering": true,
+    //        "info": true
+    //    });
+    //});
+    $(document).ready(function () {
+        $('#tblReceiveStock').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+
+        //$(document).ready(function () {
+        //    $('#tblReceiveStock').DataTable({
+        //        "order": [[1, "desc"]],
+        //        // "pageLength": 50,    //shows default page length to be 50
+        //        // "lengthMenu": [[10, 25, 50,100, -1], [10, 25, 50,100, "All"]]
+        //        "lengthMenu": [[5, 10, 25, 50, 100, -1], [5, 10, 25, 50, 100, "All"]]
+        //    });
+
+
+
+</script>
+
+
+
+
+
+
+

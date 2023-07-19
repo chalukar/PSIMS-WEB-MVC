@@ -1,0 +1,266 @@
+﻿@model IEnumerable<PSIMS.Models.Sales>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Payments list of Customer";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/select2/dist/js/select2.min.js"></script>
+
+<div class="box box-primary ">
+    <form method="Post" action="CustomerSales">
+        @*<form id="form1">*@
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <label>Payment Type</label> <br />
+                    <select class="form-control" name="PaymentType">
+                        <option>--Select--</option>
+                        <option value="0" id="Pendingpayment">Pending Payment</option>
+                        <option value="PP">Part Payment</option>
+                        <option value="FP">Full Payment </option>
+                        <option value="BP">Balance Payment</option>
+
+                    </select>
+                </td>
+                <td>
+                    <label>Invoice No</label><br />
+                    <input type="text" class="form-control" name="invoiceNo" />
+                </td>
+                <td>
+                    <label>Select</label><br />
+                    <select class="form-control" name="option">
+                        <option>--Select--</option>
+                        <option value="today" id="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="thisWeek">This Week</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="lastYear">Last Year</option>
+                    </select>
+                </td>
+                <td>
+                    <label>Customer</label> <br />
+                    <select id="SelectCustomer" name="customer" class="form-control"></select>
+                </td>
+                <td>
+                    `
+                    <label>From</label><br />
+                    <input type="text" class="datepicker form-control" name="fromDate" />
+                </td>
+                <td>
+                    <label>To</label><br />
+                    <input type="text" class="datepicker form-control" name="toDate" />
+                </td>
+                @*<td>
+            <label>Status</label>
+            <br />
+            <select name="IsActive" class="form-control">
+                <option value="0">--Select--</option>
+                <option value="1">Active</option>
+                <option value="2">Cancel</option>
+            </select>
+        </td>*@
+                <td></td>
+                <td>
+                    <br />
+                    <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+
+<div id="renderTable" class="box box-primary box-body ">
+    <table class="table table-responsive table-striped" id="datatable">
+        <thead>
+            <tr class="dataTableHead">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Customer Name
+                </th>
+                <th>
+                    Invoice Date
+                </th>
+                <th>
+                    Net Amount
+                </th>
+                <th>
+                    Grabd Total
+                </th>
+                <th>
+                    Balance
+                </th>
+                <th>
+                    Last Payment
+                </th>
+                <th>
+                    Payment Type
+                </th>
+                <th>
+                    Created By
+                </th>
+                <th>
+                   Status
+                </th>
+                <th>Action</th>
+            </tr>
+        </thead>
+      
+        
+
+        @foreach (var item in Model)
+        {
+
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Customer.CustomerName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.GrandTotal)
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.unitbalance)
+                @*@if (item.unitbalance == 0 || item.unitbalance == null)
+        {
+            @Html.DisplayFor(modelItem => item.GrandTotal)
+        }
+        else
+        {
+            @Html.DisplayFor(modelItem => item.unitbalance)
+
+        }*@
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastReceiptAmt)
+            </td>
+            <td>
+                @{ if (item.PaymentType == "0")
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:darkred " class="badge" readonly>Pending Payment</a>
+                    }
+                    else if (item.PaymentType == "PP")
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:mediumseagreen " class="badge" readonly>Part Payment</a>
+                    }
+                    else if (item.PaymentType == "FP")
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:forestgreen " class="badge" readonly>Full Payment</a>
+                    }
+                    else if (item.PaymentType == "BP")
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:forestgreen " class="badge" readonly>Balance Payment</a>
+                    }
+                }
+            </td>
+            <td>
+
+                @{var fullname = db.Users.Where(u => u.Id == item.UserID).First().UserName ?? "n/a";}
+                @fullname
+            </td>
+            <td>
+                @{ if (item.IsActive == 1)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+                    }
+                    else
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Cancel</a>
+                    }
+                }
+
+
+            </td>
+
+            <td>
+                <div class="dropdown">
+                    <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                        Actions
+                        <span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                        <li>@Html.ActionLink("Details", "CustomerSalesItem_Report", new { id = item.ID })</li>
+
+
+                    </ul>
+                </div>
+
+            </td>
+        </tr>
+        }
+
+        @*<tfoot>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><b>Grand Total : </b></td>
+                <td><strong>@GrandTtl</strong> </td>
+                <td><strong>@BalanceTtl</strong></td>
+            </tr>
+        </tfoot>*@
+
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'yyyy/mm/dd'
+        });
+
+
+        $('.x').iCheck({
+            checkboxClass: 'icheckbox_minimal',
+            radioClass: 'iradio_minimal',
+            increaseArea: '20%' // optional
+        });
+
+        $('#datatable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+
+        $("#SelectCustomer").select2();
+
+        $.get('../../../SalesEntry/PopulateCustomer', {}, function (data) {
+            $('#SelectCustomer').empty();
+            $('#SelectCustomer').append($("<option value=''>--Select Customer--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectCustomer').append($("<option></option>").val(value.ID).html(value.CustomerName));
+            });
+        }, 'json');
+
+    });
+</script>
+<style>
+    #SelectCustomer{
+        width:300px;
+    }
+</style>
+
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

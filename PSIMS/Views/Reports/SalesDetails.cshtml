@@ -1,0 +1,182 @@
+﻿@model IEnumerable<PSIMS.Models.SalesItem>
+@{
+    ViewBag.Title = "Sales Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+
+
+<div class="box box-primary ">
+    <form method="Post" action="SalesDetails">
+        @*<form id="form1">*@
+        <table class="table table-striped">
+            <tr>
+                <td>
+                    <label>Select</label><br />
+                    <select class="form-control" name="option">
+                        <option>--Select--</option>
+                        <option value="today" id="today">Today</option>
+                        <option value="yesterday">Yesterday</option>
+                        <option value="thisWeek">This Week</option>
+                        <option value="thisMonth">This Month</option>
+                        <option value="lastMonth">Last Month</option>
+                        <option value="thisYear">This Year</option>
+                        <option value="lastYear">Last Year</option>
+                    </select>
+                </td>
+                <td>
+                    <label>Customer</label> <br />
+                    <select id="SelectCustomer" name="customer" class="form-control"></select>
+                </td>
+                <td>
+                    `
+                    <label>From</label><br />
+                    <input type="text" class="datepicker form-control" name="fromDate" />
+                </td>
+                <td>
+                    <label>To</label><br />
+                    <input type="text" class="datepicker form-control" name="toDate" />
+                </td>
+                <td>
+                    <label>Is Active</label>
+                    <br />
+                    <select name="IsActive" class="form-control">
+                        <option value="">--Select--</option>
+                        <option value="1">Active</option>
+                        <option value="2">Cancel</option>
+                    </select>
+                </td>
+
+                <td></td>
+                <td>
+                    <br />
+                    <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+                    <input type="button" class="btn btn-default" id="showAll" value="Show All" />
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div id="renderTable" class="box box-primary box-body ">
+    <table class="table table-responsive table-striped" id="datatable">
+        <thead>
+            <tr class="dataTableHead">
+                <th>
+                    Sales ID
+                </th>
+
+                <th>
+                    Date
+                </th>
+                <th>
+                    Stock ID : Item Code
+                </th>
+                @*<th>
+                    Description
+                </th>
+                <th>
+                    Batch No
+                </th>*@
+                <th>
+                    Qty
+                </th>
+                <th>
+                    Discount
+                </th>
+                <th>
+                    Rate
+                </th>
+
+                <th>
+                    Amount
+                </th>
+                <th>
+                    Is Active
+                </th>
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.SalesID)
+            </td>
+
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StockID) @*<text>&nbsp; : &nbsp;  </text> @Html.DisplayFor(modelItem => item.LocationStock.Item.Name)*@
+            </td>
+            @*<td>
+                @Html.DisplayFor(modelItem => item.LocationStock.Item.Description).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LocationStock.Stock.BatchNo)
+            </td>*@
+            <td>
+                @Html.DisplayFor(modelItem => item.Qty)
+            </td>
+            <td>
+                <text>(</text> @Html.DisplayFor(modelItem => item.UnitDisCountAmt)<text>)</text>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Amount)
+            </td>
+            <td>
+                @{ if (item.IsActive == 1)
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:green " class="badge" readonly>Active</a>
+                    }
+                    else
+                    {
+                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:red " class="badge" readonly>Cancel</a>
+                    }
+                }
+
+            </td>
+
+        </tr>
+        }
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('.datepicker').datepicker();
+
+        $('#showAll').on('click', function () {
+            location.reload(true);
+        });
+
+
+        $('#datatable').DataTable({
+            dom: 'Bfrtip',
+            buttons: [
+                'copy', 'csv', 'excel', 'pdf', 'print'
+            ]
+        });
+       
+    });
+
+    
+
+    function populateCustomer() {
+        $.get('/Reports/PopulateCustomer', {}, function (data) {
+
+            $('#SelectCustomer').empty();
+            $('#SelectCustomer').append($("<option value=''>--Select Customer--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectCustomer').append($("<option></option>").val(value.ID).html(value.CustomerName));
+            });
+        }, 'json');
+
+    }
+    populateCustomer();
+
+
+</script>
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

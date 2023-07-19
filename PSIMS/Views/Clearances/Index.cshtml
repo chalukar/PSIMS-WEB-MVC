@@ -1,0 +1,105 @@
+﻿@model IEnumerable<PSIMS.Models.PurchaseModel.Clearance>
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "List Of Clearance";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+
+<div class="box box-body box-primary">
+    <p>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+    <table class="table table-striped" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    ID
+                </th>
+                <th>
+                    Invoice No
+                </th>
+                <th>
+                    Invoice Date
+                </th>
+                <th>
+                    Total Qty
+                </th>
+                <th>
+                   Flight/Shipping Cost
+                </th>
+
+                <th>
+                   Exchange Rate
+                </th>
+                <th>
+                    Clearance Amount
+                </th>
+                <th>
+                    Created On
+                </th>
+
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceNo).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InvoiceDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Qty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ShippingCost)
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.DollerPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClearanceAmt)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CretaedDate)
+                </td>
+
+
+                <td>
+                    <div class="dropdown">
+                        <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            Actions
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID }) </li>
+                            <li>@Html.ActionLink("View", "Details", new { id = item.ID }) </li>
+                            <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+                        </ul>
+                    </div>
+
+                </td>
+            </tr>
+        }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

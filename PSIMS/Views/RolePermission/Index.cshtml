@@ -1,0 +1,43 @@
+﻿@{
+    ViewBag.Title = "Manage Role Permissions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-primary box-body">
+    <div class="row">
+        @using (Html.BeginForm("Index", "RolePermission", FormMethod.Get))
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("Role Name : ")
+                </div>
+                <div class="col-md-4">
+                    @Html.DropDownList("RoleName", (IEnumerable<SelectListItem>)ViewBag.Roles, "Select ...", new { @class = "form-control" })
+                </div>
+                <div class="col-md-4">
+                    <input id="btnShow" type="submit" value="Get Permission for this Role" class="btn btn-primary" />
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+
+<div class="box box-default box-body">
+    <div id="renderTable" class="box-body">
+        @Html.Partial("_PermissionPartialView")
+    </div>
+</div>
+
+
+@*<script>
+        $(document).ready(function () {
+            $('#btnShow').on('click', function () {
+                $('#renderTable').load("GetRolePermission", $('#form1').serialize());
+            });
+
+        });
+    </script>*@
+
+
+

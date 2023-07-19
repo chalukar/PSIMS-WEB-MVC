@@ -1,0 +1,1082 @@
+﻿@*@model PSIMS.ViewModel.QuotationEntryVM*@
+@model IEnumerable<PSIMS.Models.InventoryModel.LocationStock>
+@{
+    ViewBag.Title = "New Quotation Entry";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+<script src="~/Scripts/select2/dist/js/select2.min.js"></script>
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+
+@****  loading Spinner ******@
+<div id="fade"></div>
+<div id="modalSpinner">
+    <img id="loader" src="~/Content/images/477.GIF" />
+</div>
+@**************************@
+<div class=" box  box-primary box-body">
+    <div class="row">
+        <div class="col-md-4">
+            Quotation Order No<br />
+            <input type="text" id="QuoteCode" name="QuoteCode" class="form-control " readonly />
+            @*<input id="Button1" type="button" value="button" onclick="getnum()" />*@
+            <span class="error"> Required field !</span>
+        </div>
+        <div class="col-md-4">
+            Your Ref<br />
+            <input type="text" id="yourRef" name="yourRef" class="form-control upperCase" placeholder="Your Ref" />
+        </div>
+        <div class="col-md-4">
+            Customer<br />
+            <select id="SelectCustomer" name="Customer" class="form-control "></select>
+            <span class="error"> Required field !</span>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            Quote Category<br />
+            <select id="SelectQuoteCat" name="QuoteCat" class="form-control "></select>
+            <span class="error"> Required field !</span>
+        </div>
+        <div class="col-md-4">
+            Date<br />
+            <input type="text" id="QuoteDate" name="QuoteDate" class="form-control datepicker checkDateNoGraterThanToday" placeholder="Quotation Date" autocomplete="off" />
+            <span class="error"> Required field !</span>
+        </div>
+        <div class="col-md-4">
+            Quote Expiry Date<br />
+            <input type="text" id="QuoteExpDate" name="QuoteExpDate" class="form-control datepicker checkDateNoGraterThanToday" placeholder="Quotation Expiry Date" autocomplete="off" />
+            <span class="error"> Required field !</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            Main Header Note<br />
+            <textarea class="form-control upperCase" rows="2" id="header_note_Top" name="header_note_Top" placeholder="Main Header Note"></textarea>
+        </div>
+        <div class="col-md-6">
+            Sub Header Note<br />
+            <textarea class="form-control" rows="2" id="header_note_sub" name="header_note_sub" placeholder="Sub Header Note"></textarea>
+        </div>
+        <div class="col-md-6">
+            Special Offers<br />
+            <textarea class="form-control" rows="2" id="Special_offers" name="Special_offers" placeholder="Special Offers"></textarea>
+        </div>
+        <div class="col-md-6">
+            Terms & Conditions<br />
+            <textarea class="form-control" rows="2" id="terms_conditions" name="terms_conditions" placeholder="Terms & Conditions with Warranty"></textarea>
+        </div>
+    </div>
+    <hr />
+    @****************************@
+    <div id="StockItem" class="col-md-12">
+        <div class="box box-info box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="col-md-12">
+                        @using (Html.BeginForm())
+                        {
+                            <table class="table table-striped table-hover" id="maintable">
+                                <thead>
+                                    <tr style="background-color:#3d566e; color:#ecf0f1">
+                                        <th>
+                                            Loc.Stock ID
+                                        </th>
+                                        <th>
+                                            Item
+                                        </th>
+                                        <th>
+                                            Descption
+                                        </th>
+                                        <th>
+                                            Batch No
+                                        </th>
+                                        <th>
+                                            Pack Size
+                                        </th>
+                                        <th>
+                                            Qty
+                                        </th>
+                                        <th>
+                                            Pack Rate
+                                        </th>
+                                        <th>
+                                            Unit Rate
+                                        </th>
+                                        <th>
+                                            Expiry
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                @foreach (var item in Model)
+                                {
+                                <tr class="rows">
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.ID)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock.Item.Name).ToString().ToUpper()
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock.Item.Description).ToString().ToUpper()
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Loc_BatchNo).ToString().ToUpper()
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Loc_PackSize).ToString().ToUpper()
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.FinalQty)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock.SellingPrice)
+                                    </td>
+                             
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock.unitprice)
+                                    </td>
+                                    <td>
+                                        @Html.DisplayFor(modelItem => item.Stock.ExpiryDate)
+                                    </td>
+
+                                </tr>
+                                }
+                            </table>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div id="QouteItem" class="col-md-12">
+            <div class="box box-info box-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <!--Sales Location ID-->
+                        <div class="col-md-4">
+                            Location Stock ID<br />
+                            <input type="text" id="getLocStockID" name="getLocStockID" class="form-control" placeholder="Location Stock ID" readonly /><span class="error" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Sales Item -->
+                        <div class="col-md-8">
+                            <input type="hidden" name="getItemID" id="getItemID" readonly />
+                            Item<br />
+                            <input type="text" id="SelectItem" name="Item" class="form-control" placeholder="Item" readonly /><span class="error" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Sales Pack Size -->
+                        <div class="col-md-2">
+                            Pack Size<br />
+                            <input type="text" id="packsize" name="packsize" class="form-control NumbersAndDecimal" placeholder="Pack Size" readonly /><span class="error" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Sales Pack Rate-->
+                        <div class="col-md-2">
+                            Pack Rate<br />
+                            <input type="text" id="PackRate" name="PackRate" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" readonly />
+
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Sales Unit Price-->
+                        <div class="col-md-2">
+                            Unit Price<br />
+                            <input type="text" id="UnitPrice" name="UnitPrice" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" readonly />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Sales Hidden Qty -->
+                        <div class="col-md-2">
+                            Qty<br />
+                            <input type="text" id="hiddenQty" name="hiddenQty" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" readonly />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <hr />
+                        <!--Quotation Qty-->
+                        <div class="col-md-2">
+                            Quotation Qty<br />
+                            <input type="text" id="Qty" name="Qty" class="form-control NumbersAndDecimal" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Quotation Pack Rate-->
+                        <div class="col-md-2">
+                            Quotation Pack Rate <button id="trigger4" class="trigger" data-tooltip-id="4" title="Enter Pack Price">?</button><br />
+                            <input type="text" id="getQuorationPackRate" name="getQuorationPackRate" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Quotation Unit Price-->
+                        <div class="col-md-2">
+                            Quotation Unit Price<br />
+                            <input type="text" id="SalesPrice" name="SalesPrice" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+                            <span class="error"> Required field !</span>
+                        </div>
+
+                        <!--Quotation Total-->
+                        <div class="col-md-2">
+                            Quotation Total<br />
+                            <input type="text" id="getQuorationTotal" name="getQuorationTotal" class="form-control" placeholder="0.00" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+
+                            <span class="error"> Required field !</span>
+                        </div>
+
+                        <!--Quotation Item Description-->
+                        <div class="col-md-12">
+                            Item Description<br />
+                            <textarea class="form-control upperCase" rows="2" id="ItemDes" name="ItemDes" placeholder="Item Description"></textarea>
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Quotation Model Description-->
+                        <div class="col-md-12">
+                            Model Description<br />
+                            <textarea class="form-control rowupper" rows="4" id="ModelDes" name="ModelDes" placeholder="Model Description"></textarea>
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <!--Quotation Warranty-->
+                        <div class="col-md-12">
+                            Warranty<br />
+                            <input type="text" id="warranty" name="warranty" class="form-control rowupper" placeholder="Warranty" />
+                            <span class="error"> Required field !</span>
+                        </div>
+                        <div class="col-md-4">
+                            <br />
+                            <button type="button" id="btnAdd" class="btn btn-primary">Add to list</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class=" box  box-primary box-body">
+    <div class="row ">
+        <div class="col-sm-12">
+            <div style=" background-color:#34495e; color:white; padding:10px">Quotation Order</div>
+
+            <div id="orderItems" class="tablecontainer" style="height:300px; overflow-y:scroll; border:1px solid #BFAEAE">
+
+            </div>
+            <div>
+                <br />
+                <button style="padding: 5px 30px 5px 30px" type="button" class="btn btn-primary pull-right" id="btnNext" data-toggle="modal" data-target="#myModal">
+                    Next <span class="glyphicon glyphicon-triangle-right"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Button trigger modal -->
+<!-- Modal for payment details -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" ng-app>
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div style="background-color:#c0392b; color:white;" class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">Payment Status</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped">
+                    <tr>
+                        <td>Amount</td>
+                        <td><input type="number" readonly ng-model="a" id="Amount" class="form-control" /><span class="error"> required</span></td>
+                    </tr>
+                    <tr>
+                        <td>Discount %</td>
+                        <td><input type="number" ng-model="d" id="Discountpre" class="form-control" /> <span class="error"> Invalid</span></td>
+                        <td>Discount Amount</td>
+                        <td><input type="number" ng-model="d" id="Discount" class="form-control NumbersAndDecimal" /> <span class="error"> Invalid</span></td>
+
+                    </tr>
+                    <tr>
+                        <td>Vat %</td>
+                        <td><input type="number" ng-model="t" id="Taxpre" class="form-control " /><span class="error"> Invalid</span></td>
+                        <td>Vat Amount</td>
+                        <td><input type="number" ng-model="t" id="Tax" class="form-control NumbersAndDecimal" /><span class="error"> Invalid</span></td>
+
+                    </tr>
+
+
+                    <tr>
+                        <td>GrandTotal</td>
+                        <td><input type="text" ng-bind="(a-d)+t" class="form-control" id="GrandTotal" readonly /><span class="error"> Invalid</span></td>
+                    </tr>
+
+                    <tr>
+                        <td>Remarks(Notes)</td>
+                        <td><textarea style="width:100%" id="remarks" class="form-control"></textarea></td>
+                    </tr>
+                    @*<tr>
+                            <td>Payment</td>s
+
+                            <td>
+                                <label style="margin-left:5px;"><input type="radio" value="true" id="Payment" name="payment" class="x" />&nbsp; Paid</label>
+                                <label style="margin-left:5px;"><input type="radio" value="false" name="payment" class="x" checked />&nbsp; Credit</label>
+                            </td>
+                        </tr>*@
+                </table>
+            </div>
+            <div class="modal-footer" style="margin-top:-30px">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <input type="submit" class=" btn btn-primary" id="btnSubmit" value="Submit" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    populateCustomer();
+    populateQuotCat();
+    populateItem();
+    populateQuotationCode();
+
+    //$(window).load(function () {
+    //    // $("textarea").val("abc\n\u202Edef\nghi")
+    //    var text = $("terms_conditions").val();
+    //    $("terms_conditions").val(text);
+        
+    //});
+
+    //On clicking table row
+    document.getElementById('maintable').onclick = function (event) {
+        event = event || window.event;
+        var target = event.target || event.srcElement;
+        while (target && target.nodeName != 'TR') {
+            target = target.parentElement;
+        }
+        var cells = target.cells;
+        if (!cells.length || target.parentNode.nodeName == 'THEAD') {
+            return;
+        }
+        //alert(cells[1].innerHTML);
+        $(function () {
+            $('#getLocStockID').val($.trim(cells[0].innerHTML));
+            $('#SelectItem').val($.trim(cells[1].innerHTML));
+            $('#ItemDes').val($.trim(cells[2].innerHTML));
+            $('#packsize').val($.trim(cells[4].innerHTML));
+            $('#UnitPrice').val($.trim(cells[7].innerHTML));
+            $('#PackRate').val($.trim(cells[6].innerHTML));
+
+            $('#hiddenQty').val($.trim(cells[5].innerHTML));
+
+
+
+        });
+        //clears qty and amt field
+        //$('#SelectItem').val('');
+        //$('#ModelDes').val('');
+
+        //focuses cursor on Qty field
+        document.getElementById('#Qty').focus();
+
+    }
+    $(function () {
+        $('[data-toggle="tooltip"]').tooltip();
+    });
+
+    function populateCustomer() {
+        $.get('/SalesEntry/PopulateCustomer', {}, function (data) {
+            $('#SelectCustomer').empty();
+            $('#SelectCustomer').append($("<option value='0'>--Select Customer--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectCustomer').append($("<option></option>").val(value.ID).html(value.CustomerName));
+
+            });
+        }, 'json');
+
+    }
+
+
+    function populateQuotCat() {
+        $.get('/QuotationEntry/PopulateQuotCat', {}, function (data) {
+            $('#SelectQuoteCat').empty();
+            $('#SelectQuoteCat').append($("<option value='0'>--Select Quotation Category--</option>"));
+            $.each(data, function (key, value) {
+                $('#SelectQuoteCat').append($("<option></option>").val(value.ID).html(value.CategoryName));
+
+            });
+        }, 'json');
+
+    }
+
+    //populating Items dropdown
+    function populateItem() {
+        $.get('/PurchaseEntry/PopulateItem', {}, function (data) {
+            $('#SelectItem').empty();
+            $('#SelectItem').append($("<option value='0'>--Select Items--</option>"))
+            $.each(data, function (key, value, sort) {
+                $('#SelectItem').append($('<option></option>').val(value.ID).html(value.Name));
+            });
+        }, 'json');
+    }
+
+    ////Calculate amount based on input qty
+    //$('#Qty').keyup(function () {
+    //    var QuUnitPrice = Number($('#SalesPrice').val());
+    //    var PackRate = Number($('#PackRate').val());
+    //    var PackSize = Number($('#packsize').val());
+    //    var Qty = $('#Qty').val();
+
+    //    //var newPackRate =
+
+    //    var QtyPart = String(Qty).split(".");
+    //    var output = QtyPart[0];
+    //    var output1 = QtyPart[1];
+
+    //    var BV = output * PackRate
+    //    var AV = output1 *
+
+    //    });
+
+    //datepicker
+    $(function () {
+        $(".datepicker").datepicker({
+            format: 'yyyy-mm-dd',
+            autoclose: true,
+            
+        });
+    });
+
+    var QuotationItems = [];
+    $('#btnAdd').on('click', function () {
+        //jQuery Validations
+        var hidqty = $('#hiddenQty').val();
+        var reqQty = $('#Qty').val();
+        var isValidation = true;
+        if ($('#QuoteCode').val() == ""|| $('#QuoteCode').val() == NaN || $('#QuoteCode').val() == null || $('#QuoteCode').val() == "0") {
+            isValidation = false;
+            $('#QuoteCode').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteCode').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#SelectCustomer').val() == "0"|| $('#SelectCustomer').val() == NaN || $('#SelectCustomer').val() == null) {
+            isValidation = false;
+            $('#SelectCustomer').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectCustomer').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#SelectQuoteCat').val() == "0"|| $('#SelectQuoteCat').val() == NaN || $('#SelectQuoteCat').val() == null) {
+            isValidation = false;
+            $('#SelectQuoteCat').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectQuoteCat').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#QuoteDate').val() == ''|| $('#QuoteDate').val() == null || $('#QuoteDate').val() == NaN) {
+            isValidation = false;
+            $('#QuoteDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteDate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#QuoteExpDate').val() == ''|| $('#QuoteExpDate').val() == null || $('#QuoteExpDate').val() == NaN) {
+            isValidation = false;
+            $('#QuoteExpDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteExpDate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#SelectItem').val() == "0" || $('#SelectItem').val() == '' || $('#SelectItem').val() == null || $('#SelectItem').val() == NaN) {
+            isValidation = false;
+            $('#SelectItem').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectItem').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#packsize').val() == ''|| $('#packsize').val() == NaN || $('#packsize').val() == null) {
+            isValidation = false;
+            $('#packsize').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#packsize').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#UnitPrice').val() == ''|| $('#UnitPrice').val() == NaN || $('#UnitPrice').val() == null) {
+            isValidation = false;
+            $('#UnitPrice').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#UnitPrice').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#Qty').val() == ''|| $('#Qty').val() == NaN || $('#Qty').val() == null) {
+            isValidation = false;
+            $('#Qty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Qty').siblings('span.error').css('visibility', 'hidden');
+        }
+        //if (hidqty < reqQty) {
+        //    isValidation = false;
+        //    $('#Qty').siblings('span.error').css('visibility', 'visible');
+        //}
+        //else {
+        //    $('#Qty').siblings('span.error').css('visibility', 'hidden');
+        //}
+
+        if ($('#SalesPrice').val() == ''|| $('#SalesPrice').val() == NaN || $('#SalesPrice').val() == null) {
+            isValidation = false;
+            $('#SalesPrice').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SalesPrice').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#getQuorationPackRate').val() == ''|| $('#getQuorationPackRate').val() == NaN || $('#getQuorationPackRate').val() == null) {
+            isValidation = false;
+            $('#getQuorationPackRate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#getQuorationPackRate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#getQuorationTotal').val() == ''|| $('#getQuorationTotal').val() == NaN || $('#getQuorationTotal').val() == null) {
+            isValidation = false;
+            $('#getQuorationTotal').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#getQuorationTotal').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#ModelDes').val() == '') {
+            isValidation = false;
+            $('#ModelDes').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#ModelDes').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#ItemDes').val() == '') {
+            isValidation = false;
+            $('#ItemDes').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#ItemDes').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#warranty').val() == '') {
+            isValidation = false;
+            $('#warranty').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#warranty').siblings('span.error').css('visibility', 'hidden');
+        }
+
+
+        if (isValidation) {
+            QuotationItems.push({
+                QuotationCode: ($('#QuoteCode').val()),
+                LocationStockID: $('#getLocStockID').val(),
+                ItemName: $('#SelectItem').val(),
+                ItemModel: $('#ModelDes').val(),
+                ItemDesciption: $('#ItemDes').val(),
+                packsize: $('#packsize').val(),
+                UnitPrice: $('#UnitPrice').val(),
+                QuotationQty: $('#Qty').val(),
+                QuotationSalesprice: $('#SalesPrice').val(),
+                QuotationPackRate: $('#getQuorationPackRate').val(),
+                QuotationTotal: $('#getQuorationTotal').val(),
+                Warranty: $('#warranty').val(),
+                BonusIncluded: 0
+            });
+
+            $('#Qty').val('0').focus();
+            $('#getLocStockID,#SelectItem,#packsize,#Qty,#UnitPrice,#PackRate, #ModelDes, #warranty, #ItemDes, #SalesPrice, #getQuorationPackRate, #getQuorationTotal').val('');
+
+        }
+        GeneratedItemsTable();
+
+    });
+
+
+    function GeneratedItemsTable() {
+        if (QuotationItems.length > 0) {
+            var $table = $('<table id="mytable" class="table table-striped table-hover"/>');
+            $table.append('<thead><tr style="background-color:rgb(201, 211, 218);"><th>Quotation Code</th><th>Loc.Stock ID</th><th>Item</th><th>Model Des</th><th>Item Des</th><th>Pack Size</th><th>Qty</th><th>Unit Price</th><th>Sales Price</th><th>S.P Rate</th><th>Total</th><th>Warrantry</th><th>Delete</th></tr></thead>');
+            //$table.append('<thead><tr style="background-color:rgb(201, 211, 218);"><th>Quotation Code</th><th>Qty</th><th>Unit Price</th><th>Sales Amount</th><th>Total</th><th>Delete</th></tr></thead>');
+            var $tbody = $('<tbody/>');
+
+            $.each(QuotationItems, function (i, val) {
+                var $row = $('<tr/>');
+                $row.append($('<td/>').html(val.QuotationCode));
+                $row.append($('<td/>').html(val.LocationStockID));
+                $row.append($('<td class="rowupper/">').html(val.ItemName));
+                $row.append($('<td class="rowupper;Style{Width:100px}"/>').html(val.ItemDesciption));
+                $row.append($('<td class="rowupper/">').html(val.ItemModel));
+                $row.append($('<td/>').html(val.packsize));
+                $row.append($('<td class="tdQty"/>').html(val.QuotationQty));
+                $row.append($('<td class="tdUP"/>').html(val.UnitPrice));
+                $row.append($('<td/>').html(val.QuotationSalesprice));
+                $row.append($('<td/>').html(val.QuotationPackRate));
+                $row.append($('<td/ class="tdtot">').html(val.QuotationTotal));
+                $row.append($('<td/>').html(val.Warranty));
+                $row.append($('<td/>').html('<a href=# onclick="removeItem(this)" ><span class="glyphicon glyphicon-trash"></span></a>'));
+                $tbody.append($row);
+            });
+            $table.append($tbody);
+            $('#orderItems').html($table);
+        }
+        else {
+            alert(" Quotation Items List is empty !");
+        }
+    }
+    //removes record on clicking remove icon and associated array
+    function removeItem(obj) {
+        var $index = $(obj).parent().parent()[0].sectionRowIndex;
+        alert($index);
+        QuotationItems.splice($index, 1);
+        $(obj).parent().parent().remove();
+        GeneratedItemsTable();
+    }
+
+
+    $(document).on('ready', function () {
+
+        //for calculating amount automatically
+        $('#btnNext').on('click', function () {
+            var subTotal = 0;
+            var total = 0;
+            $('#Amount').val('');
+            $('#Discount').val('0');
+            $('#Discountpre').val('');
+            $('#Tax').val('0');
+            $('#Taxpre').val('');
+            $('#GrandTotal').val('');
+
+            $('#mytable tr').each(function () {
+                //var qty = $.trim($(this).find(".tdQty").html());
+                //var up = $.trim($(this).find(".tdUPS").html());
+                var tot = $.trim($(this).find(".tdtot").html());
+                total = Number(tot);
+                subTotal += total;
+            });
+
+            $('#Amount').val(subTotal).toFixed(2);
+            $('#GrandTotal').text(subTotal.toFixed(2));
+        });
+
+
+        //Calculate Discount
+        $('#Discount').keyup(function () {
+
+            var total = Number($('#Amount').val());
+            var DisAmt = Number($('#Discount').val());
+            var taxAmt = Number($('#Tax').val());
+            var taxpre = Number($('#Taxpre').val());
+            var percent = Number($('#Discountpre').val());
+
+            if (percent == 0) {
+                var percent = ((DisAmt / total) * 100).toFixed(2);
+                $('#Discountpre').val(percent);
+                var taxcal = (total - (DisAmt))
+
+                var discountAmount = ((percent / 100) * taxcal).toFixed(2);
+                var taxAmt = ((taxpre / 100) * taxcal).toFixed(2);
+                var grandTotal = total + (taxAmt - (discountAmount));
+                $('#Tax').val(taxAmt);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+
+            }
+            else if (percent != 0) {
+                var percent = ((DisAmt / total) * 100);
+                var taxcal = (total - (DisAmt))
+
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var taxAmt = ((taxpre / 100) * taxcal).toFixed(2);
+                var grandTotal = total + (taxAmt - (discountAmount));
+
+
+                $('#Tax').val(taxAmt);
+                $('#Discountpre').val(percent);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+
+        //Calculate Discount Presantage
+        $('#Discountpre').keyup(function () {
+
+            var total = Number($('#Amount').val());
+            var percent = Number($('#Discountpre').val());
+            var taxAmt = Number($('#Tax').val());
+            var taxpre = Number($('#Taxpre').val());
+
+            if (percent == 0) {
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var diccal = (total - (discountAmount));
+                var taxcal = ((taxpre / 100) * diccal).toFixed(2);
+                var grandTotal = total + (taxcal - (discountAmount));
+
+                $('#Discount').val(discountAmount);
+                $('#Tax').val(taxcal);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (percent != 0) {
+                var discountAmount = ((percent / 100) * total).toFixed(2);
+                var diccal = (total - (discountAmount));
+                var taxamt = ((taxpre / 100) * diccal).toFixed(2);
+                var grandTotal = total + (taxamt - (discountAmount));
+                $('#Tax').val(taxamt);
+                $('#Discount').val(discountAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+        //Calculate Vat Precentage
+        $('#Taxpre').keyup(function () {
+
+            var subtotal = Number($('#Amount').val());
+            var taxpercent = Number($('#Taxpre').val());
+            var dispercent = Number($('#Discountpre').val());
+            var disAmt = Number($('#Discount').val());
+
+            if (dispercent == 0) {
+                var taxAmount = ((taxpercent / 100) * subtotal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#Tax').val(taxAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (dispercent != 0) {
+
+                var discal = (subtotal - (disAmt));
+                var taxAmount = ((taxpercent / 100) * discal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#Tax').val(taxAmount);
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+
+        });
+
+
+        //Calculate sales Tax
+        $('#Tax').keyup(function () {
+            var subtotal = Number($('#Amount').val());
+            var salAmt = Number($('#Tax').val());
+            var dispercent = Number($('#Discountpre').val());
+            var disAmt = Number($('#Discount').val());
+
+            if (dispercent == 0) {
+                var taxpercent = ((salAmt / subtotal) * 100).toFixed(2);
+                $('#Taxpre').val(taxpercent);
+
+                var taxAmount = ((taxpercent / 100) * subtotal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+            else if (dispercent != 0) {
+                var discal = (subtotal - (disAmt));
+                var taxpercent = ((salAmt / discal) * 100).toFixed(2);
+                $('#Taxpre').val(taxpercent);
+
+                var taxAmount = ((taxpercent / 100) * discal).toFixed(2);
+                var grandTotal = subtotal + (taxAmount - (disAmt));
+                $('#GrandTotal').val(grandTotal.toFixed(2));
+            }
+        });
+
+
+    });
+
+
+    $('#btnSubmit').on('click', function () {
+        var isAllValid = true;
+
+        if (QuotationItems.length == 0) {
+            isAllValid = false;
+            alert('Please Add items to Quotation Order!');
+        }
+        if ($('#QuoteCode').val().trim() == '') {
+            isAllValid = false;
+            $('#QuoteCode').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteCode').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#SelectCustomer').val() == "0") {
+            isAllValid = false;
+            $('#SelectCustomer').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectCustomer').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#SelectQuoteCat').val() == "0") {
+            isValidation = false;
+            $('#SelectQuoteCat').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#SelectQuoteCat').siblings('span.error').css('visibility', 'hidden');
+        }
+
+        if ($('#QuoteDate').val() == '') {
+            isAllValid = false;
+            $('#QuoteDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteDate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#QuoteExpDate').val() == '') {
+            isAllValid = false;
+            $('#QuoteExpDate').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#QuoteExpDate').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#Amount').val() == '' || isNaN($('#Amount').val())) {
+            isAllValid = false;
+            $('#Amount').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Amount').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#GrandTotal').val() == '' || isNaN($('#GrandTotal').val()) || $('#GrandTotal').val() == "0") {
+            isAllValid = false;
+            $('#GrandTotal').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#GrandTotal').siblings('span.error').css('visibility', 'hidden');
+        }
+        if ($('#GrandTotal').val() == '' || isNaN($('#Discount').val())) {
+            isAllValid = false;
+            $('#Discountpre').siblings('span.error').css('visibility', 'visible');
+        }
+        else {
+            $('#Discountpre').siblings('span.error').css('visibility', 'hidden');
+        }
+
+
+        //if (($('#Tax').val() == '' ||isNaN($('#Tax').val())) {
+        //    $('#Tax').siblings('span.error').css('visibility', 'visible');
+        //}
+
+
+        if (isAllValid) {
+            var data = {
+
+                QuotationCode: $.trim($('#QuoteCode').val()),//OurRef
+                CustomerID: $('#SelectCustomer').val(),
+                QuotationCategoryID: $('#SelectQuoteCat').val(),
+                YourRef: $('#yourRef').val(),
+                QuoteDate: $('#QuoteDate').val().trim(),
+                ExpiryQuote: $('#QuoteExpDate').val().trim(),
+                Amount: $('#Amount').val(),
+                Discount: $('#Discount').val(),
+                Vat: $('#Tax').val(),
+                GrandTotal: $('#GrandTotal').val(),
+                Remarks: $('#remarks').val(),
+                Header_Note_Line01: $('#header_note_Top').val(),
+                Header_Note_Line02: $('#header_note_sub').val(),
+                Speical_Offers: $('#Special_offers').val(),
+                Terms_Conditions: $('#terms_conditions').val(),
+                QuotationItems: QuotationItems
+            }
+            $(this).val('Please wait...');
+
+            //post data to server -SaveQuotation
+            $.ajax({
+                url: 'SaveQuotation',
+                type: "POST",
+                data: JSON.stringify(data),
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (d) {
+                    //check is successfully save to database
+                    if (d.status == true) {
+                        //will send status from server side
+                        alert('Successfully done.');
+                        //window.location.href = "../../../QuotationEntry/quotationForm" + d;
+                        location.reload(true);
+
+                        //clear form
+                        QuotationItems = [];
+                        $('#QuoteCode').val('');
+                        $('#SelectCustomer').val('0');
+                        $('#SelectQuoteCat').val('0');
+                        $('#QuoteDate').val('');
+                        $('#QuoteExpDate').val('');
+                        $('#header_note_Top').val('');
+                        $('#header_note_sub').val('');
+                        $('#Special_offers').val('');
+                        $('#terms_conditions').val('');
+
+
+                    }
+                    else {
+                        closeModal();
+                        swal("Some inputs may be missing!");
+                    }
+                    // $('#submit').val('Save');
+                    closeModal();
+
+                },
+                error: function () {
+                    closeModal();
+                    sweetAlert("Oops...", ' Please try again.', "error");
+
+                    // $('#btnSubmit').val('Save');
+                }
+            });
+
+
+            //this pass data to Quotation Form
+
+            //$.ajax({
+            //    url: 'SaveQuotation',
+            //    type: "POST",
+            //    data: JSON.stringify(data),
+            //    dataType: "JSON",
+            //    contentType: "application/json",
+            //    success: function (d) {
+
+            //        if (d.data != null) {
+            //            openModal()
+            //            closeModal();
+            //            window.location.href = "../../../QuotationEntry/quotationForm/" + d.data;
+
+            //        }
+            //        else {
+            //            closeModal();
+            //            swal("Some inputs may be missing!");
+            //        }
+            //        closeModal();
+
+            //    },
+            //    error: function () {
+            //        closeModal();
+            //        sweetAlert("Oops...", ' Please try again.', "error");
+            //    }
+            //});
+        }
+    });
+
+
+
+
+    //Drop down Search Box
+    $(document).ready(function () {
+
+        // Initialize select2
+        // $("#SelectItem").select2();
+        $('#SelectCustomer').select2();
+
+        // Read selected option-Item
+        //$('#SelectItem').click(function () {
+        //    var username = $('#SelectItem option:selected').text();
+        //    var userid = $('#SelectItem').val();
+
+
+        //});
+        // Read selected option-Supplier
+        $('#SelectCustomer').click(function () {
+            var username = $('#SelectCustomer option:selected').text();
+            var userid = $('#SelectCustomer').val();
+
+            //$('#result').html("id : " + userid + ", name : " + username);
+        });
+    });
+
+    // DataTable
+    $(document).ready(function () {
+        $('#maintable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "iDisplayLength": 5,
+            "aLengthMenu": [[5, 10, 25, -1], [5, 10, 25, "All"]],
+        });
+    });
+
+    // new
+
+    function populateQuotationCode() {
+
+        $.ajax({
+            type: 'GET',
+            url: '/QuotationEntry/PopulateQuotationCode',
+            dataType: 'json',
+            success: function (result) {
+                console.log(result);
+                if (result != null) {
+
+                    var d = new Date();
+                    var trDate = d.getFullYear() + "" + (d.getMonth() + 1) + "" + d.getDate();
+                    var trID = result.ID + 1;
+
+                    var gatYrID = "00" + trDate + "0" + trID
+
+                    $('#QuoteCode').val(gatYrID);
+
+                }
+
+            },
+            error: function (result) {
+                alert('error');
+            }
+        });
+    }
+
+
+    $('.modal').modal({
+        keyboard: false,
+        show: true
+    });
+    // Jquery draggable
+    $('.modal-dialog').draggable({
+        handle: ".modal-header"
+    });
+
+    //test box Tips
+    $(function () {
+        //show
+        $(document).on('click', '.trigger', function () {
+            $(this).addClass("on");
+            $(this).tooltip({
+                items: '.trigger.on',
+                position: {
+                    my: "left+30 center",
+                    at: "right center",
+                    collision: "flip"
+                }
+            });
+            $(this).trigger('mouseenter');
+        });
+        //hide
+        $(document).on('click', '.trigger.on', function () {
+            $(this).tooltip('close');
+            $(this).removeClass("on");
+        });
+        //prevent mouseout and other related events from firing their handlers
+        $(".trigger").on('mouseout', function (e) {
+            e.stopImmediatePropagation();
+        });
+    });
+</script>
+<style>
+    /*Adding some css for looks good*/
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    .rowupper {
+        text-transform: uppercase;
+    }
+
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+        background-color: #847BAA;
+        color: #ecf0f1;
+        cursor: pointer;
+    }
+    .trigger {
+        color: midnightblue;
+        border: 1px solid midnightblue;
+    }
+</style>
+

@@ -1,0 +1,78 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.Stock>
+
+
+<table class="table" id="datatable">
+    <thead>
+        <tr class="dataTableHead">
+            <th>
+                @Html.DisplayNameFor(model => model.Item.Name)
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BatchNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.InitialQty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Qty)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CostPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SellingPrice)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ExpiryDate)
+            </th>
+        </tr>
+    </thead>
+    @* _Stock *@
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Name).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Item.Description).ToString().ToUpper()
+
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.BatchNo).ToString().ToUpper()
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.InitialQty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Qty)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CostPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.SellingPrice)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpiryDate)
+            </td>
+
+        </tr>
+    }
+</table>
+
+
+    <script>
+        $(document).ready(function () {
+            $('#datatable').DataTable({
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ]
+            });
+
+        });
+    </script>

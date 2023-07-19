@@ -1,0 +1,65 @@
+﻿@model IEnumerable<PSIMS.Models.QuotationModel.QuotationCategory>
+
+@{
+    ViewBag.Title = "List of Quotation Categories";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-body box-primary">
+
+    <p>
+        @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+    <table class="table table-striped" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr>
+                <th>
+                    Category ID
+                </th>
+                <th>
+                    Category Name
+                </th>
+                <th></th>
+            </tr>
+            </thead>
+
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.CategoryName)
+                    </td>
+                    <td>
+
+                        <div class="dropdown">
+                            <button style="background-color:#e74c3c; color:white; padding:2px 5px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                Actions
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                                <li>@Html.ActionLink("Edit", "Edit", new { id = item.ID }) </li>
+                                <li>@Html.ActionLink("Details", "Details", new { id = item.ID }) </li>
+                                <li>@Html.ActionLink("Delete", "Delete", new { id = item.ID })</li>
+
+
+                            </ul>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

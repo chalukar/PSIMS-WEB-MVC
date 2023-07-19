@@ -1,0 +1,103 @@
+﻿@model PSIMS.Models.Finance.Payment
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="box box-primary box-body">
+
+    <div>
+        <h4>Payment</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                @Html.DisplayNameFor(model => model.ID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ID)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.SalesID)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SalesID)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.CompanyName)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CompanyName)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.GrandTotal)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.GrandTotal)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PaidAmount)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PaidAmount)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PaymentDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PaymentDate)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Balance)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Balance)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.PayMode)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PayMode)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ChequeNo)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ChequeNo)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.ChequeDate)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ChequeDate)
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Status)
+            </dt>
+             <dd>
+                @Html.CheckBoxFor(model => model.Status, new { @disabled = "disabled" })
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-flat" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>

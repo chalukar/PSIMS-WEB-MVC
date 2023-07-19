@@ -1,0 +1,72 @@
+﻿@* 
+ This partial controls the top menu of the AdminLTE Template, being called automatically by _AdminLteLayout
+    TODO: All of the content in here is stand-in that must be replaced by the real behavior of your app
+*@
+
+@using PSIMS.Models
+@using PSIMS.Controllers
+@using PSIMS.ViewModel
+
+@{
+    ViewBag.Layout = null;
+}
+
+
+<header class="main-header">
+    <!-- Logo -->
+    <a href="~/Home/Index" class="logo">
+        <span class="logo-lg"><b>LIMAX</b> MEDICA</span>
+    </a>
+
+   <nav class="navbar navbar-static-top" role="navigation">
+        <!-- Sidebar toggle button-->
+        @*<a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+            <span class="sr-only">Toggle navigation</span>
+        </a>*@
+       <div class="navbar-custom-menu">
+           <ul class="nav navbar-nav"></ul>
+           @Html.Partial("_LoginPartial")
+
+       </div><!-- /.navbar-custom-menu -->  
+       
+    </nav>
+</header>
+
+@*<script>
+    var count = 0, count2 = 0, total = 0;
+    $(document).ready(function () {
+        
+        $.get('../../../Home/CheckExpiry', null, function (data) {
+            //$('.label-warning').html(data);
+            $('.menu').append('<li><a href="../../../../Home/Notifications"><i class="fa fa-warning text-yellow"></i> ' + data + ' items to expire/expired.</a></li>');
+
+            if (data != null)
+            {
+                $('.alertNumber').append('<span class="label label-warning notifications">!</span>');
+            }
+            else {
+                $('.alertNumber').append('<span class="label label-warning notifications">0</span>');
+            }
+
+            count = data;
+        }, 'json');
+
+        $.get('../../../Home/StockLevel', null, function (data) {
+            //$('.label-danger').html(data);
+            $('.menu').append('<li><a href="../../../../Home/Notifications"><i class="fa fa-warning text-yellow"></i> ' + data + ' items are low in qty.</a></li>');
+
+                if (data != null) {
+                    $('.alertNumber').append('<span class="label label-warning notifications">!</span>');
+                }
+                else {
+                    $('.alertNumber').append('<span class="label label-warning notifications">0</span>');
+                }
+        }, 'json');
+    });
+
+   // <li><a href="#"><i class="fa fa-users text-aqua"></i> 5 new members joined today</a></li>
+</script>*@
+
+
+
+

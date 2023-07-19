@@ -1,0 +1,1034 @@
+﻿@model IEnumerable<PSIMS.Models.Sales>
+
+@using Microsoft.AspNet.Identity
+@using IdentitySample.Models
+@{
+    ViewBag.Title = "Receipt Payments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+<link href="~/Content/select2.min.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/square/red.css" rel="stylesheet" />
+<link href="~/Scripts/AdminLTE/plugins/iCheck/minimal/minimal.css" rel="stylesheet" />
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>
+<script src="~/Scripts/select2/dist/js/select2.min.js"></script>
+
+@****  loading Spinner ******@
+<div id="fade"></div>
+<div id="modalSpinner">
+    <img id="loader" src="~/Content/images/477.GIF" />
+</div>
+@**************************@
+<div class="row">
+    <div id="MaininvoiceDiv" class="col-md-12">
+
+        <div class="box box-primary ">
+            <form method="Post" action="PaymentReceiptForSales">
+                @*<form id="form1">*@
+                <table class="table table-striped">
+                    <tr>
+                        <td>
+                            <label>Select</label><br />
+                            <select class="form-control" name="option">
+                                <option>--Select--</option>
+                                <option value="today" id="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="thisWeek">This Week</option>
+                                <option value="thisMonth">This Month</option>
+                                <option value="lastMonth">Last Month</option>
+                                <option value="thisYear">This Year</option>
+                                <option value="lastYear">Last Year</option>
+                            </select>
+                        </td>
+                        <td>
+                            <label>Customer</label> <br />
+                            <select id="Selectcompany" name="Company" class="form-control"></select>
+                        </td>
+                        <td>
+                            `
+                            <label>From</label><br />
+                            <input type="text" class="datepicker form-control" name="fromDate" autocomplete="off" />
+                        </td>
+                        <td>
+                            <label>To</label><br />
+                            <input type="text" class="datepicker form-control" name="toDate" autocomplete="off" />
+                        </td>
+                        <td></td>
+                        <td>
+                            <br />
+                            <input type="submit" value="Submit" class="btn btn-primary" id="submit">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+
+
+            @using (Html.BeginForm())
+            {
+                <table class="table table-striped table-hover" id="maintable">
+                    <thead>
+                        <tr style="background-color:#3d566e; color:#ecf0f1">
+
+                            <th>
+                                Invoice No
+                            </th>
+                            <th>
+                                Invoice Date
+                            </th>
+                            <th>
+                                Cust. Code
+                            </th>
+                            <th>
+                                Customer Name
+                            </th>
+                            <th>
+                                Amount
+                            </th>
+                            <th>
+                                Grand Total
+                            </th>
+                            <th>
+                                Last Payment
+                            </th>
+                            <th>
+                                Balance
+                            </th>
+                            <th>
+                                Location
+                            </th>
+                            <th>
+                                Payment
+                            </th>
+
+                            <th>
+                                Payment Type
+                            </th>
+                            @*<th>Action</th>*@
+                        </tr>
+                    </thead>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.ID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Date)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.CustomerID)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Customer.CustomerName)
+                            </td>
+
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Amount)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.GrandTotal)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.LastReceiptAmt)
+                            </td>
+                            <td>
+                                @if (item.unitbalance.Equals(null))
+                                {
+                                    var balance = 0.00;
+                                    @balance
+                                }
+                                else
+                                {
+                                    @Html.DisplayFor(modelItem => item.unitbalance)
+                                }
+
+                            </td>
+
+                            <td>
+
+                                @if (item.LocationID == 0)
+                                {
+
+                                }
+                                else
+                                {
+                                    var locationName = db.Locations.Where(l => l.ID == item.LocationID).First().LocationName ?? "n/a";
+                                    @locationName
+                                }
+
+
+                            </td>
+                            <td>
+
+                                @{ if (item.IsPayment == false)
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:darkred " class="badge" readonly>Pending</a>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:darkgreen " class="badge" readonly>Paid</a>
+                                    }
+                                }
+                            </td>
+                            <td>
+
+                                @{ if (item.PaymentType == "0")
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:darkred " class="badge" readonly>PP/0</a>
+                                    }
+                                    else if (item.PaymentType == "PP")
+                                    {
+
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:mediumseagreen " class="badge" readonly>PP/0.5</a>
+                                    }
+                                    else if (item.PaymentType == "FP")
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:forestgreen " class="badge" readonly>FP/1</a>
+                                    }
+                                    else if (item.PaymentType == "BP")
+                                    {
+                                        <a href="#" style="padding: 3px 10px 3px 10px; background-color:forestgreen " class="badge" readonly>BP/Sett.</a>
+                                    }
+                                }
+                            </td>
+                            @*<td>
+                                    <div class="dropdown">
+                                        <button style="background-color:#e74c3c; color:white; padding:2px 10px" class="btn btn-default btn-sm dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                            Actions
+                                            <span class="caret"></span>
+                                        </button>
+
+                                    </div>
+
+                                </td>*@
+                        </tr>
+                    }
+                </table>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div id="SecondSelectinvoiceDiv" class="col-md-5">
+        <div class="box box-danger box-body">
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <strong>Customer Amount</strong><br />
+                                <input type="text" name="CustAmt" id="getCustAmt" class="form-control input-sm NumbersAndDecimal" placeholder="Enter Customer Recipt Payment(LKR)" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+                            </td>
+
+                            <td>
+                                <strong>Recipt Payment</strong><br />
+                                <input type="text" name="totRecpPyt" id="gettotRecpPyt" class="form-control input-sm NumbersAndDecimal" onchange="(function(el){el.value=parseFloat(el.value).toFixed(2);})(this)" />
+                                <span class="error">Receipt Amount should be less than Customer Amount</span>
+                                <span class="error">Receipt Amount should be less than Grand Amount</span>
+                            </td>
+
+                            <td>
+                                <strong>Payment Type</strong><br />
+                                <select id="getpmttype" name="pmttype" class="form-control">
+                                    <option value="0">-- Select Settlement Type --</option>
+                                    <option value="PP">Part Payment</option>
+                                    <option value="BP">Balance Payment</option>
+                                    <option value="FP">Full Payment</option>
+
+                                </select>
+                                <span class="error"> Required field !</span>
+
+                            </td>
+                        </tr>
+
+                    </table>
+                </div>
+                <div class="col-md-12">
+
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <strong>Invoice Net Amount</strong><br />
+                                <input type="text" name="NetAmt" id="getInvNetInvAmt" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <strong>Invoice Grand Total </strong><br />
+                                <input type="text" name="grandTot" id="getInvGrandTot" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <strong>Invoice Balance </strong><br />
+                                <input type="text" name="InvBalance_hide" id="getInvBalance_hide" class="form-control input-sm" readonly />
+                                <input type="text" name="InvBalance" id="getInvBalance" class="form-control input-sm" readonly />
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <strong>Invoice No</strong><br />
+                                <input type="text" name="InvoiceID" id="getInvoiceID" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <strong>Invoice Date</strong><br />
+                                <input type="text" name="InvoiceDate" id="getInvoiceDate" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <strong>Location</strong><br />
+                                <input type="text" name="location" id="getlocation" class="form-control input-sm" readonly />
+                            </td>
+
+                        </tr>
+
+                    </table>
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+                                <strong>Custtomer Code</strong><br />
+                                @*<input type="text" name="prv_CustID" id="prv_getCustID" class="form-control input-sm" readonly />*@
+                                <input type="text" name="CustID" id="getCustID" class="form-control input-sm" readonly />
+                            </td>
+                            <td>
+                                <strong>Company Name</strong><br />
+                                <input type="text" name="Companyname" id="getCompanyname" class="form-control input-sm" readonly />
+                            </td>
+                        </tr>
+
+                    </table>
+                    <table class="table table-striped table-responsive">
+                        <tr>
+                            <td>
+
+                                <input type="button" tabindex="1" value="Add to list" id="btnAdd" style="float:right; margin-right:10px" class="btn btn-success btn-lg" />
+                                <input type="button" tabindex="2" value="Clear" id="btnClear" style="float:right; margin-right:10px" class="btn btn-dropbox btn-lg" />
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="SecondinvoiceAjesmentDiv" class="col-md-7">
+        <div class="box box-danger box-body" style="height:auto" ;width="auto">
+            <!-- Begin of Form to be serialized  -->
+            <form id="pendingPaymentSerialized">
+                <div class="row">
+                    <div class="col-xs-12 col-sm-12 col-md-12">
+                        <div class="row">
+                            <div class="col-sm-12 col-md-12">
+                                <h4>&nbsp;<span class="glyphicon glyphicon-list"></span> &nbsp; &nbsp; Invoice Pending Settelment</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" style="height:450px; ">
+                                <table class="table table-condensed table-striped table-responsive">
+                                    <thead>
+                                        <tr>
+
+                                            <th>Inv.ID</th>
+                                            <th>Inv.Date</th>
+                                            <th>Location</th>
+                                            <th>Cut.ID</th>
+                                            <th>Pmt.Type</th>
+                                            <th>Inv.Amt</th>
+                                            <th>Inv.Bal</th>
+                                            <th>Rept.Amt</th>
+                                            <th><span class="glyphicon glyphicon-trash"></span></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tblAppendHerePayment"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr />
+                        <div class="row">
+                            <div class="col-md-6"> <h3 class="pull-right">Customer Amount :</h3> </div>
+                            <input type="hidden" class="setInvNos" style="width:90px; border:hidden;" overflow-y:scroll; readonly />
+                            <div class="col-md-6"> <input type="hidden" class="setcustAmtval" style="width:90px; border:hidden;" overflow-y:scroll; readonly /> <h3><span class="setcustAmtvalText pull-right">XXX</span></h3></div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6"> <h3 class="pull-right">Total :</h3> </div>
+                            <div class="col-md-6"> <input type="hidden" class="setTotalval" style="width:90px; border:hidden;" overflow-y:scroll; readonly /> <h3><span class="setTotalvalText pull-right">XXX</span></h3></div>
+                        </div>
+
+                        @*  test *@
+                        <div class="row footer" id="btnModalTrigger">
+                            <div class="col-md-12">
+                                <button type="button" class="btn btn-block" data-toggle="modal" data-target="#paymentModal" style="background-color:#16a085; cursor:pointer" id="btnnext">
+                                    <h4 style="color:#ffffff; text-align:center;"> NEXT &nbsp;<span class="glyphicon glyphicon-forward"></span> &nbsp; &nbsp; </h4>
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header" style="background-color:#c0392b; color:white;">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h4 class="modal-title" id="myModalLabel">Payment summary</h4>
+                            </div>
+                            <div class="modal-body" style="margin:auto">
+                                <div class="container-fluid">
+                                    <!--One coloum-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Total</label>
+                                            <input type="text" name="Total" class="form-control setTotalval" id="grandTotal" style=" border:hidden" readonly />
+                                        </div>
+                                    </div>
+
+
+                                    <!--One coloum Grand Total-->
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>Customer  Amount</label>
+                                            <input type="text" name="custAmount" class="form-control setcustAmount" id="custAmount" readonly />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label>TO Address</label>
+                                            <select id="selectToAddress" name="toAddress" class="form-control text-uppercase"></select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <label>Invoice No's</label>
+                                            @*<textarea rows="4" cols="50" name="setInvNos" class="form-control setInvNos" id="InvNos"></textarea>*@
+                                            <input type="text" name="setInvNos" class="form-control setInvNos" id="setInvNos" />
+                                        </div>
+                                    </div>
+
+
+                                    <hr />
+
+                                    <div class="row ">
+                                        <div class="col-md-3"><b>Payment Mode</b></div>
+                                        <div class="col-md-9">
+
+                                            <select id="PaymentMode" name="PaymentMode" class="form-control">
+                                                <option value="0">-- Select Pay Mode --</option>
+                                                <option value="1">Cash</option>
+                                                <option value="2">Cheque</option>
+                                            </select>
+                                            <span class="error"> Required field !</span>
+                                        </div>
+
+                                        <div id="Chqoption" class="col-md-12" hidden="hidden">
+                                            <div class="row ">
+                                                <div class="col-md-3"><b>Payment Type</b></div>
+                                                <div class="col-md-9">
+                                                    Bank<br />
+                                                    <select id="selectBank" name="selectBank" class="form-control text-uppercase bankcustom"></select>
+                                                    @*<span class="error"> Required field !</span>*@
+                                                </div>
+                                                <div class="col-md-3"></div>
+                                                <div class="col-md-3">
+                                                    Cheque No<br />
+                                                    <input type="text" name="ChqNo" id="chqNo" class="form-control " />
+                                                    <span class="error"> Required field !</span>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    Deposit Cheque Date<br />
+                                                    <input type="date" name="ChqDate" id="chqDate" class="form-control" />
+                                                    <span class="error"> Required field !</span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+
+                                        
+
+                                        <div id="Chqoption_cashbnk" class="col-md-12" hidden="hidden">
+                                            <div class="row ">
+                                                <div class="col-md-3"><b>Payment Type</b></div>
+                                                <div class="col-md-6">
+                                                    Bank<br />
+                                                    <select id="selectBank_cashbnk" name="selectBank_cashbnk" class="form-control text-uppercase bankcustom-cash"></select>
+                                                    @*<span class="error"> Required field !</span>*@
+                                                </div>
+
+                                                <div class="col-md-3">
+                                                    Deposit Date<br />
+                                                    <input type="date" name="depositDate_cashbank" id="depositDate_cashbank" class="form-control" />
+                                                    <span class="error"> Required field !</span>
+                                                </div>
+
+                                            </div>
+
+
+
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="modal-footer">
+                                        <div class="modal-footer" style="padding:3px;background-color:#16a085; cursor:pointer" tabindex="5" id="btnCheckOut">
+                                            <h4 style="color:#ffffff; text-align:center"> Payment &nbsp;<span class="glyphicon glyphicon-check glyphicon-align-right"></span> &nbsp; &nbsp; </h4>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="fullscreen-container">
+                                    <div id="popdiv">
+                                        <h3>Are you sure you want to printe this?</h3>
+                                        <input type="button" class=" btn btn-success" id="btnprint" value="Yes" />
+
+                                        <button type="button" id="btncancel" class="btn btn-danger" data-dismiss="modal" onclick="return DisplayProgressMessageRefrsh(this, '');">No</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+
+
+            </form>
+            <!--End of form to be serialized-->
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<script>
+    // data Table
+    $(document).ready(function () {
+        $('#maintable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true,
+            "iDisplayLength": 10,
+            "aLengthMenu": [[5, 10, 25, 50, 100, 500, 1000, -1], [5, 10, 25, 50, 100, 500, 1000, "All"]],
+        });
+
+    });
+    //On clicking table row
+    document.getElementById('maintable').onclick = function (event) {
+        event = event || window.event;
+        var target = event.target || event.srcElement;
+        while (target && target.nodeName != 'TR') {
+            target = target.parentElement;
+        }
+        var cells = target.cells;
+        if (!cells.length || target.parentNode.nodeName == 'THEAD') {
+            return;
+        }
+
+        // data transfer
+        $(function () {
+            $('#getInvoiceID').val($.trim(cells[0].innerHTML));
+            $('#getInvoiceDate').val($.trim(cells[1].innerHTML));
+            //$('#prv_getCustID').val($.trim(cells[2].innerHTML));
+            $('#getCustID').val($.trim(cells[2].innerHTML));
+            $('#getCompanyname').val($.trim(cells[3].innerHTML));
+            $('#getInvNetInvAmt').val($.trim(cells[4].innerHTML));
+            $('#getInvGrandTot').val($.trim(cells[5].innerHTML));
+            $('#getInvBalance_hide').val($.trim(cells[7].innerHTML));
+            $('#getlocation').val($.trim(cells[8].innerHTML));
+
+            $('#getInvBalance').val('');
+            $('#getpmttype').val(0);
+            $('#gettotRecpPyt').val('');
+            //$('#getCustAmt').val('');
+
+
+
+
+
+
+
+            //  $("#submitButton").val('');
+            //$("#DelyDate").val(''); //Clear  Delivery Date Option
+            // $("#DelvdOption").val('');//Clear  Delivery Note Option
+
+            document.getElementById('getCustAmt').focus();
+        });
+    }
+
+
+
+    $(document).ready(function () {
+        //Date picker
+        $('.datepicker').datepicker({
+            autoclose: true,
+            todayHighlight: true,
+            format: 'yyyy/mm/dd'
+        });
+
+        //Check Box
+        $('.x').iCheck({
+            checkboxClass: 'icheckbox_minimal',
+            radioClass: 'iradio_minimal',
+            increaseArea: '20%' // optional
+        });
+
+        // Customer Serach Box
+        $("#selectToAddress").select2();
+        //Bank Serach Box
+        $("#selectBank").select2();
+
+
+
+        $.get('../../../PaymentSettements/PopulateToAddress', {}, function (data) {
+            $('#selectToAddress').empty();
+            $('#selectToAddress').append($("<option value='0'>--Select To Address--</option>"));
+            $.each(data, function (key, value) {
+                $('#selectToAddress').append($("<option></option>").val(value.ID).html(value.CustomerName));
+            });
+        }, 'json');
+
+        $.get('../../../PaymentSettements/PopulateToAddress', {}, function (data) {
+            $('#Selectcompany').empty();
+            $('#Selectcompany').append($("<option value='0'>--Select Company--</option>"));
+            $.each(data, function (key, value) {
+                $('#Selectcompany').append($("<option></option>").val(value.ID).html(value.CustomerName));
+            });
+        }, 'json');
+
+        // populate Bank Details
+        $.get('/PaymentSettements/PopulateBank', {}, function (data) {
+            $('#selectBank').empty();
+            $('#selectBank').append($("<option value='0'>--Select Bank-</option>"))
+            $.each(data, function (key, value, sort) {
+                $('#selectBank').append($('<option></option>').val(value.ID).html(value.BankName));
+            });
+        }, 'json');
+
+        $.get('/PaymentSettements/PopulateBank', {}, function (data) {
+            $('#selectBank_cashbnk').empty();
+            $('#selectBank_cashbnk').append($("<option value='0'>--Select Bank-</option>"))
+            $.each(data, function (key, value, sort) {
+                $('#selectBank_cashbnk').append($('<option></option>').val(value.ID).html(value.BankName));
+            });
+        }, 'json');
+
+        
+
+        $("#getpmttype").on('click', function () {
+
+            
+            var InvGrandTot = Number($('#getInvGrandTot').val());
+            //var payReceiptAmt = Number($('#gettotRecpPyt').val());
+            var balanceAmt = Number($('#getInvBalance_hide').val());
+            var ReceiptAmt = Number($('#gettotRecpPyt').val());
+            if (balanceAmt == 0) {
+                //$('#getInvBalance').val(0).toFixed(2);
+                var unitBalanceAmt = (InvGrandTot - ReceiptAmt);
+                $('#getInvBalance').val(unitBalanceAmt.toFixed(2));
+            }
+            else {
+                var unitBalanceAmt = (balanceAmt - ReceiptAmt);
+                $('#getInvBalance').val(unitBalanceAmt.toFixed(2));
+            }
+
+        });
+
+
+        //Payment Mode
+        $("#PaymentMode").change(function () {
+            if ($(this).val() == 2) {
+                $("#Chqoption").show();
+                $("#Chqoption_cashbnk").hide();
+            } else if ($(this).val() == 1) {
+                $("#Chqoption").hide();
+                $("#Chqoption_cashbnk").show();
+
+
+            }
+        });
+
+
+    });
+
+    $("#btnClear").on('click', function () {
+
+        $('#getCustAmt').val('');
+        $('#getInvoiceID').val('');
+        $('#getInvoiceDate').val('');
+        $('#getCustID').val('');
+        $('#getpmttype').val(0);
+        $('#gettotRecpPyt').val('');
+        $('#getInvNetInvAmt').val('');
+        $('#getCompanyname').val('');
+        $('#getlocation').val('');
+        $('#getInvGrandTot').val('');
+        $('#getInvBalance').val('');
+        $('#getInvBalance_hide').val('');
+    });
+
+
+    $('#btnAdd').on('click', function () {
+        var isValidation = true;
+        var v1 = Number($('#getCustAmt').val());
+        var v2 = Number($('#gettotRecpPyt').val());
+        var v3 = Number($('#getInvGrandTot').val());
+        var _paytp = $('#getpmttype').val();
+        //alert(_paytp);
+        //Validation : Check if InvoiceID and Invoice Date is null
+        if ($('#getInvoiceID').val() == '' || $('#getInvoiceID').val() == 0 || !$.isNumeric($('#getInvoiceID').val()) ||
+            $('#getInvoiceDate').val() == '' ||
+            $('#getCustID').val() == '' || !$.isNumeric($('#getCustID').val()) ||
+            $('#getpmttype').val() == '' || $('#getpmttype').val() == 0 ||
+            $('#gettotRecpPyt').val() == '' || $('#gettotRecpPyt').val() == 'NaN') {
+            sweetAlert("Oops...", 'Looks like you forgot to enter Values.', "error");
+            //alert();
+        }
+        else if (v1 < v2) {
+            sweetAlert("Oops...", 'Receipt amount should be less than to customer amount.', "error");
+        }
+        //else if (v3 < v2) {
+        //    sweetAlert("Oops...", 'Receipt amount should be less than to Invoice amount.', "error");
+        //}
+        //else if ((_paytp == "FP") && (v3 != v2)) // Full
+        //{
+        //    sweetAlert("Oops...", 'Receipt amount & Invoice amount should be same amount. OR payment type should be part Stattement', "error");
+        //    $('#getpmttype').val(0);
+        //    $('#gettotRecpPyt').val('');
+        //}
+        else if ((_paytp == "PP") && (v3 == v2)) { //Part Payment
+            sweetAlert("Oops...", 'Receipt amount should be less than to Invoice amount. OR payment type should be Full Stattement', "error");
+            $('#getpmttype').val(0);
+            $('#gettotRecpPyt').val('');
+
+        }
+        else {
+            //check for duplication
+            if (CheckStockDuplication($('#getInvoiceID').val())) {
+                sweetAlert("Redundant Record", 'This Invoice No has already been added. If you want to re-enter, please remove it form the list first!', "error");
+                clearForm();
+            }
+            else {
+                var $table = $('#tblAppendHerePayment');
+                $table.append(
+                    '<tr class="dynamicRows">' +
+                    //gets sales ID for name , value (for form collection) but shows stock id in the list (for UX purpose)
+                    //'<td>' + $('#getInvoiceID').val() + '</td>' +
+                    '<td><input type="hidden" class="txtInvoiceID" name="InvoiceID"  value= "' + $('#getInvoiceID').val() + '"/>' + $('#getInvoiceID').val() + '</td>' +
+                    '<td><input type="hidden" name="InvoiceDate"     value="' + $('#getInvoiceDate').val() + '"/>' + $('#getInvoiceDate').val() + '</td>' +
+                    '<td><input type="hidden" name="location"     value="' + $('#getlocation').val() + '"/>' + $('#getlocation').val() + '</td>' +
+                    '<td><input type="hidden" name="CustID"     value="' + $('#getCustID').val() + '"/>' + $('#getCustID').val() + '</td>' +
+                    '<td><input type="hidden" name="pmttype"     value="' + $('#getpmttype').val() + '"/>' + $('#getpmttype').val() + '</td>' +
+                    '<td><input type="hidden" name="grandTot" value="' + $('#getInvGrandTot').val() + '"  style="text-align:right; "/>' + $('#getInvGrandTot').val() + '</td>' +
+                    '<td><input type="hidden" name="InvBalance" value="' + $('#getInvBalance').val() + '"  style="text-align:right; "/>' + $('#getInvBalance').val() + '</td>' +
+
+                    '<td><input type="hidden" name="totRecpPyt" value="' + $('#gettotRecpPyt').val() + '"  class="subAmt"/>' + $('#gettotRecpPyt').val() + '</td>' +
+
+                    //remove icon
+                    '<td><a href="#" class="glyphicon glyphicon-remove" onclick="removeItem(this)"></a></td>'
+                    + '</tr>'
+
+                );
+
+                //cleans form
+                clearForm();
+
+                //add_invoiceNo();
+
+
+                //calculate sub total
+                update_totalval();
+                return true;
+
+
+
+            }
+        }
+
+
+
+        //Clear txtbox
+        function clearForm() {
+            // $clear = '';
+            $('#getInvoiceID').val('');
+            $('#getInvoiceDate').val('');
+            $('#getCustID').val('');
+            $('#getpmttype').val(0);
+            $('#gettotRecpPyt').val('');
+            $('#getInvNetInvAmt').val('');
+            $('#getCompanyname').val('');
+            $('#getlocation').val('');
+            $('#getInvGrandTot').val('');
+            $('#getInvBalance').val('');
+            $('#depositDate_cashbank').val('');
+            $('#getInvBalance_hide').val('');
+        };
+
+
+
+    });
+    //check if stock ID already exists in the list
+    function CheckStockDuplication(InvoiceID) {
+        var flag = false;
+        $('.dynamicRows').each(function () {
+            if ($(this).find('.txtInvoiceID').val() == InvoiceID) {
+                flag = true;
+            }
+        });
+        return flag;
+    };
+
+    function removeItem(obj) {
+        $(obj).parent().parent().remove();
+        //updatae total amount
+        update_totalval();
+    };
+
+    //calculate sub total amount
+    function update_totalval() {
+        var cust_amttot = Number($('#getCustAmt').val());
+        var rows = $('.dynamicRows');
+        var totalval = Number();
+
+        $.each(rows, function (index, item) {
+            totalval += Number($(this).children('td').eq(7).text());
+        });
+
+        $('.setTotalval').val(totalval.toFixed(2));
+        $('.setTotalvalText').text(totalval.toFixed(2));
+        $('.setcustAmtvalText').text(cust_amttot.toFixed(2));
+        $('.setcustAmount').val(cust_amttot.toFixed(2));
+
+    };
+
+
+    $('#btnCheckOut').on('click', function () {
+        $('#btnCheckOut').removeAttr("disabled");
+        var grandTotal = Number($('#grandTotal').val());
+
+        if (($('#grandTotal').val() == NaN ||
+            $('#grandTotal').val() == null) ||
+            $('#grandTotal').val() == "" ||
+            $('#grandTotal').val() == "0.00" ||
+            $('#custAmount').val() == "" ||
+            $('#custAmount').val() == NaN ||
+            $('#custAmount').val() == null ||
+            $('#PaymentMode').val() == 0) {
+            // alert("Sorry ! Sales Items are Empty");
+            sweetAlert("Oops...", 'Looks like you forgot to enter correct values.', "error");
+            closeModal();
+        }
+        else if ($('#selectToAddress').val() == 0 || $('#selectToAddress').val() == null || $('#selectToAddress').val() == NaN) {
+            sweetAlert("Oops...", 'Looks like you forgot to enter To Address.', "error");
+            closeModal();
+        }
+        else if ($('#PaymentMode').val() == 2 && $('#chqNo').val() == "" && $('#chqDate').val() == "") {
+
+            sweetAlert("Oops...", 'Looks like you forgot to enter Bank name or Cheque number Or Cheque Date', "error");
+            closeModal();
+        }
+        else if ($('#PaymentMode').val() == 1 && $('#depositDate_cashbank').val() == 0 && $('#selectBank_cashbnk').val() == 0)  {
+
+            sweetAlert("Oops...", 'Looks like you forgot to enter Deposit Date', "error");
+            closeModal();
+        }
+
+        else {
+
+            //open loader
+
+            $('#paymentModal').modal('hide');
+            openModal();
+
+            //post form
+            $.post('../../../PaymentSettements/PendingPaymentSerializeFormData', $('#pendingPaymentSerialized').serialize(), function (data) {
+                if (data == 2) {
+                    closeModal();
+                    swal("Some inputs may be missing!");
+                }
+                else {
+                    closeModal();
+                    swal({
+                        title: "Are you sure you want to print?",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonClass: "btn-danger",
+                        confirmButtonText: "Yes, Print it!",
+                        cancelButtonText: "No, Later!",
+                        closeOnConfirm: false,
+                        closeOnCancel: false,
+
+                    },
+                        function (isConfirm) {
+                            if (isConfirm) {
+                                swal({
+                                    title: "Success!",
+                                    text: "Your record added successfully and print now.",
+                                    type: "success",
+                                    timer: 10000,
+                                    buttons: true,
+                                });
+
+                                closeModal();
+                                //swal("Success!", "Your record added successfully and print now.", "success");
+                                window.location.href = "../../../PaymentSettements/PaymentReceipt/" + data;
+
+
+                            } else {
+                                swal({
+                                    title: "Success!",
+                                    text: "Your record added successfully and print later.",
+                                    type: "success",
+                                    timer: 10000,
+                                    buttons: true,
+                                });
+
+                                closeModal();
+                                location.reload(true);
+
+
+                            }
+                        });
+                }
+            }, 'json');
+            return false;
+        }
+
+    });
+
+    //function add_invoiceNo() {
+    //    var rows = $('.dynamicRows');
+    //    //var Values = Number();
+    //    var Values = [];
+    //    $.each(rows, function (index, item) {
+    //        Values = Number($(this).children('td').eq(0).text());
+
+    //    });
+
+    //    //$('.setInvNos').val(Values.join(','));
+    //    $('.setInvNos').html(Values);
+    //};
+
+    //$('#btnModalTrigger').click(function () {
+    //    //var rows_invID = [];
+    //    var rows_invID = $('.dynamicRows');
+    //    rows_invID = Number();
+
+    //    //var rowCount = $('.dynamicRows').length;
+    //    //alert(rowCount);
+
+    //    //for (var i = 0; i <= rowCount; i++) {
+    //    //    alert(rowCount);
+    //    //}
+    //    $.each(rows, function (index, item) {
+    //        rows_invID += Number($(this).children('td').eq(0).text());
+
+    //    });
+    //    alert(rows_invID);
+    //    //$('.setInvNos').html(rows_invID);
+
+    //});
+
+
+
+</script>
+
+
+<style>
+    .subinvAmt {
+        text-align: right;
+        padding-right: 25px;
+    }
+
+    .subAmt {
+        text-align: left;
+    }
+
+    #selectToAddress {
+        width: 300px;
+    }
+
+    .modal-dialog {
+        width: 800px;
+    }
+
+    span.error {
+        display: block;
+        visibility: hidden;
+        color: red;
+        font-size: 90%;
+    }
+
+    .fullscreen-container {
+        display: none;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(90, 90, 90, 0.5);
+        z-index: 9999;
+    }
+
+    #popdiv {
+        height: 250px;
+        width: 800px;
+        background-color: aliceblue;
+        position: fixed;
+        top: 50px;
+        padding: 50px;
+        text-align: center;
+    }
+
+    #btnSave {
+        width: 80px;
+    }
+
+    #btncancel {
+        width: 80px;
+    }
+
+    .custom {
+        width: 125px !important;
+    }
+
+    .bankcustom {
+        width: 425px
+    }
+    .bankcustom-cash {
+        width: 325px
+    }
+
+    #datechangeOption {
+        color: red;
+        display: none;
+    }
+
+    .submit-progress-bg {
+        background-color: lightgray;
+        opacity: .5;
+    }
+
+    .loader {
+        position: fixed;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        background: url('../../Content/images/477.gif') 50% 50% no-repeat rgb(249,249,249);
+        opacity: .8;
+    }
+
+    .table-hover tbody tr:hover td, .table-hover tbody tr:hover th {
+        background-color: #847BAA;
+        color: #ecf0f1;
+        cursor: pointer;
+    }
+</style>
+
+<script src="~/Scripts/AdminLTE/plugins/iCheck/icheck.min.js"></script>

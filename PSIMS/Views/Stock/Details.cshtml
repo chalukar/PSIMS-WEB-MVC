@@ -1,0 +1,100 @@
+﻿@model PSIMS.Models.InventoryModel.Stock
+
+@{
+    ViewBag.Title = "Details of Stock";
+}
+<div class="box box-body box-primary">
+
+    <div>
+        <h4>Stock</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                Item Code/Name
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Item.Name)<text>&nbsp; : &nbsp;  </text> @Html.DisplayFor(model => model.Item.Description)
+            </dd>
+            <dt>
+                Pack Size
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PackSize)
+            </dd>
+            <dt>
+                Batch No
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.BatchNo)
+            </dd>
+            <dt>
+                Initial Qty
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.InitialQty)
+            </dd>
+            <dt>
+                Available  Qty
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.MovingQty)
+            </dd>
+
+            <dt>
+                Cost Price
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CostPrice)
+            </dd>
+
+            <dt>
+                Selling Price
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.SellingPrice)
+            </dd>
+
+            <dt>
+                Manufactured Date
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ManufacturedDate)
+            </dd>
+
+            <dt>
+                Expiry Date
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ExpiryDate)
+            </dd>
+            <dt>
+                Purchase ID
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.PurchaseID)
+            </dd>
+            <dt>
+                Created On
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CreatedOn)
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-flat" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>

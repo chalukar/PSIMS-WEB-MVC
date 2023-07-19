@@ -1,0 +1,79 @@
+﻿@model IEnumerable<PSIMS.Models.InventoryModel.DaliyStock>
+
+@{
+    ViewBag.Title = "List Of Daily Stock";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<div class="box box-body box-primary">
+    <table class="table table-striped table-responsive" id="dtaTable">
+        <thead class="dataTableHead">
+            <tr style="background-color:#3d566e; color:#ecf0f1">
+                <th>
+                    ID
+                </th>
+                <th>
+                    Item Code
+                </th>
+                <th>
+                    Batch No
+                </th>
+                <th>
+                    Tranx Date
+                </th>
+                <th>
+                    Location
+                </th>
+                <th>
+                    Qty In
+                </th>
+                <th>
+                    Qty Out
+                
+                </th>
+                
+                
+            </tr>
+        </thead>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.Item.Name).ToString().ToUpper()
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Stock.BatchNo).ToString().ToUpper()
+                </td>
+
+                <td>
+                    @Html.DisplayFor(modelItem => item.TrxDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Location.LocationName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.OutQty)
+                </td>
+               
+               
+           </tr>
+        }
+
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#dtaTable').DataTable({
+            "paging": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+</script>

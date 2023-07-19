@@ -1,0 +1,102 @@
+﻿@model PSIMS.Models.PurchaseModel.Clearance
+    @using Microsoft.AspNet.Identity
+    @using IdentitySample.Models       
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ApplicationDbContext db = new ApplicationDbContext();
+}
+
+<div class="box box-body box-primary">
+
+    <div>
+        <h4>Clearance Details</h4>
+        <hr />
+        <dl class="dl-horizontal">
+            <dt>
+                ID
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ID)
+            </dd>
+            <dt>
+                Invoice No
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.InvoiceNo).ToString().ToUpper()
+            </dd>
+            <dt>
+                Invoice Date
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.InvoiceDate)
+            </dd>
+            <dt>
+                Total Qty
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.Qty)
+            </dd>
+
+            <dt>
+                Exchange Rate
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.DollerPrice)
+            </dd>
+            <dt>
+                Flight/Shipping Cost
+            </dt>
+            <dd>
+                @Html.DisplayFor(model => model.ShippingCost)
+            </dd>
+            <dt>
+                Clearance Amount(LKR.)
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.ClearanceAmt)
+            </dd>
+
+            <dt>
+                Created On
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(model => model.CretaedDate)
+            </dd>
+
+            <dt>
+                Location
+            </dt>
+
+            <dd>
+                @{
+            var location = Model.Location.LocationCode + "-" + Model.Location.LocationName;
+            @location
+                }
+
+            </dd>
+            <dt>
+                Created By
+            </dt>
+
+            <dd>
+                @{
+            var UN = Model.UserID;
+            var name = db.Users.Where(u => u.Id == UN).FirstOrDefault().UserName ?? "n/a";
+            @name
+
+                }
+            </dd>
+
+        </dl>
+    </div>
+    <p>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary btn-flat" })
+        @Html.ActionLink("Back to List", "Index", null, new { @class = "btn btn-primary btn bg-olive btn-flat" })
+    </p>
+</div>
